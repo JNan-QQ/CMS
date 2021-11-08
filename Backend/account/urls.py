@@ -1,13 +1,13 @@
 # -*- coding:utf-8 -*-
 # @FileName  :urls.py
-# @Time      :2021/11/8 9:47
+# @Time      :2021/11/8 16:23
 # @Author    :姜楠
 # @Tool      :PyCharm
 from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.Login().handler),
+    # path('', views),
 ]
 
 if __name__ == "__main__":
