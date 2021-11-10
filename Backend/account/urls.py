@@ -7,7 +7,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # path('', views),
+    path('', views.Account().handler),
 ]
 
 if __name__ == "__main__":

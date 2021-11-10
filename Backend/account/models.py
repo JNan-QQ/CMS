@@ -5,9 +5,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.hashers import make_password, check_password
 
-
 # 可以通过 命令 python  manage.py createsuperuser 来创建超级管理员
 # 就是在这User表中添加记录
+from django.db.models import Q
+
+
 class User(AbstractUser):
     id = models.BigAutoField(primary_key=True)
 
@@ -63,11 +65,11 @@ class User(AbstractUser):
                 password=make_password(data['password']),
                 usertype=data['usertype'],
                 realName=data['realName'],
-                studentNo=data['studentNo'],
-                gradeNo=data['gradeNo'],
-                major=data['major'],
-                classNo=data['classNo'],
-                desc=data['desc']
+                # studentNo=data['studentNo'],
+                # gradeNo=data['gradeNo'],
+                # major=data['major'],
+                # classNo=data['classNo'],
+                # desc=data['desc']
             )
 
             return {'ret': 0, 'id': user.id}
@@ -77,8 +79,7 @@ class User(AbstractUser):
     @staticmethod
     def modify_account(data):
         try:
-            account_id = data['id']
-            username = data['username']
+            account_id = data['user_id']
             try:
                 # 根据 id 从数据库中找到相应的客户记录
                 account = User.objects.get(id=account_id)
@@ -87,10 +88,12 @@ class User(AbstractUser):
                     'ret': 1,
                     'msg': f'id 为`{account_id}`的用户不存在'
                 }
-            if User.objects.filter(username=username).exists():
-                return {'ret': 1, 'msg': f'登录名 {username} 已经存在,请重新命名'}
-            else:
-                account.username = username
+            username = data.get('username', None)
+            if username:
+                if User.objects.filter(username=username).exists():
+                    return {'ret': 1, 'msg': f'登录名 {username} 已经存在,请重新命名'}
+                else:
+                    account.username = username
             if 'realName' in data:
                 account.realName = data['realName']
             if 'studentNo' in data:
@@ -103,6 +106,8 @@ class User(AbstractUser):
                 account.major = data['major']
             if 'desc' in data:
                 account.desc = data['desc']
+            if 'password' in data:
+                account.password = make_password(data['password'])
 
             # 注意，一定要执行save才能将修改信息保存到数据库
             account.save()
@@ -112,7 +117,7 @@ class User(AbstractUser):
 
     @staticmethod
     def delete_account(data):
-        account_id = data['id']
+        account_id = data['user_id']
 
         try:
             # 根据 id 从数据库中找到相应的客户记录
@@ -131,14 +136,28 @@ class User(AbstractUser):
     @staticmethod
     def list_account(data):
         try:
-            # 要获取的第几页
-            pagenum = data['pagenum']
+            # .order_by('-id') 表示按照 id字段的值 倒序排列
+            # 这样可以保证最新的记录显示在最前面
+            qs = User.objects.values('id', 'username', 'realName', 'studentNo', 'gradeNo', 'classNo', 'major').order_by('-id')
 
-            # 每页要显示多少条记录
-            pagesize = data['pagesize']
+            # 查看是否有 关键字 搜索 参数
+            keywords = data.get('keywords', None)
+            if keywords:
+                conditions = [Q(username=one) for one in keywords.split(' ') if one]
+                query = Q()
+                for condition in conditions:
+                    query &= condition
+                qs = qs.filter(query)
+
+            # 要获取的第几页 # 每页要显示多少条记录
+            pagenum = data.get('pagenum', None)
+            pagesize = data.get('pagesize', None)
+            if not pagesize or not pagenum:
+                pagesize = 5
+                pagenum = 1
 
             # 返回一个 QuerySet 对象 ，包含所有的表记录
-            qs = User.objects.values()
+            # qs = User.objects.values()
 
             # 使用分页对象，设定每页多少条记录
             pgnt = Paginator(qs, pagesize)

@@ -25,7 +25,7 @@ class Login:
         elif action == 'signout':
             return self.signout(request)
         else:
-            return JsonResponse({'ret': 1, 'msg': 'action参数错误'})
+            return JsonResponse({'ret': 1, 'msg': 'action参数错误'}, json_dumps_params={'ensure_ascii': False})
 
     def signin(self, request):
         # 从 HTTP POST 请求中获取用户名、密码参数
@@ -38,22 +38,23 @@ class Login:
         # 如果能找到用户，并且密码正确
         if user is not None:
             if user.is_active:
-                if user.is_superuser:
-                    login(request, user)
-                    # 在session中存入用户类型
-                    request.session['usertype'] = user.usertype
+                login(request, user)
+                # 在session中存入用户类型
+                request.session['usertype'] = user.usertype
+                request.session['is_login'] = True
+                request.session['user_id'] = user.id
 
-                    return JsonResponse({'ret': 0})
-                else:
-                    return JsonResponse({'ret': 1, 'msg': '请使用管理员账户登录'})
+                return JsonResponse(
+                    {'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName},
+                    json_dumps_params={'ensure_ascii': False})
             else:
-                return JsonResponse({'ret': 0, 'msg': '用户已经被禁用'})
+                return JsonResponse({'ret': 0, 'msg': '用户已经被禁用'}, json_dumps_params={'ensure_ascii': False})
 
         # 否则就是用户名、密码有误
         else:
-            return JsonResponse({'ret': 1, 'msg': '用户名或者密码错误'})
+            return JsonResponse({'ret': 1, 'msg': '用户名或者密码错误'}, json_dumps_params={'ensure_ascii': False})
 
     def signout(self, request):
         # 使用登出方法
         logout(request)
-        return JsonResponse({'ret': 0})
+        return JsonResponse({'ret': 0}, json_dumps_params={'ensure_ascii': False})

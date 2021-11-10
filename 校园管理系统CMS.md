@@ -52,7 +52,7 @@ Set-Cookie: sessionid=<sessionid数值>
     "ret": 0,
     "usertype":1,
     "user_id":1,
-    "realname":"管理员",
+    "realName":"管理员",
 }
 ```
 
@@ -144,8 +144,9 @@ Content-Type: application/json
 ```json
 {
     "action" : "register",
-    "username" : "小明",
+    "username" : "xiaoming",
     "password" : "123456ll",
+    "realName" :"小明",
     "usertype" :100
 }
 ```
@@ -195,15 +196,16 @@ Content-Type: application/json
 ```json
 {
     "action" : "add",
-    "username" : "小明",
+    "username" : "xiaoming",
     "password" : "123456",
+    "realName" : "小明",
     "usertype" :100
 }
 ```
 
 password默认为123456
 
-usertype未账号类型：1、100、1000
+usertype为账号类型：1、100、1000
 
 ### 响应
 
@@ -301,6 +303,10 @@ Content-Type: application/json
 
 usertype不可修改
 
+管理员可以修改所有用户信息
+
+教师、学生只能修改自己的用户信息（用户名、密码、昵称）
+
 ### 响应
 
 - 响应头
@@ -338,13 +344,18 @@ Content-Type: application/json
 
 为json格式
 
-```
+```json
 {
     "action" : "list",
+    "pagenum":2,
+    "pagesize":5,
+    "keywords":"搜索关键字 可忽略"
 }
 ```
 
 仅管理员可以操作
+
+pagenum:显示的页数；pagesize:每页显示的数据个数；如果为空则默认为1，5
 
 ### 响应
 
