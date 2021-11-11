@@ -1,5 +1,5 @@
 import json
-from django.http import JsonResponse
+from shara.shara import jsonResponse
 from django.contrib.auth import authenticate, login, logout
 
 
@@ -25,7 +25,7 @@ class Login:
         elif action == 'signout':
             return self.signout(request)
         else:
-            return JsonResponse({'ret': 1, 'msg': 'action参数错误'}, json_dumps_params={'ensure_ascii': False})
+            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
     def signin(self, request):
         # 从 HTTP POST 请求中获取用户名、密码参数
@@ -44,17 +44,15 @@ class Login:
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
 
-                return JsonResponse(
-                    {'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName},
-                    json_dumps_params={'ensure_ascii': False})
+                return jsonResponse({'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName})
             else:
-                return JsonResponse({'ret': 0, 'msg': '用户已经被禁用'}, json_dumps_params={'ensure_ascii': False})
+                return jsonResponse({'ret': 0, 'msg': '用户已经被禁用'})
 
         # 否则就是用户名、密码有误
         else:
-            return JsonResponse({'ret': 1, 'msg': '用户名或者密码错误'}, json_dumps_params={'ensure_ascii': False})
+            return jsonResponse({'ret': 1, 'msg': '用户名或者密码错误'})
 
     def signout(self, request):
         # 使用登出方法
         logout(request)
-        return JsonResponse({'ret': 0}, json_dumps_params={'ensure_ascii': False})
+        return jsonResponse({'ret': 0})
