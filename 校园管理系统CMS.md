@@ -17,7 +17,7 @@ CMS系统使用session会话机制。
 - 请求头
 
 ```http
-POST /sign
+POST /sign/
 Content-Type: application/json
 ```
 
@@ -86,7 +86,7 @@ ret 不为 0 表示登录失败， msg字段描述登录失败的原因
 - 请求头
 
 ```http
-POST /sign
+POST /sign/
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -132,7 +132,7 @@ Set-Cookie: sessionid=""
 - 请求头
 
 ```http
-POST /account
+POST /account/
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -151,7 +151,7 @@ Content-Type: application/json
 }
 ```
 
-usertype未账号类型：100、1000
+usertype为账号类型：100、1000；（管理员账号无法注册）
 
 ### 响应
 
@@ -184,7 +184,7 @@ user_id 是用户在系统中的id
 - 请求头
 
 ```http
-POST /account
+POST /account/
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -238,7 +238,7 @@ user_id 是用户在系统中的id
 - 请求头
 
 ```
-POST /account
+POST /account/
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -284,7 +284,7 @@ ret 为 0 表示删除成功
 - 请求头
 
 ```
-POST /account
+POST /account/
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -335,7 +335,7 @@ ret 为 0 表示修改成功
 - 请求头
 
 ```
-POST /account
+POST /account/
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -382,6 +382,461 @@ Content-Type: application/json
 ```
 
 ret 为 0 表示列出成功
+
+
+
+
+
+
+
+
+
+# 新闻与通知管理
+
+新闻只有管理员可以编辑、发布；新闻分为三种状态：0（禁用、不显示）、1（发布中）、2（热点）;
+
+通知管理员可以同时给全体用户发信息
+
+## 新闻
+
+### 添加新闻
+
+#### 请求
+
+- 请求头
+
+```http
+POST /notice/new
+Cookie: sessionid=<sessionid数值>
+Content-Type: application/json
+```
+
+- 消息体
+
+为json格式
+
+```json
+{
+    "action" : "add",
+    "author_id" : "1",
+    "title" : "****",
+    "content" : "**************",
+    "status" :1,
+    "new_type":"校园、社会、竞赛。。。。",
+}
+```
+
+author_id : 创建者id，暂时默认为1
+
+title ：新闻标题
+
+content ：新闻内容
+
+status ：新闻状态
+
+new_type ：新闻类型根据实际需要填写
+
+
+
+#### 响应
+
+- 响应头
+
+```http
+200 OK
+Content-Type: application/json
+```
+
+- 消息体
+
+```json
+{
+    "ret": 0,
+    "new_id":5,
+}
+```
+
+ret 为 0 表示添加成功
+
+new_id 是新闻在系统中的id
+
+### 修改新闻
+
+#### 请求
+
+- 请求头
+
+```http
+POST /notice/new
+Cookie: sessionid=<sessionid数值>
+Content-Type: application/json
+```
+
+- 消息体
+
+为json格式
+
+```json
+{
+    "action" : "modify",
+    "new_id" : "5",
+    "title" : "new_title",
+    "content" : "new_content",
+    "status" :0\1\2,
+    "new_type":"校园、社会、竞赛。。。。",
+}
+```
+
+new_id : 要修改的新闻id
+
+
+
+#### 响应
+
+- 响应头
+
+```http
+200 OK
+Content-Type: application/json
+```
+
+- 消息体
+
+```json
+{
+    "ret": 0,
+}
+```
+
+ret 为 0 表示修改成功
+
+### 删除新闻
+
+#### 请求
+
+- 请求头
+
+```http
+POST /notice/new
+Cookie: sessionid=<sessionid数值>
+Content-Type: application/json
+```
+
+- 消息体
+
+为json格式
+
+```json
+{
+    "action" : "delete",
+    "new_id" : "5",
+}
+```
+
+new_id : 要删除的新闻id
+
+
+
+#### 响应
+
+- 响应头
+
+```http
+200 OK
+Content-Type: application/json
+```
+
+- 消息体
+
+```json
+{
+    "ret": 0,
+}
+```
+
+ret 为 0 表示删除成功
+
+### 列出新闻
+
+#### 请求
+
+- 请求头
+
+```django
+POST /notice/new
+Cookie: sessionid=<sessionid数值>
+Content-Type: application/json
+```
+
+- 消息体
+
+为json格式
+
+```json
+{
+    "action" : "list",
+    "pagenum":2,
+    "pagesize":5,
+    "keywords":"搜索关键字 可忽略",
+    "new_type":"新闻类型"
+}
+```
+
+pagenum:显示的页数；pagesize:每页显示的数据个数；如果为空则默认为1，5
+
+new_type  ： ALL为所有新闻
+
+#### 响应
+
+- 响应头
+
+```
+200 OK
+Content-Type: application/json
+```
+
+- 消息体
+
+```json
+{
+    "ret": 0,
+    "retlist":[
+    {
+    "new_id":5,
+    "title":"**",
+    "content":"****",
+    "status":1\2\0,
+    },{...}
+    ]
+}
+```
+
+ret 为 0 表示列出成功
+
+
+
+## 通知
+
+### 添加通知
+
+#### 请求
+
+- 请求头
+
+```http
+POST /notice/message
+Cookie: sessionid=<sessionid数值>
+Content-Type: application/json
+```
+
+- 消息体
+
+为json格式
+
+```json
+{
+    "action" : "add",
+    "author_id" : "3",
+    "title" : "****",
+    "content" : "**************",
+    "status" :1,
+    "receive_id":[2,3,5],
+}
+```
+
+author_id : 创建者id
+
+title ：通知标题
+
+content ：通知内容
+
+status ：通知状态 0：禁用；1：发布
+
+new_type ：新闻类型根据实际需要填写
+
+receive_id ：接收者的id
+
+
+
+#### 响应
+
+- 响应头
+
+```http
+200 OK
+Content-Type: application/json
+```
+
+- 消息体
+
+```json
+{
+    "ret": 0,
+    "message_id":5,
+}
+```
+
+ret 为 0 表示添加成功
+
+message_id 是新闻在系统中的id
+
+### 修改通知
+
+#### 请求
+
+- 请求头
+
+```http
+POST /notice/message
+Cookie: sessionid=<sessionid数值>
+Content-Type: application/json
+```
+
+- 消息体
+
+为json格式
+
+```json
+{
+    "action" : "modify",
+    "message_id" : "5",
+    "title" : "new_title",
+    "content" : "new_content",
+    "status" :0\1\2,
+}
+```
+
+new_id : 要修改的新闻id
+
+
+
+#### 响应
+
+- 响应头
+
+```http
+200 OK
+Content-Type: application/json
+```
+
+- 消息体
+
+```json
+{
+    "ret": 0,
+}
+```
+
+ret 为 0 表示修改成功
+
+### 删除通知
+
+#### 请求
+
+- 请求头
+
+```http
+POST /notice/message
+Cookie: sessionid=<sessionid数值>
+Content-Type: application/json
+```
+
+- 消息体
+
+为json格式
+
+```json
+{
+    "action" : "delete",
+    "message_id" : "5",
+}
+```
+
+new_id : 要删除的新闻id
+
+
+
+#### 响应
+
+- 响应头
+
+```http
+200 OK
+Content-Type: application/json
+```
+
+- 消息体
+
+```json
+{
+    "ret": 0,
+}
+```
+
+ret 为 0 表示删除成功
+
+### 列出通知
+
+#### 请求
+
+- 请求头
+
+```django
+POST /notice/message
+Cookie: sessionid=<sessionid数值>
+Content-Type: application/json
+```
+
+- 消息体
+
+为json格式
+
+```json
+{
+    "action" : "list",
+}
+```
+
+根据用户类型列出通知：
+
+管理员-》列出所有通知
+
+教师-》列出名下通知 和 接收到的通知
+
+学生-》列出接收到的通知
+
+#### 响应
+
+- 响应头
+
+```
+200 OK
+Content-Type: application/json
+```
+
+- 消息体
+
+```json
+{
+    "ret": 0,
+    "retlist":[
+    {
+    "message_id":5,
+    "title":"**",
+    "content":"****",
+    "author_id":5,
+    },{...}
+    ]
+}
+```
+
+ret 为 0 表示列出成功
+
+
+
+
+
+
 
 
 
