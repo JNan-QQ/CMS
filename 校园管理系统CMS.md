@@ -406,7 +406,7 @@ ret 为 0 表示列出成功
 - 请求头
 
 ```http
-POST /notice/new
+POST /notice/news
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -452,7 +452,7 @@ Content-Type: application/json
 ```json
 {
     "ret": 0,
-    "new_id":5,
+    "news_id":5,
 }
 ```
 
@@ -467,7 +467,7 @@ new_id 是新闻在系统中的id
 - 请求头
 
 ```http
-POST /notice/new
+POST /notice/news
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -479,7 +479,7 @@ Content-Type: application/json
 ```json
 {
     "action" : "modify",
-    "new_id" : "5",
+    "news_id" : "5",
     "title" : "new_title",
     "content" : "new_content",
     "status" :0\1\2,
@@ -517,7 +517,7 @@ ret 为 0 表示修改成功
 - 请求头
 
 ```http
-POST /notice/new
+POST /notice/news
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -529,7 +529,7 @@ Content-Type: application/json
 ```json
 {
     "action" : "delete",
-    "new_id" : "5",
+    "news_id" : "5",
 }
 ```
 
@@ -563,7 +563,7 @@ ret 为 0 表示删除成功
 - 请求头
 
 ```django
-POST /notice/new
+POST /notice/news
 Cookie: sessionid=<sessionid数值>
 Content-Type: application/json
 ```
@@ -577,8 +577,7 @@ Content-Type: application/json
     "action" : "list",
     "pagenum":2,
     "pagesize":5,
-    "keywords":"搜索关键字 可忽略",
-    "new_type":"新闻类型"
+    "news_type":"新闻类型"
 }
 ```
 
