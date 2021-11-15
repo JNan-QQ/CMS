@@ -22,4 +22,6 @@ urlpatterns = [
     path('sign/', include('login.urls')),
     # 账号管理模块
     path('account/', include('account.urls')),
+    # 新闻、通知模块
+    path('notice/', include('notice.urls')),
 ]

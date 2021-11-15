@@ -422,7 +422,7 @@ Content-Type: application/json
     "title" : "****",
     "content" : "**************",
     "status" :1,
-    "new_type":"校园、社会、竞赛。。。。",
+    "news_type":"校园、社会、竞赛。。。。",
 }
 ```
 

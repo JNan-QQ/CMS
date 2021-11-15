@@ -27,17 +27,17 @@ class News(models.Model):
     @staticmethod
     def add_news(data):
 
-        try:
-            news = News.objects.create(
-                title=data['title'],
-                content=data['content'],
-                author=data['id'],
-                status=data['status'],
-                new_type=data['new_type']
-            )
-            return {'ret': 0, 'news_id': news.id}
-        except:
-            return {'ret': 1, 'msg': '添加新闻失败！'}
+        # try:
+        news = News.objects.create(
+            title=data['title'],
+            content=data['content'],
+            author=User.objects.get(id=data['author_id']),
+            status=data['status'],
+            news_type=data['news_type']
+        )
+        return {'ret': 0, 'news_id': news.id}
+        # except:
+        #     return {'ret': 1, 'msg': '添加新闻失败！'}
 
     @staticmethod
     def modify_news(data):
