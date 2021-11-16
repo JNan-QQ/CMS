@@ -64,8 +64,10 @@ class News:
         if 'is_login' not in request.session:
             return jsonResponse({'ret': 302, 'msg': '未登录'}, status=302)
 
-        if request.session['usertype'] != 1:
-            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号进行该操作！'})
+        # if request.session['usertype'] != 1:
+        #     return jsonResponse({'ret': 1, 'msg': '请使用管理员账号进行该操作！'})
+
+        request.params['usertype'] = request.session['usertype']
 
         ret = newsMgr.list_news(request.params)
 
