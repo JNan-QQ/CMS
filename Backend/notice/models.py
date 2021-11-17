@@ -1,6 +1,6 @@
 import traceback
 from django.core.paginator import Paginator, EmptyPage
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from account.models import User
 
@@ -137,59 +137,105 @@ class Message(models.Model):
     # 状态
     # 0:禁用  1：发布   2：热度
     status = models.PositiveIntegerField()
-    # 接收者
-    receiver = models.ManyToManyField(User, through='cms_Message_User')
 
     class Meta:
         db_table = "cms_message"
 
+
+class MessageReceiver(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # 通知id
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    # 作者id
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    # 接收者id
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE)
+    # status
+    status = models.PositiveIntegerField()
+
+    class Meta:
+        db_table = "cms_receiver"
+
     @staticmethod
     def add_message(data):
-
         try:
-            message = Message.objects.create(
-                title=data['title'],
-                content=data['content'],
-                author=User.objects.get(id=data['author_id']),
-                status=data['status'],
-                receiver=data['user_Objects']
-            )
-            return {'ret': 0, 'news_id': message.id}
+            with transaction.atomic():
+                message = Message.objects.create(
+                    title=data['title'],
+                    content=data['content'],
+                    author=User.objects.get(id=data['author_id']),
+                    status=data['status'],
+                )
+            for i in data['receiver_user_id']:
+                MessageReceiver.objects.create(
+                    message=message,
+                    author=User.objects.get(id=data['author_id']),
+                    receiver=User.objects.get(id=i),
+                    status=1,
+                )
+            return {'ret': 0, 'message_id': message.id}
         except:
             return {'ret': 1, 'msg': '添加通知失败！'}
 
     @staticmethod
     def modify_message(data):
         try:
-            message_id = data['message_id']
-            try:
-                # 根据 id 从数据库中找到相应的客户记录
-                message = Message.objects.get(id=message_id)
-            except:
-                return {
-                    'ret': 1,
-                    'msg': f'id 为`{message_id}`的新闻不存在'
-                }
+            with transaction.atomic():
+                message_id = data['message_id']
+                try:
+                    # 根据 id 从数据库中找到相应的客户记录
+                    message = Message.objects.get(id=message_id)
+                except:
+                    return {
+                        'ret': 1,
+                        'msg': f'id 为`{message_id}`的新闻不存在'
+                    }
 
-            if 'title' in data:
-                message.title = data['title']
-            if 'content' in data:
-                message.content = data['content']
-            if 'author' in data:
-                message.author = User.objects.get(id=data['author_id'])
-            if 'status' in data:
-                message.status = data['status']
-            if 'news_type' in data:
-                message.receiver = data['user_Objects']
-
-            # 注意，一定要执行save才能将修改信息保存到数据库
-            message.save()
+                if 'title' in data:
+                    message.title = data['title']
+                if 'content' in data:
+                    message.content = data['content']
+                if 'status' in data:
+                    message.status = data['status']
+                if 'receiver_user_id' in data:
+                    message_list = list(MessageReceiver.objects.values('receiver').filter(message=message_id))
+                    for i in data['receiver_user_id']:
+                        if i in message_list:
+                            continue
+                        else:
+                            MessageReceiver.objects.create(
+                                message=message,
+                                author=User.objects.get(id=data['author_id']),
+                                receiver=User.objects.get(id=i),
+                                status=1,
+                            )
+                            message_list.remove(i)
+                    if message_list:
+                        for ii in message_list:
+                            MessageReceiver.objects.get(receiver=ii).delete()
+                # 注意，一定要执行save才能将修改信息保存到数据库
+                message.save()
             return {'ret': 0}
         except:
             return {'ret': 1, 'msg': '修改通知信息失败！'}
 
     @staticmethod
-    def delete_news(data):
+    def check_message(data):
+        message_id = data['message_id']
+        user_id = data['user_id']
+        try:
+            # 根据 id 从数据库中找到相应的客户记录
+            message_receiver = MessageReceiver.objects.filter(message=message_id, receiver=user_id)
+        except:
+            return {
+                'ret': 1,
+                'msg': f'id 为`{message_id}`的通知不存在'
+            }
+        message_receiver.status = 0
+        message_receiver.save()
+
+    @staticmethod
+    def delete_message(data):
         message_id = data['message_id']
 
         try:
@@ -198,7 +244,7 @@ class Message(models.Model):
         except:
             return {
                 'ret': 1,
-                'msg': f'id 为`{message_id}`的用户不存在'
+                'msg': f'id 为`{message_id}`的通知不存在'
             }
 
         # delete 方法就将该记录从数据库中删除了
@@ -207,15 +253,15 @@ class Message(models.Model):
         return {'ret': 0}
 
     @staticmethod
-    def list_news(data):
+    def list_message(data):
 
         try:
-            if data['news_type'] == 'ALL':
-                qs = News.objects.values().order_by('-id')
-            else:
-                qs = News.objects.values().order_by('-id').filter(news_type=data['news_type'])
-            if data['usertype'] != 1:
-                qs = qs.filter(Q(status=1) | Q(status=2))
+            if data['usertype'] == 1:
+                qs = Message.objects.values().order_by('-id')
+            elif data['usertype'] == 10:
+                qs = Message.objects.values().order_by('-id').filter(author=data['user_id'])
+            elif data['usertype'] != 100:
+                qs = Message.objects.values().order_by('-id').filter(receiver=data['user_id'])
 
             # 要获取的第几页 # 每页要显示多少条记录
             pagenum = data.get('pagenum', None)

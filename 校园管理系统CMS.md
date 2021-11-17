@@ -639,7 +639,7 @@ Content-Type: application/json
     "title" : "****",
     "content" : "**************",
     "status" :1,
-    "receive_id":[2,3,5],
+    "receive_user_id":[2,3,5],
 }
 ```
 
@@ -653,7 +653,7 @@ status ：通知状态 0：禁用；1：发布
 
 new_type ：新闻类型根据实际需要填写
 
-receive_id ：接收者的id
+receive_user_id：接收者的id
 
 
 
