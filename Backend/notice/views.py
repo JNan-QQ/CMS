@@ -116,7 +116,7 @@ class MessageR:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
     @staticmethod
-    def addNews(request):
+    def addMessage(request):
         # 判断是否登录
         if 'is_login' not in request.session:
             return jsonResponse({'ret': 302, 'msg': '未登录'}, status=302)
