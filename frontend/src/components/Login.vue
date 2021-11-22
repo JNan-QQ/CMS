@@ -3,11 +3,11 @@
         <h1>Login</h1>
         <div class="item">
             <i class="fa fa-github-alt" style="font-size:24px"></i>
-            <input type="text" placeholder="Username" v-model="state.username">
+            <input type="text" placeholder="Username" v-model="username">
         </div>
         <div class="item">
             <i class="fa fa-search" style="font-size:24px"></i>
-            <input type="text" placeholder="Password" v-model="state.password">
+            <input type="text" placeholder="Password" v-model="password">
         </div>
         <div class="item">
             <input class="button" type="button" value="登陆" @click="signin">
@@ -17,21 +17,38 @@
 </template>
 
 <script>
-
-import {ref} from "vue";
-import {axios} from "axios"
+import axios from "axios";
 
 export default {
     name: "Login",
-    setup() {
-
-        let username=ref('');
-        let password=ref('');
-
-        function signin() {
-            axios.post()
+    data() {
+        return {
+            username: '',
+            password: '',
         }
-
+    },
+    methods: {
+        signin() {
+            const that = this;
+            axios.post('http://127.0.0.1:8210/sign/', {
+                action: "signin",
+                username: this.username,
+                password: this.password,
+            }).then(function (response) {
+                const data = response.data;
+                if (data.ret === 0) {
+                    let mode = [];
+                    if (data.usertype === 1) {
+                        mode = [0, 0, 1, 0, 0];
+                    } else {
+                        mode = [0, 1, 0, 0, 0];
+                    }
+                    that.$emit("view_mode", mode);
+                } else if (data.ret === 1) {
+                    console.log('登录失败');
+                }
+            });
+        }
     }
 }
 </script>
@@ -88,7 +105,7 @@ h1 {
     border: none;
     border-radius: 15px;
     box-shadow: 0 9px #999;
-    margin-right: 10px;
+    margin-right: auto;
 }
 
 .button:hover {

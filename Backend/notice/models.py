@@ -147,9 +147,9 @@ class MessageReceiver(models.Model):
     # 通知id
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
     # 作者id
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author')
     # 接收者id
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver')
     # status
     status = models.PositiveIntegerField()
 
@@ -252,38 +252,38 @@ class MessageReceiver(models.Model):
 
         return {'ret': 0}
 
-    @staticmethod
-    def list_message(data):
-
-        try:
-            if data['usertype'] == 1:
-                qs = Message.objects.values().order_by('-id')
-            elif data['usertype'] == 10:
-                qs = Message.objects.values().order_by('-id').filter(author=data['user_id'])
-            elif data['usertype'] != 100:
-                qs = Message.objects.values().order_by('-id').filter(receiver=data['user_id'])
-
-            # 要获取的第几页 # 每页要显示多少条记录
-            pagenum = data.get('pagenum', None)
-            pagesize = data.get('pagesize', None)
-            if not pagesize or not pagenum:
-                pagesize = 5
-                pagenum = 1
-
-            # 返回一个 QuerySet 对象 ，包含所有的表记录
-            # qs = User.objects.values()
-
-            # 使用分页对象，设定每页多少条记录
-            pgnt = Paginator(qs, pagesize)
-
-            # 从数据库中读取数据，指定读取其中第几页
-            page = pgnt.page(pagenum)
-
-            # 将 QuerySet 对象 转化为 list 类型
-            retlist = list(page)
-
-            # total指定了 一共有多少数据
-            return {'ret': 0, 'retlist': retlist, 'total': pgnt.count}
-
-        except:
-            return {'ret': 2, 'msg': f'未知错误\n{traceback.format_exc()}'}
+    # @staticmethod
+    # def list_message(data):
+    #
+    #     try:
+    #         if data['usertype'] == 1:
+    #             qs = Message.objects.values().order_by('-id')
+    #         elif data['usertype'] == 10:
+    #             qs = Message.objects.values().order_by('-id').filter(author=data['user_id'])
+    #         elif data['usertype'] != 100:
+    #             qs = Message.objects.values().order_by('-id').filter(receiver=data['user_id'])
+    #
+    #         # 要获取的第几页 # 每页要显示多少条记录
+    #         pagenum = data.get('pagenum', None)
+    #         pagesize = data.get('pagesize', None)
+    #         if not pagesize or not pagenum:
+    #             pagesize = 5
+    #             pagenum = 1
+    #
+    #         # 返回一个 QuerySet 对象 ，包含所有的表记录
+    #         # qs = User.objects.values()
+    #
+    #         # 使用分页对象，设定每页多少条记录
+    #         pgnt = Paginator(qs, pagesize)
+    #
+    #         # 从数据库中读取数据，指定读取其中第几页
+    #         page = pgnt.page(pagenum)
+    #
+    #         # 将 QuerySet 对象 转化为 list 类型
+    #         retlist = list(page)
+    #
+    #         # total指定了 一共有多少数据
+    #         return {'ret': 0, 'retlist': retlist, 'total': pgnt.count}
+    #
+    #     except:
+    #         return {'ret': 2, 'msg': f'未知错误\n{traceback.format_exc()}'}

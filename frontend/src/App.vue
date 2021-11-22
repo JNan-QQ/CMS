@@ -1,16 +1,33 @@
 <template>
     <main>
-        <loginviwe></loginviwe>
+        <login_view v-on:view_mode="view_mode" v-show="mode[0]"></login_view>
+        <home_view v-show="mode[1]"></home_view>
+        <admin_view v-show="mode[2]"></admin_view>
     </main>
 </template>
 
 <script>
-import loginviwe from './components/Login'
+import login_view from './components/Login.vue'
+import home_view from './components/Home.vue'
+import admin_view from './components/Admin.vue'
 
 export default {
     name: 'App',
+    data() {
+        return {
+            mode: [0, 0, 1, 0, 0],
+        }
+    },
     components: {
-        loginviwe,
+        home_view: home_view,
+        login_view: login_view,
+        admin_view: admin_view,
+    },
+    methods: {
+        view_mode(e) {
+            console.log(e)
+            this.mode = e;
+        }
     }
 }
 </script>
