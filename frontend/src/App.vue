@@ -1,8 +1,8 @@
 <template>
     <main>
-        <login_view v-on:view_mode="view_mode" v-show="mode[0]"></login_view>
-        <home_view v-show="mode[1]"></home_view>
-        <admin_view v-show="mode[2]"></admin_view>
+        <login_view v-on:view_mode="view_mode" v-if="mode==='登录'"></login_view>
+        <home_view v-else-if="mode==='主页'"></home_view>
+        <admin_view v-else-if="mode==='后台'"></admin_view>
     </main>
 </template>
 
@@ -15,7 +15,7 @@ export default {
     name: 'App',
     data() {
         return {
-            mode: [0, 0, 1, 0, 0],
+            mode: '登录',
         }
     },
     components: {

@@ -37,11 +37,11 @@ export default {
             }).then(function (response) {
                 const data = response.data;
                 if (data.ret === 0) {
-                    let mode = [];
+                    let mode = '';
                     if (data.usertype === 1) {
-                        mode = [0, 0, 1, 0, 0];
+                        mode = '后台';
                     } else {
-                        mode = [0, 1, 0, 0, 0];
+                        mode = '主页';
                     }
                     that.$emit("view_mode", mode);
                 } else if (data.ret === 1) {
