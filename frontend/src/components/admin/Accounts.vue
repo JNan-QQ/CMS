@@ -1,23 +1,145 @@
 <template>
-<div id="search"><input class="input" type="search" placeholder="请输入关键词"></div>
+    <div class="container">
+        <div class="bar">
+            <ul>
+                <li><a>管理员</a></li>
+                <li><a>教师</a></li>
+                <li><a>学生</a></li>
+            </ul>
+        </div>
+        <div class="search">
+            <select v-model="selected">
+                <option disabled value="">请选择一个搜索类别</option>
+                <option>id</option>
+                <option>username</option>
+                <option>class</option>
+            </select>
+            :
+            <input type="text" name="uname" placeholder="Search here...">
+            <button>SEARCH
+                <span class="t"></span>
+            </button>
+        </div>
+        <table>
+            <caption>{{ tableTitle }}</caption>
+            <tr>
+                <th>id</th>
+                <th>userName</th>
+                <th>realName</th>
+                <th>studentNo</th>
+                <th>classNo</th>
+                <th>gradeNo</th>
+                <th>major</th>
+            </tr>
+            <tr v-for="item in items">
+                <td>{{ item.id }}</td>
+                <td>{{ item.username }}</td>
+                <td>{{ item.realName }}</td>
+                <td>{{ item.studentNo }}</td>
+                <td>{{ item.classNo }}</td>
+                <td>{{ item.gradeNo }}</td>
+                <td>{{ item.major }}</td>
+            </tr>
+        </table>
+    </div>
 </template>
 
 <script>
 export default {
-    name: "Accounts"
+    name: "Accounts",
+    data() {
+        return {
+            selected: '',
+            tableTitle: '',
+            items: [{
+                "id": "1",
+                "username": "jj",
+                "realName": "cc",
+                "studentNo": "1360541",
+                "classNo": "1604",
+                "gradeNo": "2018",
+                "major": "自动化"
+            }],
+        }
+    }
 }
 </script>
 
 <style scoped>
-[type=search]::-webkit-search-cancel-button{
-    -webkit-appearance: none;
-    width: 36px;
-    height: 36px;
-    border: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E %3Cpath d='M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z'%3E%3C/path%3E %3C/svg%3E") center no-repeat;
-    background-size: 16px;
-    cursor: pointer;
-    opacity: .4;
-    transition: .2s;
+/*整体界面*/
+.container {
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: 1px 1px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    padding: 15px 10px;
+    background-color: rgb(245, 248, 252);
 }
+
+/*导航栏*/
+.bar ul {
+    list-style-type: none;
+    margin: auto; /*margin:100px auto无效,不能使ul左右居中*/
+    text-align: center;
+    font-size: 14px;
+}
+
+li {
+    float: left; /*改动的地方*/
+    width: 80px;
+    padding: 10px;
+    background-color: #ff9137;
+}
+
+a:link, a:visited, a:hover, a:active {
+    color: #fff;
+    text-decoration: none;
+}
+
+a {
+    display: block; /*整体变为可点击区域，而不只是字*/
+}
+
+/*搜索栏*/
+
+/*列表*/
+th {
+    font-weight: bold;
+    background-color: #eff6fe;
+    color: #90c0fe
+}
+
+th, td {
+    font-size: 0.95em;
+    text-align: center;
+    padding: 4px;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ffffff;
+}
+
+th {
+    border: 1px solid #eff6fe;
+}
+
+td {
+    border: 1px solid #eeeeee;
+}
+
+tr {
+    border: 1px solid #ffffff;
+}
+
+tr:nth-child(odd) {
+    background-color: #f7f7f7;
+}
+
+tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+
 </style>

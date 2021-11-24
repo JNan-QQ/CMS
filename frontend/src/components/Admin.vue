@@ -9,23 +9,18 @@
             <!--左侧导航栏-->
             <div class="items_left">
                 <ul>
-                    <li class="active"><a>账号管理</a>
-                        <ul>
-                            <li><a>管理员</a></li>
-                            <li><a>教师</a></li>
-                            <li><a>学生</a></li>
-                        </ul>
-                    </li>
-                    <li><a>新闻管理</a></li>
-                    <li><a>通知管理</a></li>
+                    <li @click="ViewContent('account')"><a :class="{active:isActive[0]}">账号管理</a></li>
+                    <li @click="ViewContent('news')"><a :class="{active:isActive[1]}">新闻管理</a></li>
+                    <li @click="ViewContent('notices')"><a :class="{active:isActive[2]}">通知管理</a></li>
                     <li><a>其他（待添加）</a></li>
                 </ul>
             </div>
             <!--内容展示-->
             <div class="tables_right">
-                <account_table>表格</account_table>
-                <news_table>表格</news_table>
-                <notices_table>表格</notices_table>
+                <account_table v-if="mode==='account'"></account_table>
+                <news_table v-else-if="mode==='news'"></news_table>
+                <notices_table v-else-if="mode==='notices'"></notices_table>
+                <div v-else>欢迎管理员登录</div>
             </div>
         </div>
     </div>
@@ -40,7 +35,8 @@ export default {
     name: "Admin",
     data() {
         return {
-
+            isActive: [1, 0, 0],
+            mode: ''
         }
     },
     components: {
@@ -48,6 +44,20 @@ export default {
         news_table: news_table,
         notices_table: notices_table,
     },
+    methods: {
+        ViewContent(id) {
+            if (id === "account") {
+                this.isActive = [1, 0, 0];
+            } else if (id === "news") {
+                this.isActive = [0, 1, 0];
+            } else if (id === 'notices') {
+                this.isActive = [0, 0, 1];
+            }
+            this.mode = id;
+            console.log(this.mode);
+
+        }
+    }
 
 }
 </script>
@@ -55,6 +65,11 @@ export default {
 
 <style scoped>
 /*container定义为伸缩盒，其子元素在y轴排列*/
+
+.active {
+    background-color: #42b983;
+    box-shadow: 2px 2px 24px rgba(0, 0, 0, 0.15);
+}
 
 .container {
     display: flex;
@@ -144,23 +159,5 @@ export default {
 .content > .items_left > ul > li:hover {
     box-shadow: inset 0 0 3px #fff;
 }
-
-.items_left > ul > li > ul {
-    display: none;
-}
-
-.items_left > ul > li:hover > ul {
-    display: block;
-}
-
-.items_left > ul > li > ul a:hover {
-    color: #FF9800;
-}
-
-.items_left > ul > li > ul > li {
-    margin-top: 3px;
-    background-color: #116f8d;
-}
-
 
 </style>
