@@ -18,7 +18,6 @@ class Account:
 
         # 根据不同的action分派给不同的函数进行处理
         action = request.params['action']
-
         if action == 'register':
             return self.register(request)
         elif action == 'add':

@@ -7,15 +7,15 @@
 </template>
 
 <script>
-import login_view from './components/Login.vue'
-import home_view from './components/Home.vue'
-import admin_view from './components/Admin.vue'
+import login_view from './pages/Login.vue'
+import home_view from './pages/Home.vue'
+import admin_view from './pages/Admin.vue'
 
 export default {
     name: 'App',
     data() {
         return {
-            mode: '登录',
+            mode: '',
         }
     },
     components: {
@@ -28,6 +28,7 @@ export default {
             console.log(e)
             this.mode = e;
         }
+
     }
 }
 </script>

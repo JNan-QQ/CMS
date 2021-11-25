@@ -27,9 +27,9 @@
 </template>
 
 <script>
-import account_table from './admin/Accounts.vue'
-import news_table from './admin/News.vue'
-import notices_table from './admin/Notices.vue'
+import account_table from '../components/admin/Accounts.vue'
+import news_table from '../components/admin/News.vue'
+import notices_table from '../components/admin/Notices.vue'
 
 export default {
     name: "Admin",
@@ -74,7 +74,6 @@ export default {
 .container {
     display: flex;
     flex-direction: column;
-
     box-shadow: 1px 1px 24px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
     padding: 15px 10px;
@@ -115,7 +114,6 @@ export default {
     background-color: #FCEDED;
     margin-right: 5px;
 
-
 }
 
 /*right 分配content的剩余空间*/
@@ -125,12 +123,8 @@ export default {
     box-sizing: border-box;
 }
 
-.content > .tables_right > .wrapper {
-    height: 100%;
-    background-color: #fff;
-    border-radius: 5px;
-    overflow-y: auto; /*在y轴方向如果内容过多，会出现滚动条*/
-    box-shadow: 0 0 5px #ccc;
+ul{
+    padding: 0;
 }
 
 .content > .items_left > ul > li {
@@ -140,6 +134,7 @@ export default {
     line-height: 3em;
     text-align: center;
     font-size: 15px;
+    list-style: none;
 
 }
 
@@ -159,5 +154,6 @@ export default {
 .content > .items_left > ul > li:hover {
     box-shadow: inset 0 0 3px #fff;
 }
+
 
 </style>

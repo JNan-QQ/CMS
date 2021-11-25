@@ -14,11 +14,10 @@
                 <option>username</option>
                 <option>class</option>
             </select>
-            :
+            <strong style="margin: 0 2px 0 2px">:</strong>
             <input type="text" name="uname" placeholder="Search here...">
-            <button>SEARCH
-                <span class="t"></span>
-            </button>
+            <button>SEARCH</button>
+            <button class="add">添加</button>
         </div>
         <table>
             <caption>{{ tableTitle }}</caption>
@@ -30,6 +29,7 @@
                 <th>classNo</th>
                 <th>gradeNo</th>
                 <th>major</th>
+                <th>操作</th>
             </tr>
             <tr v-for="item in items">
                 <td>{{ item.id }}</td>
@@ -39,12 +39,34 @@
                 <td>{{ item.classNo }}</td>
                 <td>{{ item.gradeNo }}</td>
                 <td>{{ item.major }}</td>
+                <td><span>编辑</span><span>禁用</span><span>删除</span></td>
             </tr>
         </table>
+        <div class="pages">
+            <ul>
+                <li><a href="#" class="prev">
+                    <i class="fa fa-chevron-left"></i>
+                    Previous
+                </a>
+                </li>
+                <li><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+                <li><a href="#" class="active">5</a></li>
+                <li><a href="#">6</a></li>
+                <li><a href="#">7</a></li>
+                <li><a href="#" class="next"> Next
+                    <i class="fa fa-chevron-right"></i>
+                </a></li>
+            </ul>
+        </div>
     </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
     name: "Accounts",
     data() {
@@ -59,9 +81,33 @@ export default {
                 "classNo": "1604",
                 "gradeNo": "2018",
                 "major": "自动化"
+            }, {
+                "id": "1",
+                "username": "jj",
+                "realName": "cc",
+                "studentNo": "1360541",
+                "classNo": "1604",
+                "gradeNo": "2018",
+                "major": "自动化"
             }],
         }
-    }
+    },
+    mounted() {
+        this.first();
+    },
+    methods: {
+        first() {
+            const e = axios.post('http://127.0.0.1:8210/account/', {
+                action: "list",
+                pagenum: 2,
+                pagesize: 5,
+            }).then(function (response) {
+                const data = response.data
+                console.log(data)
+            });
+            console.log(e);
+        }
+    },
 }
 </script>
 
@@ -70,7 +116,7 @@ export default {
 .container {
     display: flex;
     flex-direction: column;
-
+    min-height: 540px;
     box-shadow: 1px 1px 24px rgba(0, 0, 0, 0.15);
     border-radius: 12px;
     padding: 15px 10px;
@@ -78,18 +124,27 @@ export default {
 }
 
 /*导航栏*/
+.bar {
+    box-shadow: 1px 1px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
 .bar ul {
     list-style-type: none;
-    margin: auto; /*margin:100px auto无效,不能使ul左右居中*/
+    margin-left: 10px;
+    margin-top: 2px;
+    margin-bottom: 3px;
     text-align: center;
     font-size: 14px;
 }
 
-li {
+.bar li {
     float: left; /*改动的地方*/
     width: 80px;
     padding: 10px;
     background-color: #ff9137;
+    border-radius: 10px;
 }
 
 a:link, a:visited, a:hover, a:active {
@@ -97,13 +152,60 @@ a:link, a:visited, a:hover, a:active {
     text-decoration: none;
 }
 
-a {
+.bar a {
     display: block; /*整体变为可点击区域，而不只是字*/
 }
 
 /*搜索栏*/
+.search {
+    box-shadow: 1px 1px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    min-height: 40px;
+}
+
+.search > select {
+    margin-left: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 20px;
+    width: auto;
+}
+
+.search > input {
+    border: 2px solid #7cb47e;
+    border-radius: 5px 0 0 5px;
+    color: #9E9C9C;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 20px;
+    width: auto;
+}
+
+.search > button {
+    right: 0;
+    background: #a7b8b9;
+    border-radius: 0 5px 5px 0;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 20px;
+    width: auto;
+}
+
+.search > button.add {
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
 
 /*列表*/
+table {
+    box-shadow: 1px 1px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
 th {
     font-weight: bold;
     background-color: #eff6fe;
@@ -131,6 +233,7 @@ td {
 
 tr {
     border: 1px solid #ffffff;
+    margin-left: 10px;
 }
 
 tr:nth-child(odd) {
@@ -141,5 +244,71 @@ tr:nth-child(even) {
     background-color: #ffffff;
 }
 
+/*分页*/
+.pages {
+    list-style: none;
+    display: inline-block;
+    padding: 0;
+    margin: auto auto 0 auto;
+}
+
+.pages li {
+    display: inline;
+    text-align: center;
+}
+
+.pages a {
+    float: left;
+    display: block;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 5px 12px;
+    color: #fff;
+    margin-left: -1px;
+    border: 1px solid transparent;
+    line-height: 1.5;
+}
+
+.pages a.active {
+    cursor: default;
+}
+
+.pages a:active {
+    outline: none;
+}
+
+.pages a {
+    margin: 0 5px;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+    background-color: #F7C12C;
+}
+
+.pages a.prev {
+    -moz-border-radius: 50px 0 0 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px 0 0 50px;
+    width: 100px;
+}
+
+.pages a.next {
+    -moz-border-radius: 0 50px 50px 0;
+    -webkit-border-radius: 0;
+    border-radius: 0 50px 50px 0;
+    width: 100px;
+}
+
+.pages a:hover {
+    background-color: #FFA500;
+}
+
+.pages a.active, .pages a:active {
+    background-color: #FFA100;
+}
 
 </style>

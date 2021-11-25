@@ -6,7 +6,7 @@
             <input type="text" placeholder="Username" v-model="username">
         </div>
         <div class="item">
-            <i class="fa fa-search" style="font-size:24px"></i>
+            <i class="fa fa-eye" style="font-size:24px"></i>
             <input type="text" placeholder="Password" v-model="password">
         </div>
         <div class="item">
@@ -29,25 +29,23 @@ export default {
     },
     methods: {
         signin() {
-            const that = this;
-            axios.post('http://127.0.0.1:8210/sign/', {
+            axios.post('/api/sign/', {
                 action: "signin",
                 username: this.username,
                 password: this.password,
             }).then(function (response) {
-                const data = response.data;
-                if (data.ret === 0) {
-                    let mode = '';
-                    if (data.usertype === 1) {
-                        mode = '后台';
-                    } else {
-                        mode = '主页';
+                    const data = response.data;
+                    if (data.ret === 0) {
+                        if (data.usertype === 1) {
+                            window.location.href = '/admin';
+                        } else {
+                            window.location.href = '/#'
+                        }
+                    } else if (data.ret === 1) {
+                        console.log('登录失败');
                     }
-                    that.$emit("view_mode", mode);
-                } else if (data.ret === 1) {
-                    console.log('登录失败');
                 }
-            });
+            );
         }
     }
 }
@@ -55,9 +53,9 @@ export default {
 
 <style scoped>
 .container {
-    width: 60%;
     max-width: 400px;
-    box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.15);
+    height: auto;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.15);
     border-radius: 24px;
     padding: 48px 28px;
     background-color: rgb(245, 246, 252);
