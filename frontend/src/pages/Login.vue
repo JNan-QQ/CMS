@@ -35,13 +35,13 @@ export default {
                 password: this.password,
             }).then(function (response) {
                     const data = response.data;
-                    if (data.ret === 0) {
+                    if (data['ret'] === 0) {
                         if (data.usertype === 1) {
                             window.location.href = '/admin';
                         } else {
                             window.location.href = '/#'
                         }
-                    } else if (data.ret === 1) {
+                    } else if (data['ret'] === 1) {
                         console.log('登录失败');
                     }
                 }

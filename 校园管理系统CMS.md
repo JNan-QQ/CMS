@@ -199,7 +199,13 @@ Content-Type: application/json
     "username" : "xiaoming",
     "password" : "123456",
     "realName" : "小明",
-    "usertype" :100
+    "usertype" :100, 
+    #以下字段可不填
+    'studentNo':'',
+    'classNo':'',
+    'gradeNo':'',
+    'major':'',
+    'desc':''
 }
 ```
 
@@ -349,7 +355,7 @@ Content-Type: application/json
     "action" : "list",
     "pagenum":2,
     "pagesize":5,
-    "keywords":"搜索关键字 可忽略"
+    "search_items":{key1:value1},
 }
 ```
 

@@ -60,16 +60,27 @@ class User(AbstractUser):
             if User.objects.filter(username=username).exists():
                 return {'ret': 1, 'msg': f'登录名 {username} 已经存在'}
 
+            if 'studentNo' not in data:
+                data['studentNo'] = ''
+            if 'gradeNo' not in data:
+                data['gradeNo'] = ''
+            if 'major' not in data:
+                data['major'] = ''
+            if 'classNo' not in data:
+                data['classNo'] = ''
+            if 'desc' not in data:
+                data['desc'] = '无评价'
+
             user = User.objects.create(
                 username=username,
                 password=make_password(data['password']),
                 usertype=data['usertype'],
                 realName=data['realName'],
-                # studentNo=data['studentNo'],
-                # gradeNo=data['gradeNo'],
-                # major=data['major'],
-                # classNo=data['classNo'],
-                # desc=data['desc']
+                studentNo=data['studentNo'],
+                gradeNo=data['gradeNo'],
+                major=data['major'],
+                classNo=data['classNo'],
+                desc=data['desc']
             )
 
             return {'ret': 0, 'id': user.id}
@@ -138,7 +149,26 @@ class User(AbstractUser):
         try:
             # .order_by('-id') 表示按照 id字段的值 倒序排列
             # 这样可以保证最新的记录显示在最前面
-            qs = User.objects.values('id', 'username', 'realName', 'studentNo', 'gradeNo', 'classNo', 'major').order_by('-id')
+            qs = User.objects.values('id', 'username', 'realName', 'studentNo', 'gradeNo', 'classNo', 'major').order_by(
+                '-id')
+
+            search_items = data['search_items']
+            if 'usertype' in search_items:
+                qs = qs.filter(usertype=search_items['usertype'])
+            if 'id' in search_items:
+                qs = qs.filter(id=search_items['id'])
+            if 'username' in search_items:
+                qs = qs.filter(username=search_items['username'])
+            if 'realName' in search_items:
+                qs = qs.filter(realName=search_items['realName'])
+            if 'studentNo' in search_items:
+                qs = qs.filter(studentNo=search_items['studentNo'])
+            if 'gradeNo' in search_items:
+                qs = qs.filter(gradeNo=search_items['gradeNo'])
+            if 'classNo' in search_items:
+                qs = qs.filter(classNo=search_items['classNo'])
+            if 'major' in search_items:
+                qs = qs.filter(major=search_items['major'])
 
             # 查看是否有 关键字 搜索 参数
             keywords = data.get('keywords', None)
