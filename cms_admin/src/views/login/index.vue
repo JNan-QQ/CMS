@@ -1,5 +1,6 @@
 <template>
     <div class="login-container">
+        <div class="logo-img"></div>
         <el-form class="login-from" ref="form" :model="form">
             <el-form-item>
                 <el-input v-model="form.username" placeholder="Please input username"></el-input>
@@ -27,6 +28,7 @@ export default {
                 password: '',
             },
             checked: false,
+            src: '',
         }
     },
     methods: {
@@ -39,18 +41,19 @@ export default {
 
 <style scoped lang="less">
 .login-container {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
+    max-width: 500px;
     align-items: center;
-    background-size: cover;
+    background-color: #acc6da;
+
+    .logo-img{
+        background-image: url("login-logo.png");
+        height: 119px;
+        width: 320px;
+        margin: 20px auto auto;
+    }
+
     .login-from {
         padding: 50px;
-        background-color: #acc6da;
     }
 
     .login-btn {
