@@ -10,7 +10,7 @@
                          mode="horizontal" background-color="#545c64"
                          text-color="#fff" active-text-color="#ffd04b"
                          @select="handleSelect">
-                    <el-menu-item index="1">首页</el-menu-item>
+                    <el-menu-item index="1"><router-link to="/front">首页</router-link></el-menu-item>
                     <el-sub-menu index="2">
                         <template #title>校园新闻</template>
                         <el-menu-item index="2-1">学校介绍</el-menu-item>
@@ -23,7 +23,7 @@
                     <el-menu-item index="5" v-if="p_center">个人中心</el-menu-item>
                 </el-menu>
             </el-header>
-            <el-main>Main</el-main>
+            <el-main><router-view/></el-main>
             <el-footer>Footer</el-footer>
         </el-container>
     </div>
@@ -50,7 +50,7 @@ export default {
     },
     methods: {
         getUserInfo() {
-            const userdata = this.$route.params
+            const userdata = this.$route.query
             if ('ret' in userdata) {
                 console.log(123456)
                 this.userdata = userdata

@@ -59,7 +59,7 @@ export default {
                                 type: 'success',
                             })
                             // 跳转到首页
-                            that.$router.push({path:'/',params:data})
+                            that.$router.push({path:'/',query:data})
                         } else {
                             ElMessage({
                                 message: '登陆失败！msg：' + data['msg'],

@@ -1,7 +1,8 @@
 import json
+
 from shara.shara import jsonResponse
 from .models import News as newsMgr
-from .models import MessageReceiver, Message
+from .models import NewsImg
 
 
 class News:
@@ -28,6 +29,10 @@ class News:
             return self.listNews(request)
         elif action == 'modify':
             return self.modifyNews(request)
+        elif action == 'pageImg':
+            return self.listImg(request)
+        elif action == 'pageNews':
+            return self.pageNews(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -87,6 +92,15 @@ class News:
 
         return jsonResponse(ret)
 
+    @staticmethod
+    def listImg(request):
+        ret = NewsImg.list_img()
+        return jsonResponse(ret)
+
+    @staticmethod
+    def pageNews(request):
+        ret = newsMgr.pagenews()
+        return jsonResponse(ret)
 
 # class MessageR:
 #     def handler(self, request):

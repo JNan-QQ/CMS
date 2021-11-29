@@ -1,7 +1,9 @@
 import traceback
-from django.core.paginator import Paginator, EmptyPage
+
+from django.core.paginator import Paginator
 from django.db import models, transaction
 from django.db.models import Q
+
 from account.models import User
 
 
@@ -122,6 +124,30 @@ class News(models.Model):
 
         except:
             return {'ret': 2, 'msg': f'未知错误\n{traceback.format_exc()}'}
+
+    @staticmethod
+    def pagenews():
+        qs = News.objects.values('title', 'create_time', 'author__realName')
+        retlist = list(qs)
+        return {'ret': 0, 'retlist': retlist}
+
+
+class NewsImg(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # 新闻id
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    # 新闻图片
+    img = models.ImageField(upload_to='images/',
+                            null=True, blank=True)
+
+    @staticmethod
+    def list_img():
+        qs = NewsImg.objects.values('news__title', 'img')
+        # 将 QuerySet 对象 转化为 list 类型
+        retlist = list(qs)
+
+        # total指定了 一共有多少数据
+        return {'ret': 0, 'retlist': retlist}
 
 
 class Message(models.Model):

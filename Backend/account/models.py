@@ -1,10 +1,9 @@
 import traceback
 
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractUser
 from django.core.paginator import Paginator, EmptyPage
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.hashers import make_password, check_password
-
 # 可以通过 命令 python  manage.py createsuperuser 来创建超级管理员
 # 就是在这User表中添加记录
 from django.db.models import Q
@@ -21,9 +20,15 @@ class User(AbstractUser):
     realName = models.CharField(max_length=30, db_index=True)
 
     # 学号
-    studentNo = models.CharField(
+    No = models.CharField(
         max_length=10,
         db_index=True,
+        null=True, blank=True
+    )
+
+    # aviator
+    aviator = models.ImageField(
+        upload_to='images/',
         null=True, blank=True
     )
 
@@ -60,8 +65,8 @@ class User(AbstractUser):
             if User.objects.filter(username=username).exists():
                 return {'ret': 1, 'msg': f'登录名 {username} 已经存在'}
 
-            if 'studentNo' not in data:
-                data['studentNo'] = ''
+            if 'No' not in data:
+                data['No'] = ''
             if 'gradeNo' not in data:
                 data['gradeNo'] = ''
             if 'major' not in data:
@@ -76,7 +81,7 @@ class User(AbstractUser):
                 password=make_password(data['password']),
                 usertype=data['usertype'],
                 realName=data['realName'],
-                studentNo=data['studentNo'],
+                No=data['No'],
                 gradeNo=data['gradeNo'],
                 major=data['major'],
                 classNo=data['classNo'],
@@ -107,8 +112,8 @@ class User(AbstractUser):
                     account.username = username
             if 'realName' in data:
                 account.realName = data['realName']
-            if 'studentNo' in data:
-                account.studentNo = data['studentNo']
+            if 'No' in data:
+                account.No = data['No']
             if 'gradeNo' in data:
                 account.gradeNo = data['gradeNo']
             if 'classNo' in data:
@@ -149,7 +154,7 @@ class User(AbstractUser):
         try:
             # .order_by('-id') 表示按照 id字段的值 倒序排列
             # 这样可以保证最新的记录显示在最前面
-            qs = User.objects.values('id', 'username', 'realName', 'studentNo', 'gradeNo', 'classNo', 'major').order_by(
+            qs = User.objects.values('id', 'username', 'realName', 'No', 'gradeNo', 'classNo', 'major').order_by(
                 '-id')
 
             search_items = data['search_items']
@@ -161,8 +166,8 @@ class User(AbstractUser):
                 qs = qs.filter(username=search_items['username'])
             if 'realName' in search_items:
                 qs = qs.filter(realName=search_items['realName'])
-            if 'studentNo' in search_items:
-                qs = qs.filter(studentNo=search_items['studentNo'])
+            if 'No' in search_items:
+                qs = qs.filter(No=search_items['No'])
             if 'gradeNo' in search_items:
                 qs = qs.filter(gradeNo=search_items['gradeNo'])
             if 'classNo' in search_items:
