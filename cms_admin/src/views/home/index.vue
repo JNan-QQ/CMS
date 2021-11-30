@@ -6,13 +6,11 @@
         </div>
         <el-container>
             <el-header>
-                <el-menu :default-active="activeIndex2" class="header"
+                <el-menu :default-active="activeIndex" class="header"
                          mode="horizontal" background-color="#545c64"
                          text-color="#fff" active-text-color="#ffd04b"
                          @select="handleSelect">
-                    <el-menu-item index="1">
-                        <router-link to="/front">首页</router-link>
-                    </el-menu-item>
+                    <el-menu-item index="1">首页</el-menu-item>
                     <el-sub-menu index="2">
                         <template #title>校园新闻</template>
                         <el-menu-item index="2-1">学校介绍</el-menu-item>
@@ -22,9 +20,7 @@
                     </el-sub-menu>
                     <el-menu-item index="3">社会热点</el-menu-item>
                     <el-menu-item index="4">失物招领</el-menu-item>
-                    <el-menu-item index="5" v-if="p_center">
-                        <router-link :to="PersonalCenter">个人中心</router-link>
-                    </el-menu-item>
+                    <el-menu-item index="5" v-if="p_center">个人中心</el-menu-item>
                 </el-menu>
             </el-header>
             <el-main>
@@ -36,25 +32,43 @@
 </template>
 
 <script>
-import {ElMessage} from "element-plus";
 import request from "../../utils/request";
+import {ElMessage} from "element-plus";
 
 export default {
     name: "HomeIndex",
     data() {
         return {
-            activeIndex2: 1,
+            activeIndex: 1,
             p_center: false,
             realName: '未登录',
             avatar_src: '',
             userdata: {},
-            PersonalCenter: '/common'
+            PersonalCenter: '/common',
+            router_index: {
+                1: '/front',
+                5: '/admin',
+            }
         }
     },
+    // 进入页面执行函数
     mounted() {
         this.before()
 
     },
+    // 监听
+    watch: {
+        activeIndex () {
+            if (this.activeIndex in this.router_index){
+                this.$router.push(this.router_index[this.activeIndex])
+            }else {
+                 ElMessage('该页面还未配置奥！')
+            }
+
+        }
+    },
+
+    // 函数定义
     methods: {
         before() {
             request.post('/api/sign/', {action: 'checkLogin'}).then(res => {
@@ -62,16 +76,18 @@ export default {
                     this.userdata = res.data
                     this.realName = res.data['realName']
                     this.p_center = true
+                    this.avatar_src = res.data['aviator']
                     if (res.data['usertype'] === 1) {
                         this.PersonalCenter = '/admin'
                     }
                 }
             })
+            this.$router.push('/front')
         },
 
 
         handleSelect(key, keyPath) {
-            // console.log(key, keyPath)
+            this.activeIndex = key
         },
 
         toLogin() {

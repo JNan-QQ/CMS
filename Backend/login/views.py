@@ -1,6 +1,8 @@
 import json
-from shara.shara import jsonResponse
+
 from django.contrib.auth import authenticate, login, logout
+
+from shara.shara import jsonResponse
 
 
 # Create your views here.
@@ -47,6 +49,7 @@ class Login:
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
                 request.session['realName'] = user.realName
+                request.session['aviator'] = str(user.aviator)
 
                 return jsonResponse(
                     {'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName})
@@ -67,6 +70,6 @@ class Login:
     def checkLogin(request):
         if request.session['is_login']:
             return jsonResponse({'ret': 0, 'id': request.session['user_id'], 'usertype': request.session['usertype'],
-                                 'realName': request.session['realName']})
+                                 'realName': request.session['realName'], 'aviator': request.session['aviator']})
         else:
             return jsonResponse({'ret': 302, 'msg': '未登录'})
