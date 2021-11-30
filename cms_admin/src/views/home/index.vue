@@ -10,7 +10,9 @@
                          mode="horizontal" background-color="#545c64"
                          text-color="#fff" active-text-color="#ffd04b"
                          @select="handleSelect">
-                    <el-menu-item index="1"><router-link to="/front">首页</router-link></el-menu-item>
+                    <el-menu-item index="1">
+                        <router-link to="/front">首页</router-link>
+                    </el-menu-item>
                     <el-sub-menu index="2">
                         <template #title>校园新闻</template>
                         <el-menu-item index="2-1">学校介绍</el-menu-item>
@@ -20,10 +22,14 @@
                     </el-sub-menu>
                     <el-menu-item index="3">社会热点</el-menu-item>
                     <el-menu-item index="4">失物招领</el-menu-item>
-                    <el-menu-item index="5" v-if="p_center">个人中心</el-menu-item>
+                    <el-menu-item index="5" v-if="p_center">
+                        <router-link :to="PersonalCenter">个人中心</router-link>
+                    </el-menu-item>
                 </el-menu>
             </el-header>
-            <el-main><router-view/></el-main>
+            <el-main>
+                <router-view/>
+            </el-main>
             <el-footer>Footer</el-footer>
         </el-container>
     </div>
@@ -42,26 +48,30 @@ export default {
             realName: '未登录',
             avatar_src: '',
             userdata: {},
+            PersonalCenter: '/common'
         }
     },
     mounted() {
-        this.getUserInfo()
+        this.before()
 
     },
     methods: {
-        getUserInfo() {
-            const userdata = this.$route.query
-            if ('ret' in userdata) {
-                console.log(123456)
-                this.userdata = userdata
-                this.realName = userdata['realName']
-                this.p_center = true
-            }
+        before() {
+            request.post('/api/sign/', {action: 'checkLogin'}).then(res => {
+                if (res.data['ret'] === 0) {
+                    this.userdata = res.data
+                    this.realName = res.data['realName']
+                    this.p_center = true
+                    if (res.data['usertype'] === 1) {
+                        this.PersonalCenter = '/admin'
+                    }
+                }
+            })
         },
 
 
         handleSelect(key, keyPath) {
-            console.log(key, keyPath)
+            // console.log(key, keyPath)
         },
 
         toLogin() {

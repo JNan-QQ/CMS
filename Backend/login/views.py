@@ -24,10 +24,13 @@ class Login:
             return self.signin(request)
         elif action == 'signout':
             return self.signout(request)
+        elif action == 'checkLogin':
+            return self.checkLogin(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
-    def signin(self, request):
+    @staticmethod
+    def signin(request):
         # 从 HTTP POST 请求中获取用户名、密码参数
         userName = request.params.get('username')
         passWord = request.params.get('password')
@@ -43,8 +46,10 @@ class Login:
                 request.session['usertype'] = user.usertype
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
+                request.session['realName'] = user.realName
 
-                return jsonResponse({'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName})
+                return jsonResponse(
+                    {'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName})
             else:
                 return jsonResponse({'ret': 0, 'msg': '用户已经被禁用'})
 
@@ -52,7 +57,16 @@ class Login:
         else:
             return jsonResponse({'ret': 1, 'msg': '用户名或者密码错误'})
 
-    def signout(self, request):
+    @staticmethod
+    def signout(request):
         # 使用登出方法
         logout(request)
         return jsonResponse({'ret': 0})
+
+    @staticmethod
+    def checkLogin(request):
+        if request.session['is_login']:
+            return jsonResponse({'ret': 0, 'id': request.session['user_id'], 'usertype': request.session['usertype'],
+                                 'realName': request.session['realName']})
+        else:
+            return jsonResponse({'ret': 302, 'msg': '未登录'})
