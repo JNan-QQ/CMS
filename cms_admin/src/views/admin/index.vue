@@ -58,22 +58,52 @@
             </el-col>
         </el-row>
         <div class="right">
-            <el-row class="top" style="display: flex;flex-flow: row nowrap;flex-direction: row;align-items: center;">
-                <el-col>
+            <el-row class="top"
+                    style="display: flex;flex-flow: row nowrap;flex-direction: row;align-items: center;justify-content: space-between">
+                <div style="display:flex">
                     <el-icon>
-                        <d-arrow-left/>
+                        <d-arrow-left style="width: 20px;height: 20px"/>
                     </el-icon>
-                    <el-breadcrumb :separator-icon="ArrowRight">
+                    <el-breadcrumb :separator-icon="ArrowRight" style="margin-left: 10px;font-size: 20px">
                         <el-breadcrumb-item v-for="page in index_page">{{ page }}</el-breadcrumb-item>
                     </el-breadcrumb>
-                </el-col>
+                </div>
+                <el-dropdown>
+                    <div class="avatar" style="align-items: center; margin-right: 10px">
+                        <el-avatar :src="userdata['aviator']" size="medium" class="avatar_img" fit="fill"></el-avatar>
+                        <div class="user" style="margin-left: 10px">{{ userdata['realName'] }}</div>
+                        <el-icon style="margin-left: 10px">
+                            <arrow-down/>
+                        </el-icon>
+                    </div>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item @click="toLogout">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+
             </el-row>
+            <el-tabs v-model="activeName" @tab-click="handleClick">
+                <el-tab-pane v-for="name in index_table" :label="name"></el-tab-pane>
+            </el-tabs>
         </div>
     </div>
 </template>
 
 <script>
-import {DArrowLeft, Flag, Headset, Message, Notebook, Notification, Setting, User,ArrowRight} from "@element-plus/icons"
+import {
+    DArrowLeft,
+    Flag,
+    Headset,
+    Message,
+    Notebook,
+    Notification,
+    Setting,
+    User,
+    ArrowRight,
+    ArrowDown,
+} from "@element-plus/icons"
 import request from "../../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
 
@@ -83,11 +113,13 @@ export default {
         return {
             userdata: {},
             ArrowRight,
-            activeIndex:1,
-            index_page:[]
+            activeIndex: 1,
+            index_page: [],
+            index_table: [],
+            activeName: ''
         }
     },
-    components: {User, Setting, Notebook, Headset, Flag, Message, Notification, DArrowLeft,ArrowRight},
+    components: {User, Setting, Notebook, Headset, Flag, Message, Notification, DArrowLeft, ArrowRight, ArrowDown},
 
     mounted() {
         this.before()
@@ -126,15 +158,30 @@ export default {
         handleSelect(key, keyPath) {
             this.activeIndex = key
             const pages = {
-                '1':['首页配置'],
-                '2-1':['账号管理','学生'],
-                '2-2':['账号管理','教师'],
-                '2-3':['账号管理','管理员'],
-                '3':['新闻管理'],
-                '4':['通知管理'],
+                '1': ['首页配置'],
+                '2-1': ['账号管理', '学生'],
+                '2-2': ['账号管理', '教师'],
+                '2-3': ['账号管理', '管理员'],
+                '3': ['新闻管理'],
+                '4': ['通知管理'],
             }
             this.index_page = pages[key]
+            this.index_table.push(pages[key][pages[key].length - 1])
+            this.index_table = Array.from(new Set(this.index_table))
+
+
         },
+
+        handleClick() {
+
+        },
+
+        // 退出登录函数
+        toLogout() {
+            request.post('/api/sign/', {action: 'signout'})
+            this.userdata = {}
+            this.$router.push('/')
+        }
     }
 
 }
@@ -151,7 +198,15 @@ export default {
 
     .top {
         height: 80px;
-        background-color: #ffffff;
+        border-width: 2px;
+        border-bottom-style: inset;
+    }
+
+    .avatar {
+        display: flex;
+        margin-right: 10px;
+        line-height: 80px;
+        font-size: 16px;
     }
 
 }

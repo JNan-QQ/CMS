@@ -1,9 +1,20 @@
 <template>
     <div class="home-container">
-        <div class="avatar" @click="toLogin">
-            <el-avatar :src="avatar_src" size="medium" class="avatar_img" fit="fill"></el-avatar>
-            <div class="user">{{ realName }}</div>
-        </div>
+        <el-dropdown>
+            <div class="avatar" @click="toLogin">
+                <el-avatar :src="avatar_src" size="medium" class="avatar_img" fit="fill"></el-avatar>
+                <div class="user">{{ realName }}</div>
+                <el-icon>
+                    <arrow-down class="zk"/>
+                </el-icon>
+            </div>
+            <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item v-if="p_center" @click="toLogout">退出登录</el-dropdown-item>
+                    <el-dropdown-item v-else @click="toLogin">登录</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+        </el-dropdown>
         <el-container>
             <el-header>
                 <el-menu :default-active="activeIndex" class="header"
@@ -34,6 +45,7 @@
 <script>
 import request from "../../utils/request";
 import {ElMessage} from "element-plus";
+import {ArrowDown} from "@element-plus/icons";
 
 export default {
     name: "HomeIndex",
@@ -51,6 +63,8 @@ export default {
             }
         }
     },
+    // 注册组件
+    components: {ArrowDown},
     // 进入页面执行函数
     mounted() {
         this.before()
@@ -58,11 +72,11 @@ export default {
     },
     // 监听
     watch: {
-        activeIndex () {
-            if (this.activeIndex in this.router_index){
+        activeIndex() {
+            if (this.activeIndex in this.router_index) {
                 this.$router.push(this.router_index[this.activeIndex])
-            }else {
-                 ElMessage('该页面还未配置奥！')
+            } else {
+                ElMessage('该页面还未配置奥！')
             }
 
         }
@@ -70,6 +84,7 @@ export default {
 
     // 函数定义
     methods: {
+        // 加载函数
         before() {
             request.post('/api/sign/', {action: 'checkLogin'}).then(res => {
                 if (res.data['ret'] === 0) {
@@ -85,15 +100,25 @@ export default {
             this.$router.push('/front')
         },
 
-
+        // 导航栏点击函数
         handleSelect(key, keyPath) {
             this.activeIndex = key
         },
 
+        // 点击登录函数
         toLogin() {
             if (this.realName === '未登录') {
                 this.$router.push('/login')
             }
+        },
+
+        // 退出登录函数
+        toLogout() {
+            request.post('/api/sign/', {action: 'signout'})
+            this.p_center = false
+            this.realName = '未登录'
+            this.avatar_src = ''
+            this.userdata = {}
         }
     },
 }
@@ -117,6 +142,10 @@ export default {
 
         .avatar_img {
             margin: auto 10px;
+        }
+
+        .el-icon {
+            margin: auto 0;
         }
     }
 
