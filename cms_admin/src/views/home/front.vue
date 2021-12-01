@@ -2,7 +2,7 @@
     <div class="content">
         <el-carousel :interval="4000" type="card" height="200px">
             <el-carousel-item v-for="item in pageImg" :key="item">
-                <el-image :src="item['img']" fit="fit"></el-image>
+                <el-image :src="item['img']" fit="fill"></el-image>
             </el-carousel-item>
         </el-carousel>
         <div class="table">

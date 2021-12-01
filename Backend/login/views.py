@@ -68,7 +68,7 @@ class Login:
 
     @staticmethod
     def checkLogin(request):
-        if request.session['is_login']:
+        if request.session.get('is_login', False):
             return jsonResponse({'ret': 0, 'id': request.session['user_id'], 'usertype': request.session['usertype'],
                                  'realName': request.session['realName'], 'aviator': request.session['aviator']})
         else:

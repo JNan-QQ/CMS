@@ -51,15 +51,15 @@ export default {
     name: "HomeIndex",
     data() {
         return {
-            activeIndex: 1,
+            activeIndex: '1',
             p_center: false,
             realName: '未登录',
             avatar_src: '',
             userdata: {},
             PersonalCenter: '/common',
             router_index: {
-                1: '/front',
-                5: '/admin',
+                '1': '/front',
+                '5': '/admin',
             }
         }
     },

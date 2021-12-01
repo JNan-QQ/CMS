@@ -5,6 +5,7 @@ import Front from '../views/home/front.vue'
 import Admin from '@/views/admin/index/'
 
 
+
 const routes = [
     {
         path: '/login',

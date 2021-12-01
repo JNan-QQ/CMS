@@ -4,7 +4,7 @@
             <el-col>
                 <div style="display: flex;background-color: #545c64;margin-bottom: 1px;">
                     <el-image style="width: auto; height: 80px;margin-left: auto" src="./favicon.ico"
-                              fit="fit"></el-image>
+                              fit="fill"></el-image>
                     <span style="line-height: 80px;margin-left: 5px;margin-right: auto">CMS-ADMIN</span>
                 </div>
                 <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-menu-vertical-demo"
@@ -84,8 +84,8 @@
                 </el-dropdown>
 
             </el-row>
-            <el-tabs v-model="activeName" @tab-click="handleClick">
-                <el-tab-pane v-for="name in index_table" :label="name"></el-tab-pane>
+            <el-tabs v-model="activeName" @edit="handleTabsEdit" type="card" editable>
+                <el-tab-pane v-for="name in index_table" :label="name" :name="name"></el-tab-pane>
             </el-tabs>
         </div>
     </div>
@@ -93,6 +93,9 @@
 
 <script>
 import {
+    ArrowDown,
+    ArrowRight,
+    Close,
     DArrowLeft,
     Flag,
     Headset,
@@ -100,9 +103,7 @@ import {
     Notebook,
     Notification,
     Setting,
-    User,
-    ArrowRight,
-    ArrowDown,
+    User
 } from "@element-plus/icons"
 import request from "../../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
@@ -119,10 +120,40 @@ export default {
             activeName: ''
         }
     },
-    components: {User, Setting, Notebook, Headset, Flag, Message, Notification, DArrowLeft, ArrowRight, ArrowDown},
+    components: {
+        User,
+        Setting,
+        Notebook,
+        Headset,
+        Flag,
+        Message,
+        Notification,
+        DArrowLeft,ArrowRight,
+        ArrowDown,
+        Close
+    }
+    ,
 
+    // 加载函数
     mounted() {
         this.before()
+    },
+
+    // 监听函数
+    watch:{
+        activeIndex(){
+            const pages = {
+                '1': ['首页配置'],
+                '2-1': ['账号管理', '学生'],
+                '2-2': ['账号管理', '教师'],
+                '2-3': ['账号管理', '管理员'],
+                '3': ['新闻管理'],
+                '4': ['通知管理'],
+            }
+            this.index_page = pages[this.activeIndex]
+            this.index_table.push(pages[this.activeIndex][pages[this.activeIndex].length - 1])
+            this.index_table = Array.from(new Set(this.index_table))
+        }
     },
 
     methods: {
@@ -157,23 +188,17 @@ export default {
 
         handleSelect(key, keyPath) {
             this.activeIndex = key
-            const pages = {
-                '1': ['首页配置'],
-                '2-1': ['账号管理', '学生'],
-                '2-2': ['账号管理', '教师'],
-                '2-3': ['账号管理', '管理员'],
-                '3': ['新闻管理'],
-                '4': ['通知管理'],
-            }
-            this.index_page = pages[key]
-            this.index_table.push(pages[key][pages[key].length - 1])
-            this.index_table = Array.from(new Set(this.index_table))
-
-
         },
 
-        handleClick() {
-
+        // 删除 tabs 标签页
+        handleTabsEdit(targetName, action) {
+            console.log(targetName)
+            if (action === 'remove') {
+                const index = this.index_table.indexOf(targetName)
+                if (index > -1){
+                    this.index_table.splice(index,1)
+                }
+            }
         },
 
         // 退出登录函数
