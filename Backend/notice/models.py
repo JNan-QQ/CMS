@@ -94,9 +94,9 @@ class News(models.Model):
 
         try:
             if data['news_type'] == 'ALL':
-                qs = News.objects.values().order_by('-id')
+                qs = News.objects.values('id', 'title', 'content', 'author__realName', 'news_type').order_by('-id')
             else:
-                qs = News.objects.values().order_by('-id').filter(news_type=data['news_type'])
+                qs = News.objects.values('id', 'title', 'content', 'author__realName', 'news_type').order_by('-id').filter(news_type=data['news_type'])
             if data['usertype'] != 1:
                 qs = qs.filter(Q(status=1) | Q(status=2))
 
