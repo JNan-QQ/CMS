@@ -3,6 +3,7 @@ import Login from '@/views/login/'
 import Home from '@/views/home/'
 import Front from '../views/home/front.vue'
 import Admin from '@/views/admin/index/'
+import News from '../views/admin/news.vue'
 
 
 
@@ -15,7 +16,13 @@ const routes = [
     {
         path: '/admin',
         name: 'admin',
-        component: Admin
+        component: Admin,
+        children: [
+        {
+          path: 'news',
+          component: News
+        },
+        ]
     },
     {
         path: '/',

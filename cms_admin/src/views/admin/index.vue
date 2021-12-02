@@ -84,9 +84,11 @@
                 </el-dropdown>
 
             </el-row>
-            <el-tabs v-model="activeName" @edit="handleTabsEdit" type="card" editable>
-                <el-tab-pane v-for="name in index_table" :label="name" :name="name"></el-tab-pane>
-            </el-tabs>
+            <el-tag v-for="tag in index_table" :key="tag" closable :type="tps[Math.round(Math.random() * tps.length)]"
+                    @close="handleClose(tag)">
+                {{ tag }}
+            </el-tag>
+            <router-view/>
         </div>
     </div>
 </template>
@@ -115,7 +117,10 @@ export default {
             userdata: {},
             ArrowRight,
             activeIndex: 1,
+            tps: ['success', '', 'danger', 'warning', 'info'],
+            // 面包学导航
             index_page: [],
+            // 标签也
             index_table: [],
             activeName: ''
         }
@@ -128,7 +133,7 @@ export default {
         Flag,
         Message,
         Notification,
-        DArrowLeft,ArrowRight,
+        DArrowLeft, ArrowRight,
         ArrowDown,
         Close
     }
@@ -140,8 +145,8 @@ export default {
     },
 
     // 监听函数
-    watch:{
-        activeIndex(){
+    watch: {
+        activeIndex() {
             const pages = {
                 '1': ['首页配置'],
                 '2-1': ['账号管理', '学生'],
@@ -153,6 +158,16 @@ export default {
             this.index_page = pages[this.activeIndex]
             this.index_table.push(pages[this.activeIndex][pages[this.activeIndex].length - 1])
             this.index_table = Array.from(new Set(this.index_table))
+            const page_path = {
+                '1': '',
+                '2-1': '',
+                '2-2': '',
+                '2-3': '',
+                '3': '/admin/news',
+                '4': '',
+            }
+            this.$router.push(page_path[this.activeIndex])
+
         }
     },
 
@@ -190,15 +205,9 @@ export default {
             this.activeIndex = key
         },
 
-        // 删除 tabs 标签页
-        handleTabsEdit(targetName, action) {
-            console.log(targetName)
-            if (action === 'remove') {
-                const index = this.index_table.indexOf(targetName)
-                if (index > -1){
-                    this.index_table.splice(index,1)
-                }
-            }
+        // 动态编辑标签
+        handleClose(tag) {
+            this.index_table.splice(this.index_table.indexOf(tag), 1)
         },
 
         // 退出登录函数

@@ -104,7 +104,7 @@ class News(models.Model):
             pagenum = data.get('pagenum', None)
             pagesize = data.get('pagesize', None)
             if not pagesize or not pagenum:
-                pagesize = 5
+                pagesize = 1000
                 pagenum = 1
 
             # 返回一个 QuerySet 对象 ，包含所有的表记录
