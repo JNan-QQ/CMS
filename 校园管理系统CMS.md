@@ -424,7 +424,7 @@ Content-Type: application/json
 ```json
 {
     "action" : "add",
-    "author_id" : "1",
+    // "author_id" : "1",
     "title" : "****",
     "content" : "**************",
     "status" :1,
@@ -432,7 +432,7 @@ Content-Type: application/json
 }
 ```
 
-author_id : 创建者id，暂时默认为1
+<!-- author_id : 创建者id，暂时默认为1 -->
 
 title ：新闻标题
 

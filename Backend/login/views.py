@@ -1,5 +1,9 @@
 import json
+import random
+import string
+import time
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 
 from shara.shara import jsonResponse
@@ -73,3 +77,58 @@ class Login:
                                  'realName': request.session['realName'], 'aviator': request.session['aviator']})
         else:
             return jsonResponse({'ret': 302, 'msg': '未登录'})
+
+
+class FilesUpDown:
+    def handler(self, request):
+
+        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
+        if request.method == 'POST':
+            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+            print(request)
+            action = request.POST['action']
+        else:
+            action = None
+
+        # 根据不同的action分派给不同的函数进行处理
+        if action == 'upload':
+            return self.upload(request)
+        elif action == 'download':
+            return self.download(request)
+        else:
+            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+
+    @staticmethod
+    def upload(request, _in=False):
+        """保存上传文件"""
+        print(1111111)
+        # 1.获取上传的文件
+        files = request.FILES['files']
+
+        # 2.判断文件类型
+        files_name = files.name
+        file_type = files_name.split('.')[-1]
+        new_file_name = str(int(round(time.time() * 1000))) + '_' + ''.join(
+            random.sample(string.ascii_letters + string.digits, 4)) + f'.{file_type}'
+        print(files_name, file_type, new_file_name)
+
+        # 3.创建文件
+        if file_type in ['png', 'jpg', 'gif', 'jpeg']:
+            save_path = f'{settings.MEDIA_ROOT}/images/{new_file_name}'
+        else:
+            save_path = f'{settings.MEDIA_ROOT}/files/{new_file_name}'
+        with open(save_path, 'wb') as f:
+            # 获取上传文件的内容并写到创建文件中
+            # pic.chunks():分块的返回文件
+            for content in files.chunks():
+                f.write(content)
+
+        # 4.返回响应
+        if _in:
+            return new_file_name
+        else:
+            return jsonResponse({'ret': 0, 'file_url': f'{settings.MEDIA_URL}images/{new_file_name}'})
+
+    @staticmethod
+    def download(request):
+        pass

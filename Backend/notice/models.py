@@ -7,6 +7,17 @@ from django.db.models import Q
 from account.models import User
 
 
+# 新闻类别
+class NewsType(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # 新闻id
+    types = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        db_table = "cms_news_types"
+
+
+# 新闻主类
 class News(models.Model):
     id = models.BigAutoField(primary_key=True)
     # 新闻标题
@@ -21,7 +32,7 @@ class News(models.Model):
     # 0:禁用  1：发布   2：热度
     status = models.PositiveIntegerField()
     # 类型
-    news_type = models.CharField(max_length=100, null=True, blank=True)
+    news_type = models.ForeignKey(NewsType, on_delete=models.CASCADE)
 
     class Meta:
         db_table = "cms_news"
@@ -35,7 +46,7 @@ class News(models.Model):
                 content=data['content'],
                 author=User.objects.get(id=data['author_id']),
                 status=data['status'],
-                news_type=data['news_type']
+                news_type=NewsType.objects.get(types=data['news_type'])
             )
             return {'ret': 0, 'news_id': news.id}
         except:
@@ -94,9 +105,11 @@ class News(models.Model):
 
         try:
             if data['news_type'] == 'ALL':
-                qs = News.objects.values('id', 'title', 'content', 'author__realName', 'news_type').order_by('-id')
+                qs = News.objects.values('id', 'title', 'content', 'author__realName', 'news_type__types',
+                                         'status').order_by('-id')
             else:
-                qs = News.objects.values('id', 'title', 'content', 'author__realName', 'news_type').order_by('-id').filter(news_type=data['news_type'])
+                qs = News.objects.values('id', 'title', 'content', 'author__realName', 'news_type__types',
+                                         'status').order_by('-id').filter(news_type=data['news_type'])
             if data['usertype'] != 1:
                 qs = qs.filter(Q(status=1) | Q(status=2))
 
@@ -132,6 +145,7 @@ class News(models.Model):
         return {'ret': 0, 'retlist': retlist}
 
 
+# 新闻首页轮播图
 class NewsImg(models.Model):
     id = models.BigAutoField(primary_key=True)
     # 新闻id
@@ -139,6 +153,9 @@ class NewsImg(models.Model):
     # 新闻图片
     img = models.ImageField(upload_to='images/',
                             null=True, blank=True)
+
+    class Meta:
+        db_table = "cms_news_img"
 
     @staticmethod
     def list_img():

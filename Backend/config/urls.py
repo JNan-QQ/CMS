@@ -15,6 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
+from login.views import FilesUpDown
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +27,6 @@ urlpatterns = [
     path('account/', include('account.urls')),
     # 新闻、通知模块
     path('notice/', include('notice.urls')),
-]
+    # 文件上传
+    path('files', FilesUpDown().handler),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
