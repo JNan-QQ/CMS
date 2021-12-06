@@ -85,7 +85,7 @@
 
             </el-row>
             <el-tag v-for="tag in index_table" :key="tag" closable :type="tps[Math.round(Math.random() * tps.length)]"
-                    @close="handleClose(tag)">
+                    @close="handleClose(tag)" style="margin: 5px">
                 {{ tag }}
             </el-tag>
             <router-view/>
@@ -160,9 +160,9 @@ export default {
             this.index_table = Array.from(new Set(this.index_table))
             const page_path = {
                 '1': '',
-                '2-1': '',
-                '2-2': '',
-                '2-3': '',
+                '2-1': '/admin/account?type=student',
+                '2-2': '/admin/account?type=teacher',
+                '2-3': '/admin/account?type=mgr',
                 '3': '/admin/news',
                 '4': '',
             }

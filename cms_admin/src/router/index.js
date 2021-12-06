@@ -4,8 +4,7 @@ import Home from '@/views/home/'
 import Front from '../views/home/front.vue'
 import Admin from '@/views/admin/index/'
 import News from '../views/admin/news.vue'
-
-
+import Account from '../views/admin/account.vue'
 
 const routes = [
     {
@@ -18,10 +17,13 @@ const routes = [
         name: 'admin',
         component: Admin,
         children: [
-        {
-          path: 'news',
-          component: News
-        },
+            {
+                path: 'news',
+                component: News
+            }, {
+                path: 'account',
+                component: Account
+            },
         ]
     },
     {
@@ -29,10 +31,10 @@ const routes = [
         name: 'home',
         component: Home,
         children: [
-        {
-          path: 'front',
-          component: Front
-        },
+            {
+                path: 'front',
+                component: Front
+            },
         ]
     }
 ]
