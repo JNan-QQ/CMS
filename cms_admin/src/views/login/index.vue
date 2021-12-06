@@ -24,6 +24,8 @@
 import {ElMessage} from "element-plus";
 import request from "../../utils/request";
 import { UserFilled,Promotion } from "@element-plus/icons"
+import {markRaw} from "vue";
+
 export default {
     name: "LoginIndex",
     data() {
@@ -37,7 +39,7 @@ export default {
             loading: false,
         }
     },
-    components:{UserFilled,Promotion},
+    components:{UserFilled:markRaw(UserFilled),Promotion:markRaw(Promotion)},
     methods: {
         onSubmit() {
             // 禁用登陆按钮

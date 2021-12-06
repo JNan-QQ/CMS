@@ -124,7 +124,7 @@ export default {
                 content: '',
                 news_id: 0
             },
-            Delete,
+            Delete:markRaw(Delete),
         }
     },
     components: markRaw({Editor,Delete}),

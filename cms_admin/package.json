@@ -10,6 +10,7 @@
     "@element-plus/icons": "^0.0.11",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "default-passive-events": "^2.0.0",
     "element-plus": "^1.2.0-beta.3",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",

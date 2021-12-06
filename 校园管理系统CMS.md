@@ -201,7 +201,7 @@ Content-Type: application/json
     "realName" : "小明",
     "usertype" :100, 
     #以下字段可不填
-    'studentNo':'',
+    'No':'',
     'classNo':'',
     'gradeNo':'',
     'major':'',

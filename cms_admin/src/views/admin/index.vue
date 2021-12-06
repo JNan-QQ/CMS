@@ -85,7 +85,7 @@
 
             </el-row>
             <el-tag v-for="tag in index_table" :key="tag" closable :type="tps[Math.round(Math.random() * tps.length)]"
-                    @close="handleClose(tag)" style="margin: 5px">
+                    @close="handleClose(tag)" style="margin: 5px" @click="tagChange(tag)">
                 {{ tag }}
             </el-tag>
             <router-view/>
@@ -109,6 +109,7 @@ import {
 } from "@element-plus/icons"
 import request from "../../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
+import {defineAsyncComponent, markRaw} from "vue";
 
 export default {
     name: 'admin',
@@ -122,22 +123,21 @@ export default {
             index_page: [],
             // 标签也
             index_table: [],
-            activeName: ''
+            activeName: '',
         }
     },
     components: {
-        User,
-        Setting,
-        Notebook,
-        Headset,
-        Flag,
-        Message,
-        Notification,
-        DArrowLeft, ArrowRight,
-        ArrowDown,
-        Close
-    }
-    ,
+        User:markRaw(User),
+        Setting:markRaw(Setting),
+        Notebook:markRaw(Notebook),
+        Headset:markRaw(Headset),
+        Flag:markRaw(Flag),
+        Message:markRaw(Message),
+        Notification:markRaw(Notification),
+        DArrowLeft:markRaw(DArrowLeft), ArrowRight:markRaw(ArrowRight),
+        ArrowDown:markRaw(ArrowDown),
+        Close:markRaw(Close)
+    },
 
     // 加载函数
     mounted() {
@@ -159,7 +159,7 @@ export default {
             this.index_table.push(pages[this.activeIndex][pages[this.activeIndex].length - 1])
             this.index_table = Array.from(new Set(this.index_table))
             const page_path = {
-                '1': '',
+                '1': '/admin',
                 '2-1': '/admin/account?type=student',
                 '2-2': '/admin/account?type=teacher',
                 '2-3': '/admin/account?type=mgr',
@@ -208,6 +208,19 @@ export default {
         // 动态编辑标签
         handleClose(tag) {
             this.index_table.splice(this.index_table.indexOf(tag), 1)
+        },
+
+        // 点击标签
+        tagChange(tag) {
+            const pages = {
+                '首页配置': '1',
+                '学生': '2-1',
+                '教师': '2-2',
+                '管理员': '2-3',
+                '新闻管理': '3',
+                '通知管理': '4',
+            }
+            this.activeIndex = pages[tag]
         },
 
         // 退出登录函数

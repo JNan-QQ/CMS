@@ -45,7 +45,8 @@
 <script>
 import request from "../../utils/request";
 import {ElMessage} from "element-plus";
-import {ArrowDown} from "@element-plus/icons";
+import {ArrowDown, Delete} from "@element-plus/icons";
+import {markRaw} from "vue";
 
 export default {
     name: "HomeIndex",
@@ -64,7 +65,7 @@ export default {
         }
     },
     // 注册组件
-    components: {ArrowDown},
+    components: {ArrowDown:markRaw(ArrowDown)},
     // 进入页面执行函数
     mounted() {
         this.before()
