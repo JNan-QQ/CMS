@@ -75,6 +75,8 @@ class User(AbstractUser):
                 data['classNo'] = ''
             if 'desc' not in data:
                 data['desc'] = '无评价'
+            if 'password' not in data:
+                data['password'] = '123456'
 
             user = User.objects.create(
                 username=username,
@@ -124,7 +126,6 @@ class User(AbstractUser):
                 account.desc = data['desc']
             if 'password' in data:
                 account.password = make_password(data['password'])
-
             # 注意，一定要执行save才能将修改信息保存到数据库
             account.save()
             return {'ret': 0}

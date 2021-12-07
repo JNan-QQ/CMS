@@ -109,7 +109,7 @@ import {
 } from "@element-plus/icons"
 import request from "../../utils/request";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {defineAsyncComponent, markRaw} from "vue";
+import {markRaw} from "vue";
 
 export default {
     name: 'admin',
@@ -127,16 +127,16 @@ export default {
         }
     },
     components: {
-        User:markRaw(User),
-        Setting:markRaw(Setting),
-        Notebook:markRaw(Notebook),
-        Headset:markRaw(Headset),
-        Flag:markRaw(Flag),
-        Message:markRaw(Message),
-        Notification:markRaw(Notification),
-        DArrowLeft:markRaw(DArrowLeft), ArrowRight:markRaw(ArrowRight),
-        ArrowDown:markRaw(ArrowDown),
-        Close:markRaw(Close)
+        User: markRaw(User),
+        Setting: markRaw(Setting),
+        Notebook: markRaw(Notebook),
+        Headset: markRaw(Headset),
+        Flag: markRaw(Flag),
+        Message: markRaw(Message),
+        Notification: markRaw(Notification),
+        DArrowLeft: markRaw(DArrowLeft), ArrowRight: markRaw(ArrowRight),
+        ArrowDown: markRaw(ArrowDown),
+        Close: markRaw(Close)
     },
 
     // 加载函数
@@ -197,6 +197,9 @@ export default {
                             that.$router.push('/')
                         })
                     }
+                } else if (res.data['ret'] === 302) {
+                    ElMessage('请先登陆！')
+                    that.$router.push('/')
                 }
             })
         },
