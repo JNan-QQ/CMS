@@ -105,7 +105,7 @@ class User(AbstractUser):
                     'msg': f'id 为`{account_id}`的用户不存在'
                 }
             username = data.get('username', None)
-            if username:
+            if username and username != account.username:
                 if User.objects.filter(username=username).exists():
                     return {'ret': 1, 'msg': f'登录名 {username} 已经存在,请重新命名'}
                 else:
