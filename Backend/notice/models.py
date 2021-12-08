@@ -159,7 +159,7 @@ class NewsImg(models.Model):
 
     @staticmethod
     def list_img():
-        qs = NewsImg.objects.values('news__title', 'img')
+        qs = NewsImg.objects.values('news__title', 'img', 'id','news')
         # 将 QuerySet 对象 转化为 list 类型
         retlist = list(qs)
 
