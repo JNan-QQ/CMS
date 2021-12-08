@@ -21,17 +21,18 @@
     </div>
 
     <el-table :data="accountData" border style="width: 100%;text-align: center">
-        <el-table-column prop="id" label="id" min-width="10%"/>
+        <el-table-column prop="id" label="id" min-width="10%" sortable/>
         <el-table-column prop="username" label="用户名" min-width="10%"/>
         <el-table-column prop="realName" label="姓名" min-width="10%"/>
         <el-table-column prop="No" label="编号" min-width="10%" v-if="accountType!=='mgr'"/>
         <el-table-column prop="classNo" label="班级" min-width="10%" v-if="accountType==='student'"/>
         <el-table-column prop="gradeNo" label="年级" min-width="10%" v-if="accountType==='student'"/>
-        <el-table-column prop="major" label="专业" min-width="10%" v-if="accountType!=='mgr'"/>
+        <el-table-column prop="major" label="专业" min-width="10%" v-if="accountType!=='mgr'" :filters="filtersMajor"
+                         :filter-method="filterMajor"/>
         <el-table-column label="操作" min-width="20%" #default="props">
             <el-button type="primary" :icon="Edit" circle @click="editBtnFunction(props.row)"></el-button>
             <el-button type="success" :icon="Loading" circle @click="resetPassword(props.row.id)"></el-button>
-            <el-button type="danger" :icon="Delete" circle></el-button>
+            <el-button type="danger" :icon="Delete" circle @click="deleteAccount(props.row)"></el-button>
         </el-table-column>
     </el-table>
 
@@ -74,14 +75,25 @@ export default {
     name: "account",
     data() {
         return {
+            // 用户数据列表
             accountData: [],
+            // 用户类型
             accountType: '',
+            // 添加修改用户信息字典
             newAccount: {},
+            // 引入ico图标
             Edit: markRaw(Edit), Loading: markRaw(Loading), Delete: markRaw(Delete), Search: markRaw(Search),
+            // 编辑、添加按钮判定
             editBtn: false,
+            // 选择字段
             select_type: '',
-            select_value: ''
-
+            // 字段值
+            select_value: '',
+            // 专业过滤列表
+            filtersMajor: [
+                {text: '计算机', value: '计算机'},
+                {text: '自动化', value: '自动化'},
+            ]
         }
     },
     components: {},
@@ -216,7 +228,38 @@ export default {
                     }
                 })
             })
-        }
+        },
+
+        // 删除账号
+        deleteAccount(data) {
+            const that = this
+            ElMessageBox.confirm(
+                '确认删除姓名为：' + data['realName'] + ' 的账号密码吗?',
+                '提示',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'info',
+                }
+            ).then(() => {
+                request.post('/api/account/', {
+                    action: 'delete',
+                    user_id: data['id']
+                }).then(res => {
+                    if (res.data['ret'] === 0) {
+                        ElMessage({message: '用户删除成功！', type: 'success',})
+                        that.before()
+                    } else {
+                        ElMessage({message: res.data['msg'], type: 'warning',})
+                    }
+                })
+            })
+        },
+
+        // 专业过滤
+        filterMajor(value, row) {
+            return row.major === value
+        },
 
     },
 }

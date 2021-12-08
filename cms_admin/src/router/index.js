@@ -5,6 +5,7 @@ import Front from '../views/home/front.vue'
 import Admin from '@/views/admin/index/'
 import News from '../views/admin/news.vue'
 import Account from '../views/admin/account.vue'
+import Homepage from '../views/admin/homepage.vue'
 
 const routes = [
     {
@@ -23,6 +24,9 @@ const routes = [
             }, {
                 path: 'account',
                 component: Account
+            },{
+                path: 'homepage',
+                component: Homepage
             },
         ]
     },

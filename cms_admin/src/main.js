@@ -17,6 +17,5 @@ import 'default-passive-events'
 
 
 
-
 createApp(App).use(router).use(ElementPlus).mount('#app')
 

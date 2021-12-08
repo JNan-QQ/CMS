@@ -159,7 +159,7 @@ export default {
             this.index_table.push(pages[this.activeIndex][pages[this.activeIndex].length - 1])
             this.index_table = Array.from(new Set(this.index_table))
             const page_path = {
-                '1': '/admin',
+                '1': '/admin/homepage',
                 '2-1': '/admin/account?type=student',
                 '2-2': '/admin/account?type=teacher',
                 '2-3': '/admin/account?type=mgr',
@@ -196,6 +196,8 @@ export default {
                             })
                             that.$router.push('/')
                         })
+                    } else {
+                        that.$router.push('/admin/homepage')
                     }
                 } else if (res.data['ret'] === 302) {
                     ElMessage('请先登陆！')
