@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import string
 import time
@@ -85,8 +86,9 @@ class FilesUpDown:
         # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
         if request.method == 'POST':
             # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            print(request)
             action = request.POST['action']
+        elif request.method == 'GET':
+            action = request.GET['action']
         else:
             action = None
 
@@ -95,13 +97,14 @@ class FilesUpDown:
             return self.upload(request)
         elif action == 'download':
             return self.download(request)
+        elif action == 'delete':
+            return self.deleteFiles(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
     @staticmethod
     def upload(request, _in=False):
         """保存上传文件"""
-        print(1111111)
         # 1.获取上传的文件
         files = request.FILES['files']
 
@@ -132,3 +135,16 @@ class FilesUpDown:
     @staticmethod
     def download(request):
         pass
+
+    @staticmethod
+    def deleteFiles(request):
+        # 判断是否登录
+        if 'is_login' not in request.session:
+            return jsonResponse({'ret': 302, 'msg': '未登录'}, status=302)
+
+        if request.session['usertype'] != 1:
+            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号进行该操作！'})
+
+        filePath = request.GET['files_path']
+        if os.path.exists(f'{settings.BASE_DIR}{filePath}'):
+            os.remove(f'{settings.BASE_DIR}{filePath}')

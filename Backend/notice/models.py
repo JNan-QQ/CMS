@@ -166,6 +166,31 @@ class NewsImg(models.Model):
         # total指定了 一共有多少数据
         return {'ret': 0, 'retlist': retlist}
 
+    @staticmethod
+    def modify_img(data):
+        try:
+            newsImg_id = data['id']
+            try:
+                # 根据 id 从数据库中找到相应的客户记录
+                newsImg = NewsImg.objects.get(id=newsImg_id)
+            except:
+                return {
+                    'ret': 1,
+                    'msg': f'id 为`{newsImg_id}`的新闻不存在'
+                }
+
+            if 'news_id' in data:
+                newsImg.news = News.objects.get(id=data['news_id'])
+            if 'img' in data:
+                newsImg.img = data['img']
+
+            # 注意，一定要执行save才能将修改信息保存到数据库
+            newsImg.save()
+            return {'ret': 0}
+
+        except:
+            return {'ret': 1, 'msg': '修改新闻图片失败！'}
+
 
 class Message(models.Model):
     id = models.BigAutoField(primary_key=True)

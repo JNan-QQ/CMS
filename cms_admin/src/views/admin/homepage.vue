@@ -1,29 +1,33 @@
 <template>
     <el-tabs type="border-card">
         <el-tab-pane label="轮播图" style="display: flex;flex-direction: row;flex-wrap: wrap;">
-            <el-row v-for="hotNews in hotNewsData" style="width: 45%;margin: 2%">
-                <el-col>新闻id：
+            <div v-for="hotNews in hotNewsData" style="width: 45%;margin: 2%;height: 400px">
+                <span>新闻id：
                     <el-input-number v-model="hotNews['news']" :min="1" controls-position="right" size="small"
-                                     @change=""/>
-                </el-col>
-                <el-col style="margin-top: 3px;margin-bottom: 3px;">title：{{ hotNews['news__title'] }}</el-col>
-                <el-image :src="hotNews.img" style="margin: auto" @click="modifyImg(hotNews['news'])">
-                    <template #error>
-                        <el-icon size=32>
-                            <icon-picture/>
-                        </el-icon>
-                    </template>
-                </el-image>
-            </el-row>
+                                     @change="modifyNews(hotNews['news'],hotNews.id)"/>&nbsp;&nbsp;{{
+                        hotNews['news__title']
+                    }}
+                </span>
+                <div style="height: 350px;margin-top: 10px">
+                    <el-image :src="'/api'+hotNews.img" @click="modifyImg(hotNews['news'],hotNews.img)"
+                              style="margin: 2px;height: 340px;width:auto">
+                        <template #error>
+                            <el-icon size=32 @click="modifyImg(hotNews['news'])">
+                                <icon-picture/>
+                            </el-icon>
+                        </template>
+                    </el-image>
+                </div>
+            </div>
         </el-tab-pane>
         <el-tab-pane label="校园新闻">Config</el-tab-pane>
         <el-tab-pane label="社会新闻">Role</el-tab-pane>
         <el-tab-pane label="疫情防控">Task</el-tab-pane>
     </el-tabs>
 
-    <el-dialog v-model="dialogVisible" title="Tips" width="36%" destroy-on-close>
-        <el-upload drag action="/api/files" :data="{action:'upload'}" name="files"
-                   @on-success="changeImg(response,file,fileList)">
+    <el-dialog v-model="dialogVisible" title="上传图片" width="30%" destroy-on-close>
+        <el-upload drag action="/api/files" :data="{action:'upload'}" name="files" list-type="picture" :multiple="false"
+                   style="text-align: center;" :on-success="changeImg">
             <el-icon class="el-icon--upload">
                 <upload-filled/>
             </el-icon>
@@ -43,27 +47,15 @@
 import {Picture as IconPicture, UploadFilled} from '@element-plus/icons'
 import {markRaw} from "vue"
 import request from "../../utils/request";
+import {ElMessage} from "element-plus";
 
 export default {
     name: "homepage",
     data() {
         return {
-            hotNewsData: [
-                {
-                    news_id: 20,
-                    news_title: '测试用titerc',
-
-                }, {
-                    news_id: 20,
-                    news_title: '测试用titer',
-                    img: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
-                }, {
-                    news_id: 20,
-                    news_title: '测试用titer',
-                    img: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
-                },
-            ],
+            hotNewsData: [],
             dialogVisible: false,
+            modifyID: 0, baseImg: '',
         }
     },
     components: {IconPicture: markRaw(IconPicture), UploadFilled: markRaw(UploadFilled)},
@@ -71,6 +63,7 @@ export default {
         this.before()
     },
     methods: {
+        // 请求列表函数
         before() {
             const that = this
             request.post('/api/notice/news', {
@@ -82,12 +75,50 @@ export default {
                 }
             })
         },
-        modifyImg(id) {
-            this.dialogVisible = true
-        },
-        changeImg(response,file,fileList){
 
-        }
+        // 显示dialog窗口
+        modifyImg(id, img) {
+            this.dialogVisible = true
+            this.modifyID = id
+            this.baseImg = img
+
+        },
+
+        // 改变上传图片
+        changeImg(response, file, fileList) {
+            const that = this
+            // 上传图片到服务器，成功后写入数据库
+            request.post('/api/notice/news', {
+                action: 'modifyImg',
+                id: this.modifyID,
+                img: response['file_url'],
+            }).then(res => {
+                // 写入成功后删除旧图片
+                if (res.data['ret'] === 0) {
+                    request.get('/api/files?action=delete&files_path=' + that.baseImg)
+                    that.dialogVisible = false
+                    that.before()
+                } else {
+                }
+            })
+        },
+
+        // 改变新闻id
+        modifyNews(news_id, id) {
+            const that = this
+            request.post('/api/notice/news', {
+                action: 'modifyImg',
+                id: id,
+                news_id: news_id,
+            }).then(res => {
+                if (res.data['ret'] === 0){
+                    that.before()
+                }else {
+                    ElMessage({message: `ID:${news_id} 新闻不存在`, type: 'warning',})
+                }
+            })
+
+        },
     },
 }
 </script>

@@ -33,6 +33,8 @@ class News:
             return self.listImg(request)
         elif action == 'pageNews':
             return self.pageNews(request)
+        elif action == 'modifyImg':
+            return self.pageImgModify(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -100,6 +102,11 @@ class News:
     @staticmethod
     def pageNews(request):
         ret = newsMgr.pagenews()
+        return jsonResponse(ret)
+
+    @staticmethod
+    def pageImgModify(request):
+        ret = NewsImg.modify_img(request.params)
         return jsonResponse(ret)
 
 # class MessageR:
