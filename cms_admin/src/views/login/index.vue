@@ -25,13 +25,13 @@ import {ElMessage} from "element-plus";
 import request from "../../utils/request";
 import { UserFilled,Promotion } from "@element-plus/icons"
 import {markRaw} from "vue";
+import {signin} from '../../api/Login'
 
 export default {
     name: "LoginIndex",
     data() {
         return {
             form: {
-                action: 'signin',
                 username: '',
                 password: '',
             },
@@ -51,29 +51,8 @@ export default {
                 return this.loading = false
             }
 
-            const that = this
-
             // 发起登陆请求
-            request.post('/api/sign/', this.form)
-                .then(
-                    function (response) {
-                        const data = response.data
-                        if (data['ret'] === 0) {
-                            ElMessage({
-                                message: '登陆成功！欢迎您：' + data['realName'],
-                                type: 'success',
-                            })
-                            // 跳转到首页
-                            that.$router.push('/')
-                        } else {
-                            ElMessage({
-                                message: '登陆失败！msg：' + data['msg'],
-                                type: 'warning',
-                            })
-                        }
-                    }
-                )
-                .catch(error => ElMessage.error('服务器错误'))
+            signin(this.form,this)
             this.loading = false
         },
     },

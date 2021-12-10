@@ -2,15 +2,15 @@
     <div class="home-container">
         <el-dropdown>
             <div class="avatar" @click="toLogin">
-                <el-avatar :src="avatar_src" size="medium" class="avatar_img" fit="fill"></el-avatar>
-                <div class="user">{{ realName }}</div>
+                <el-avatar :src="userdata.aviator" size="medium" class="avatar_img" fit="fill"></el-avatar>
+                <div class="user">{{ userdata.realName }}</div>
                 <el-icon>
                     <arrow-down class="zk"/>
                 </el-icon>
             </div>
             <template #dropdown>
                 <el-dropdown-menu>
-                    <el-dropdown-item v-if="p_center" @click="toLogout">退出登录</el-dropdown-item>
+                    <el-dropdown-item v-if="userdata.realName !== '未登录'" @click="toLogout">退出登录</el-dropdown-item>
                     <el-dropdown-item v-else @click="toLogin">登录</el-dropdown-item>
                 </el-dropdown-menu>
             </template>
@@ -31,7 +31,7 @@
                     </el-sub-menu>
                     <el-menu-item index="3">社会热点</el-menu-item>
                     <el-menu-item index="4">失物招领</el-menu-item>
-                    <el-menu-item index="5" v-if="p_center">个人中心</el-menu-item>
+                    <el-menu-item index="5" v-if="userdata.realName !== '未登录'">个人中心</el-menu-item>
                 </el-menu>
             </el-header>
             <el-main>
@@ -43,20 +43,17 @@
 </template>
 
 <script>
-import request from "../../utils/request";
-import {ElMessage} from "element-plus";
-import {ArrowDown, Delete} from "@element-plus/icons";
-import {markRaw} from "vue";
+import {checklogin, signout} from "../../api/Login"
+import {ElMessage} from "element-plus"
+import {ArrowDown, Delete} from "@element-plus/icons"
+import {markRaw} from "vue"
 
 export default {
     name: "HomeIndex",
     data() {
         return {
             activeIndex: '1',
-            p_center: false,
-            realName: '未登录',
-            avatar_src: '',
-            userdata: {},
+            userdata: {realName: '未登录', aviator: '',},
             PersonalCenter: '/common',
             router_index: {
                 '1': '/front',
@@ -65,7 +62,7 @@ export default {
         }
     },
     // 注册组件
-    components: {ArrowDown:markRaw(ArrowDown)},
+    components: {ArrowDown: markRaw(ArrowDown)},
     // 进入页面执行函数
     mounted() {
         this.before()
@@ -87,17 +84,10 @@ export default {
     methods: {
         // 加载函数
         before() {
-            request.post('/api/sign/', {action: 'checkLogin'}).then(res => {
-                if (res.data['ret'] === 0) {
-                    this.userdata = res.data
-                    this.realName = res.data['realName']
-                    this.p_center = true
-                    this.avatar_src = res.data['aviator']
-                    if (res.data['usertype'] === 1) {
-                        this.PersonalCenter = '/admin'
-                    }
-                }
-            })
+            checklogin(this)
+            if (this.userdata['usertype'] === 0) {
+                this.PersonalCenter = '/admin'
+            }
             this.$router.push('/front')
         },
 
@@ -108,18 +98,15 @@ export default {
 
         // 点击登录函数
         toLogin() {
-            if (this.realName === '未登录') {
+            if (this.userdata.realName === '未登录') {
                 this.$router.push('/login')
             }
         },
 
         // 退出登录函数
         toLogout() {
-            request.post('/api/sign/', {action: 'signout'})
-            this.p_center = false
-            this.realName = '未登录'
-            this.avatar_src = ''
-            this.userdata = {}
+            signout()
+            this.userdata = {realName: '未登录', aviator: ''}
         }
     },
 }

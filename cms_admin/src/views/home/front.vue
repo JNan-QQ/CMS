@@ -2,7 +2,7 @@
     <div class="content">
         <el-carousel :interval="4000" type="card" height="200px">
             <el-carousel-item v-for="item in pageImg" :key="item">
-                <el-image :src="item['img']" fit="fill"></el-image>
+                <el-image :src="'/api'+item['img']" fit="fill"></el-image>
             </el-carousel-item>
         </el-carousel>
         <div class="table">
@@ -43,14 +43,14 @@ export default {
             request.post('/api/notice/news', {
                 action: 'pageImg'
             }).then(function (response) {
-                that.pageImg = response.data['retlist']
+                that.pageImg = response['retlist']
             })
 
             request.post('/api/notice/news', {
                 action: 'pageNews'
             }).then(function (response) {
-                that.schoolTable = response.data['retlist']
-                that.socTable = response.data['retlist']
+                that.schoolTable = response['retlist']
+                that.socTable = response['retlist']
             })
         }
     }

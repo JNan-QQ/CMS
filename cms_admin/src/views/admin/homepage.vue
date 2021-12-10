@@ -1,22 +1,35 @@
 <template>
     <el-tabs type="border-card">
-        <el-tab-pane label="轮播图" style="display: flex;flex-direction: row;flex-wrap: wrap;">
-            <div v-for="hotNews in hotNewsData" style="width: 45%;margin: 2%;height: 400px">
-                <span>新闻id：
-                    <el-input-number v-model="hotNews['news']" :min="1" controls-position="right" size="small"
-                                     @change="modifyNews(hotNews['news'],hotNews.id)"/>&nbsp;&nbsp;{{
-                        hotNews['news__title']
-                    }}
-                </span>
-                <div style="height: 350px;margin-top: 10px">
-                    <el-image :src="'/api'+hotNews.img" @click="modifyImg(hotNews['news'],hotNews.img)"
-                              style="margin: 2px;height: 340px;width:auto">
-                        <template #error>
-                            <el-icon size=32 @click="modifyImg(hotNews['news'])">
-                                <icon-picture/>
-                            </el-icon>
-                        </template>
-                    </el-image>
+        <el-tab-pane label="轮播图">
+
+            <el-button-group>
+                <el-button type="success" @click="addHomeImg">添加</el-button>
+            </el-button-group>
+
+            <div style="display: flex;flex-direction: row;flex-wrap: wrap;">
+                <div v-for="hotNews in hotNewsData"
+                     style="width: 45%;margin: 2%;border: 2px dashed var(--el-border-color-base);">
+                    <span>新闻id：
+                        <el-input-number v-model="hotNews['news']" :min="1" controls-position="right" size="small"
+                                         @change="modifyNews(hotNews['news'],hotNews.id)"/>&nbsp;&nbsp;{{
+                            hotNews['news__title']
+                        }}
+                    </span>
+                    <div style="height: 350px;margin-top: 10px">
+                        <el-image :src="'/api'+hotNews.img" style="margin: 2px;height: 340px;width:auto">
+                            <template #error>
+                                <el-icon size=32>
+                                    <icon-picture/>
+                                </el-icon>
+                            </template>
+                        </el-image>
+                    </div>
+                    <div style="float: right">
+                        <el-button-group>
+                            <el-button type="warning" @click="modifyImg(hotNews.id,hotNews.img)">修改图片</el-button>
+                            <el-button type="danger" @click="deleteHomeImg(hotNews.id)">删除</el-button>
+                        </el-button-group>
+                    </div>
                 </div>
             </div>
         </el-tab-pane>
@@ -55,7 +68,8 @@ export default {
         return {
             hotNewsData: [],
             dialogVisible: false,
-            modifyID: 0, baseImg: '',
+            modifyID: 0,
+            baseImg: '',
         }
     },
     components: {IconPicture: markRaw(IconPicture), UploadFilled: markRaw(UploadFilled)},
@@ -95,7 +109,9 @@ export default {
             }).then(res => {
                 // 写入成功后删除旧图片
                 if (res.data['ret'] === 0) {
-                    request.get('/api/files?action=delete&files_path=' + that.baseImg)
+                    if (that.baseImg !== '') {
+                        request.get('/api/files?action=delete&files_path=' + that.baseImg)
+                    }
                     that.dialogVisible = false
                     that.before()
                 } else {
@@ -111,13 +127,34 @@ export default {
                 id: id,
                 news_id: news_id,
             }).then(res => {
-                if (res.data['ret'] === 0){
+                if (res.data['ret'] === 0) {
                     that.before()
-                }else {
+                } else {
                     ElMessage({message: `ID:${news_id} 新闻不存在`, type: 'warning',})
                 }
             })
 
+        },
+
+        // 删除对应轮播图
+        deleteHomeImg(id) {
+            const that = this
+            request.post('/api/notice/news', {
+                action: 'deleteImg',
+                id: id,
+            }).then(res => {
+                that.before()
+            })
+        },
+
+        // 添加一个空白新闻
+        addHomeImg() {
+            const that = this
+            request.post('/api/notice/news', {
+                action: 'addImg',
+            }).then(res => {
+                that.before()
+            })
         },
     },
 }

@@ -149,7 +149,7 @@ class News(models.Model):
 class NewsImg(models.Model):
     id = models.BigAutoField(primary_key=True)
     # 新闻id
-    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    news = models.ForeignKey(News, on_delete=models.CASCADE, null=True, blank=True)
     # 新闻图片
     img = models.ImageField(upload_to='images/',
                             null=True, blank=True)
@@ -159,7 +159,7 @@ class NewsImg(models.Model):
 
     @staticmethod
     def list_img():
-        qs = NewsImg.objects.values('news__title', 'img', 'id','news')
+        qs = NewsImg.objects.values('news__title', 'img', 'id', 'news')
         # 将 QuerySet 对象 转化为 list 类型
         retlist = list(qs)
 
@@ -176,7 +176,7 @@ class NewsImg(models.Model):
             except:
                 return {
                     'ret': 1,
-                    'msg': f'id 为`{newsImg_id}`的新闻不存在'
+                    'msg': f'id 为`{newsImg_id}`的新闻轮播图不存在'
                 }
 
             if 'news_id' in data:
@@ -190,6 +190,33 @@ class NewsImg(models.Model):
 
         except:
             return {'ret': 1, 'msg': '修改新闻图片失败！'}
+
+    @staticmethod
+    def delete_img(data):
+        newsImg_id = data['id']
+
+        try:
+            # 根据 id 从数据库中找到相应的客户记录
+            newsImg = NewsImg.objects.get(id=newsImg_id)
+        except:
+            return {
+                'ret': 1,
+                'msg': f'id 为`{newsImg_id}`的轮播图不存在'
+            }
+
+        # delete 方法就将该记录从数据库中删除了
+        newsImg.delete()
+
+        return {'ret': 0}
+
+    @staticmethod
+    def add_img(data):
+        try:
+            newsImg = NewsImg.objects.create(
+            )
+            return {'ret': 0, 'news_id': newsImg.id}
+        except:
+            return {'ret': 1, 'msg': '添加新闻失败！'}
 
 
 class Message(models.Model):
