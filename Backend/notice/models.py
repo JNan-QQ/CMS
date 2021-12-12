@@ -16,6 +16,13 @@ class NewsType(models.Model):
     class Meta:
         db_table = "cms_news_types"
 
+    @staticmethod
+    def listNewsType():
+        qs = NewsType.objects.values()
+        retlist = list(qs)
+        # total指定了 一共有多少数据
+        return {'ret': 0, 'retlist': retlist}
+
 
 # 新闻主类
 class News(models.Model):
@@ -46,7 +53,7 @@ class News(models.Model):
                 content=data['content'],
                 author=User.objects.get(id=data['author_id']),
                 status=data['status'],
-                news_type=NewsType.objects.get(types=data['news_type'])
+                news_type=NewsType.objects.get(id=data['news_type'])
             )
             return {'ret': 0, 'news_id': news.id}
         except:

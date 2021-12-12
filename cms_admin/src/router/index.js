@@ -24,7 +24,7 @@ const routes = [
             }, {
                 path: 'account',
                 component: Account
-            },{
+            }, {
                 path: 'homepage',
                 component: Homepage
             },
@@ -43,9 +43,10 @@ const routes = [
     }
 ]
 
-const router = createRouter({
-    history: createWebHashHistory(),
-    routes
-})
+const router = createRouter(
+    {
+        history: createWebHashHistory(),
+        routes
+    })
 
 export default router

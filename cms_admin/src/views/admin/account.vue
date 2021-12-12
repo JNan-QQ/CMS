@@ -70,6 +70,7 @@ import request from "../../utils/request"
 import {Delete, Edit, Loading, Search} from '@element-plus/icons'
 import {markRaw} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
+import {addAccount, listAccount, modifyAccount,deleteAccount} from "../../api/Account";
 
 export default {
     name: "account",
@@ -124,22 +125,12 @@ export default {
                 search_items[this.select_type] = this.select_value
             }
             // 发送请求
-            request.post('/api/account/', {
-                action: 'list',
-                search_items: search_items,
-            }).then(res => {
-                const data = res.data
-                if (data['ret'] === 0) {
-                    that.accountData = data['retlist']
-                }
-
-            })
+            listAccount({search_items: search_items}, this)
         },
         // 编辑修改账号
         editBtnFunction(data) {
 
             this.newAccount = {
-                action: 'modify',
                 user_id: data['id'],
                 username: data['username'],
                 realName: data['realName'],
@@ -159,7 +150,6 @@ export default {
                 mgr: 1
             }
             this.newAccount = {
-                action: 'add',
                 username: '',
                 realName: '',
                 No: '',
@@ -177,30 +167,12 @@ export default {
         },
         //提交修改、添加账号
         modify_add_Account() {
-            const that = this
             if ('user_id' in this.newAccount) {
                 // 修改请求
-                request.post('/api/account/', this.newAccount).then(res => {
-                    const data = res.data
-                    if (data['ret'] === 0) {
-                        ElMessage({message: '修改用户信息成功', type: 'success',})
-                        that.before()
-                    } else {
-                        ElMessage({message: data['msg'], type: 'warning',})
-                    }
-                })
+                modifyAccount(this.newAccount, this)
             } else {
                 // 添加账号请求
-                request.post('/api/account/', this.newAccount).then(res => {
-                    const data = res.data
-                    if (data['ret'] === 0) {
-                        ElMessage({message: '添加用户信息成功,id:' + data['id'], type: 'success',})
-                        that.before()
-                    } else {
-                        ElMessage({message: data['msg'], type: 'warning',})
-                    }
-                })
-
+                addAccount(this.newAccount, this)
             }
             this.newAccount = {}
         },
@@ -216,23 +188,12 @@ export default {
                     type: 'info',
                 }
             ).then(() => {
-                request.post('/api/account/', {
-                    action: 'modify',
-                    user_id: user_id,
-                    password: '123456',
-                }).then(res => {
-                    if (res.data['ret'] === 0) {
-                        ElMessage({message: '密码重置为：123456', type: 'success',})
-                    } else {
-                        ElMessage({message: res.data['msg'], type: 'warning',})
-                    }
-                })
+                modifyAccount({user_id: user_id, password: '123456'}, this)
             })
         },
 
         // 删除账号
         deleteAccount(data) {
-            const that = this
             ElMessageBox.confirm(
                 '确认删除姓名为：' + data['realName'] + ' 的账号密码吗?',
                 '提示',
@@ -242,17 +203,7 @@ export default {
                     type: 'info',
                 }
             ).then(() => {
-                request.post('/api/account/', {
-                    action: 'delete',
-                    user_id: data['id']
-                }).then(res => {
-                    if (res.data['ret'] === 0) {
-                        ElMessage({message: '用户删除成功！', type: 'success',})
-                        that.before()
-                    } else {
-                        ElMessage({message: res.data['msg'], type: 'warning',})
-                    }
-                })
+                deleteAccount({user_id: data['id']},this)
             })
         },
 

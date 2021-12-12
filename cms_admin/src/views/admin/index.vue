@@ -107,15 +107,16 @@ import {
     Setting,
     User
 } from "@element-plus/icons"
-import request from "../../utils/request";
-import {ElMessage, ElMessageBox} from "element-plus";
-import {markRaw} from "vue";
+import {checklogin, signout} from "../../api/Login"
+import {markRaw} from "vue"
+import {ElMessage} from "element-plus"
+import userdata from '../../utils/gloab'
 
 export default {
     name: 'admin',
     data() {
         return {
-            userdata: {},
+            userdata,
             ArrowRight,
             activeIndex: 1,
             tps: ['success', '', 'danger', 'warning', 'info'],
@@ -136,7 +137,7 @@ export default {
         Notification: markRaw(Notification),
         DArrowLeft: markRaw(DArrowLeft), ArrowRight: markRaw(ArrowRight),
         ArrowDown: markRaw(ArrowDown),
-        Close: markRaw(Close)
+        Close: markRaw(Close),
     },
 
     // 加载函数
@@ -173,35 +174,16 @@ export default {
 
     methods: {
         before() {
-            const that = this
-            request.post('/api/sign/', {action: 'checkLogin'}).then(res => {
-                if (res.data['ret'] === 0) {
-                    this.userdata = res.data
-                    if (res.data['usertype'] !== 1) {
-                        ElMessageBox.confirm('你登录的不是管理员账号，无法访问此页面奥！', 'Warning',
-                            {
-                                confirmButtonText: '登录',
-                                cancelButtonText: '取消',
-                                type: 'warning',
-                            }).then(() => {
-                            ElMessage({
-                                type: 'success',
-                                message: '进入登录界面',
-                            })
-                            that.$router.push('/login')
-                        }).catch(() => {
-                            ElMessage({
-                                type: 'success',
-                                message: '进入首页',
-                            })
-                            that.$router.push('/')
-                        })
-                    } else {
-                        that.$router.push('/admin/homepage')
-                    }
-                } else if (res.data['ret'] === 302) {
-                    ElMessage('请先登陆！')
-                    that.$router.push('/')
+            checklogin(this).then(() => {
+                console.log(this.userdata)
+                if (this.userdata.usertype === 1) {
+                    this.$router.push('/admin/homepage')
+                } else {
+                    ElMessage({
+                        message: '请使用管理员账号登陆',
+                        type: 'warning',
+                    })
+                    this.$router.push('/')
                 }
             })
         },
@@ -230,8 +212,13 @@ export default {
 
         // 退出登录函数
         toLogout() {
-            request.post('/api/sign/', {action: 'signout'})
-            this.userdata = {}
+            signout()
+            this.userdata = {
+                realName: '未登录',
+                aviator: '',
+                id: 0,
+                usertype: 0
+            }
             this.$router.push('/')
         }
     }

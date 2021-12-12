@@ -2,7 +2,7 @@ import json
 
 from shara.shara import jsonResponse
 from .models import News as newsMgr
-from .models import NewsImg
+from .models import NewsImg, NewsType
 
 
 class News:
@@ -30,6 +30,9 @@ class News:
         # 列出新闻
         elif action == 'list':
             return self.listNews(request)
+        # 列出新闻类型
+        elif action == 'listNewsType':
+            return self.listNewsType(request)
         # 修改新闻
         elif action == 'modify':
             return self.modifyNews(request)
@@ -91,6 +94,21 @@ class News:
         request.params['usertype'] = request.session['usertype']
 
         ret = newsMgr.list_news(request.params)
+
+        return jsonResponse(ret)
+
+    @staticmethod
+    def listNewsType(request):
+        # 判断是否登录
+        if 'is_login' not in request.session:
+            return jsonResponse({'ret': 302, 'msg': '未登录'}, status=302)
+
+        if request.session['usertype'] != 1:
+            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号进行该操作！'})
+
+        request.params['usertype'] = request.session['usertype']
+
+        ret = NewsType.listNewsType()
 
         return jsonResponse(ret)
 

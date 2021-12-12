@@ -51,12 +51,10 @@
                     </el-form-item>
                     <el-form-item label="新闻内容：">
                         <Editor @onEditor="editorContent" base-txt=""/>
-                        <!--                        <el-input type="textarea" v-model="addForm.content"></el-input>-->
                     </el-form-item>
                     <el-form-item label="类型、状态：">
                         <el-select v-model="addForm.news_type" placeholder="选择新闻类型">
-                            <el-option label="校园" value="校园"></el-option>
-                            <el-option label="社会" value="社会"></el-option>
+                            <el-option v-for="item in newsType" :label=item.types :value=item.id></el-option>
                         </el-select>
                         <el-radio v-model="addForm.status" label=0>cold</el-radio>
                         <el-radio v-model="addForm.status" label=1>warm</el-radio>
@@ -99,11 +97,10 @@
 </template>
 
 <script>
-import request from "../../utils/request";
-import {ElMessage} from "element-plus";
 import Editor from '../../utils/editor'
 import {Delete} from "@element-plus/icons"
-import {markRaw, shallowRef} from "vue";
+import {markRaw} from "vue"
+import {addNews, deleteNews, listNews, listNewsType, modifyNews} from "../../api/News";
 
 export default {
     name: "news",
@@ -112,41 +109,30 @@ export default {
             tableData: [],
             isAdds: false,
             addForm: {
-                action: 'add',
                 title: '',
                 content: '',
                 news_type: '',
                 status: 1
             },
             newFrom: {
-                action: 'modify',
                 title: '',
                 content: '',
                 news_id: 0
             },
-            Delete:markRaw(Delete),
+            Delete: markRaw(Delete),
+            newsType:[]
         }
     },
-    components: markRaw({Editor,Delete}),
+    components: {Editor, Delete},
     mounted() {
         this.before()
+        listNewsType(this)
     },
     watch: {},
 
     methods: {
         before() {
-            const that = this
-            request.post('/api/notice/news', {
-                action: 'list', news_type: 'ALL'
-            }).then(res => {
-                const data = res.data
-                console.log(data)
-                if (data['ret'] === 0) {
-                    that.tableData = data['retlist']
-                } else {
-                    ElMessage.error('服务器错误')
-                }
-            })
+            listNews({news_type: 'ALL'}, this)
         },
 
         // 列表筛选
@@ -157,35 +143,12 @@ export default {
 
         // 改变新闻状态
         changeStatus(newStatus, id) {
-            request.post('/api/notice/news', {
-                action: 'modify',
-                status: newStatus,
-                news_id: id
-            }).then(res => {
-                if (res.data['ret'] !== 0) {
-                    ElMessage.error('修改失败！！！')
-                }
-            })
+            modifyNews({status: newStatus, news_id: id}, this)
         },
 
         // 添加一个新闻
         onSubmitOne() {
-            const that = this
-            request.post('/api/notice/news', this.addForm).then(res => {
-                const data = res.data
-                if (data['ret'] === 0) {
-                    ElMessage({
-                        message: '添加新闻成功，id:' + data['news_id'],
-                        type: 'success',
-                    })
-                    that.before()
-                } else {
-                    ElMessage({
-                        message: data['msg'],
-                        type: 'warning',
-                    })
-                }
-            })
+            addNews(this.addForm,this)
         },
 
         // 接受子组件富文本内容
@@ -200,53 +163,16 @@ export default {
             if (data) {
                 this.newFrom.title = data['title']
                 this.newFrom.news_id = data['id']
-            } else {
-                this.newFrom = {
-                    action: 'modify',
-                    title: '',
-                    content: '',
-                    news_id: 0
-                }
             }
         },
         modify_btn() {
-            const that = this
-            request.post('/api/notice/news', this.newFrom).then(res => {
-                const data = res.data
-                if (data['ret'] === 0) {
-                    ElMessage({
-                        message: '修改新闻成功',
-                        type: 'success',
-                    })
-                    that.before()
-                } else {
-                    ElMessage({
-                        message: data['msg'],
-                        type: 'warning',
-                    })
-                }
-            })
+            modifyNews(this.newFrom,this)
         },
 
         // 删除新闻
-        delete_btn(news_id){
-            const that = this
-            request.post('/api/notice/news',{action:'delete',news_id:news_id}).then(res =>{
-                const data = res.data
-                if (data['ret'] === 0){
-                    ElMessage({
-                        message: '删除成功',
-                        type: 'success',
-                    })
-                    that.before()
-                }else {
-                    ElMessage({
-                        message: data['msg'],
-                        type: 'warning',
-                    })
-                }
-            })
-        }
+        delete_btn(news_id) {
+            deleteNews({news_id: news_id},this)
+        },
 
     }
 
@@ -254,12 +180,12 @@ export default {
 </script>
 
 <style scoped>
-.el-radio {
-    margin-left: 15px;
-}
+/*.el-radio {*/
+/*    margin-left: 15px;*/
+/*}*/
 
-.el-form-item {
-    margin: 5px 20px 5px 10px;
-}
+/*.el-form-item {*/
+/*    margin: 5px 20px 5px 10px;*/
+/*}*/
 
 </style>

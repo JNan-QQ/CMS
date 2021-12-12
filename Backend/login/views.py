@@ -148,3 +148,5 @@ class FilesUpDown:
         filePath = request.GET['files_path']
         if os.path.exists(f'{settings.BASE_DIR}{filePath}'):
             os.remove(f'{settings.BASE_DIR}{filePath}')
+
+        return jsonResponse({'ret': 0})

@@ -1,7 +1,6 @@
 <template>
     <el-tabs type="border-card">
         <el-tab-pane label="轮播图">
-
             <el-button-group>
                 <el-button type="success" @click="addHomeImg">添加</el-button>
             </el-button-group>
@@ -61,6 +60,7 @@ import {Picture as IconPicture, UploadFilled} from '@element-plus/icons'
 import {markRaw} from "vue"
 import request from "../../utils/request";
 import {ElMessage} from "element-plus";
+import {addNewsImg, deleteNewsImg, listNewsImg, modifyNewsImg} from "../../api/News";
 
 export default {
     name: "homepage",
@@ -79,15 +79,7 @@ export default {
     methods: {
         // 请求列表函数
         before() {
-            const that = this
-            request.post('/api/notice/news', {
-                action: 'pageImg'
-            }).then(res => {
-                const data = res.data
-                if (data['ret'] === 0) {
-                    that.hotNewsData = data['retlist']
-                }
-            })
+            listNewsImg(this)
         },
 
         // 显示dialog窗口
@@ -100,61 +92,23 @@ export default {
 
         // 改变上传图片
         changeImg(response, file, fileList) {
-            const that = this
             // 上传图片到服务器，成功后写入数据库
-            request.post('/api/notice/news', {
-                action: 'modifyImg',
-                id: this.modifyID,
-                img: response['file_url'],
-            }).then(res => {
-                // 写入成功后删除旧图片
-                if (res.data['ret'] === 0) {
-                    if (that.baseImg !== '') {
-                        request.get('/api/files?action=delete&files_path=' + that.baseImg)
-                    }
-                    that.dialogVisible = false
-                    that.before()
-                } else {
-                }
-            })
+            modifyNewsImg({id: this.modifyID,img: response['file_url']},this)
         },
 
         // 改变新闻id
         modifyNews(news_id, id) {
-            const that = this
-            request.post('/api/notice/news', {
-                action: 'modifyImg',
-                id: id,
-                news_id: news_id,
-            }).then(res => {
-                if (res.data['ret'] === 0) {
-                    that.before()
-                } else {
-                    ElMessage({message: `ID:${news_id} 新闻不存在`, type: 'warning',})
-                }
-            })
-
+            modifyNewsImg({id: id,news_id: news_id},this)
         },
 
         // 删除对应轮播图
         deleteHomeImg(id) {
-            const that = this
-            request.post('/api/notice/news', {
-                action: 'deleteImg',
-                id: id,
-            }).then(res => {
-                that.before()
-            })
+            deleteNewsImg({id: id},this)
         },
 
         // 添加一个空白新闻
         addHomeImg() {
-            const that = this
-            request.post('/api/notice/news', {
-                action: 'addImg',
-            }).then(res => {
-                that.before()
-            })
+            addNewsImg(this)
         },
     },
 }

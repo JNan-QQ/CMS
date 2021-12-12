@@ -36,6 +36,7 @@ request.interceptors.response.use(
                 message: '未登录，请先登录',
                 type: 'warning',
             })
+            return {path:'front'}
         } else if (res['ret'] === 1) {
             ElMessage({
                 message: res['msg'],

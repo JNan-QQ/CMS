@@ -45,19 +45,19 @@
 <script>
 import {checklogin, signout} from "../../api/Login"
 import {ElMessage} from "element-plus"
-import {ArrowDown, Delete} from "@element-plus/icons"
+import {ArrowDown} from "@element-plus/icons"
 import {markRaw} from "vue"
+import userdata from '../../utils/gloab'
 
 export default {
     name: "HomeIndex",
     data() {
         return {
             activeIndex: '1',
-            userdata: {realName: '未登录', aviator: '',},
-            PersonalCenter: '/common',
+            userdata,
             router_index: {
                 '1': '/front',
-                '5': '/admin',
+                '5': '/common',
             }
         }
     },
@@ -84,10 +84,11 @@ export default {
     methods: {
         // 加载函数
         before() {
-            checklogin(this)
-            if (this.userdata['usertype'] === 0) {
-                this.PersonalCenter = '/admin'
-            }
+            checklogin(this).then(() => {
+                if (this.userdata['usertype'] === 1) {
+                    this.router_index["5"] = '/admin'
+                }
+            })
             this.$router.push('/front')
         },
 
@@ -106,7 +107,12 @@ export default {
         // 退出登录函数
         toLogout() {
             signout()
-            this.userdata = {realName: '未登录', aviator: ''}
+            this.userdata = {
+                realName: '未登录',
+                aviator: '',
+                id: 0,
+                usertype: 0
+            }
         }
     },
 }
