@@ -1,23 +1,10 @@
 <template>
-    <div class="content">
-        <el-carousel :interval="4000" type="card" height="200px">
-            <el-carousel-item v-for="item in pageImg" :key="item">
+    <div class="content" style="display: flex;flex-direction: row;flex-wrap: wrap;">
+        <el-carousel :interval="4000" type="card" style="width: 100%">
+            <el-carousel-item v-for="item in pageImg" :key="item" style="height: auto;">
                 <el-image :src="'/api'+item['img']" fit="fill"></el-image>
             </el-carousel-item>
         </el-carousel>
-        <div class="table">
-            <el-table :data="schoolTable" stripe>
-                <el-table-column prop="title"/>
-                <el-table-column prop="author__realName"/>
-                <el-table-column prop="create_time"/>
-            </el-table>
-
-            <el-table :data="socTable" stripe>
-                <el-table-column prop="title"/>
-                <el-table-column prop="author__realName"/>
-                <el-table-column prop="create_time"/>
-            </el-table>
-        </div>
 
     </div>
 </template>
