@@ -78,6 +78,7 @@
                     </div>
                     <template #dropdown>
                         <el-dropdown-menu>
+                            <el-dropdown-item @click="this.$router.push('/')">返回首页</el-dropdown-item>
                             <el-dropdown-item @click="toLogout">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>

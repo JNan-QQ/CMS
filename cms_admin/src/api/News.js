@@ -42,6 +42,22 @@ export function listNewsImg(that) {
     })
 }
 
+
+// 根据data里的数据类型列出新闻首页轮播图
+export function listNewsHot(that) {
+    return request({
+        url: api,
+        method: 'post',
+        data: {action: 'pageNewsHot'}
+    }).then(res => {
+        if (res) {
+            that.schoolTable = res['school_retlist']
+            that.socTable = res['soc_retlist']
+        }
+    })
+}
+
+
 // 根据data里的数据修改新闻
 export function modifyNews(data, that) {
     return request({

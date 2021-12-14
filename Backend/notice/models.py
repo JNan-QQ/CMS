@@ -146,10 +146,12 @@ class News(models.Model):
             return {'ret': 2, 'msg': f'未知错误\n{traceback.format_exc()}'}
 
     @staticmethod
-    def pagenews():
-        qs = News.objects.values('title', 'create_time', 'author__realName')
-        retlist = list(qs)
-        return {'ret': 0, 'retlist': retlist}
+    def pageNewsHot():
+        school = News.objects.filter(status=2, news_type=1).values('title', 'create_time', 'author__realName')
+        soc = News.objects.filter(status=2, news_type=2).values('title', 'create_time', 'author__realName')
+        school_retlist = list(school)
+        soc_retlist = list(soc)
+        return {'ret': 0, 'school_retlist': school_retlist, 'soc_retlist': soc_retlist}
 
 
 # 新闻首页轮播图

@@ -38,10 +38,10 @@ class News:
             return self.modifyNews(request)
         # 列出首页轮播图 newsimg
         elif action == 'pageImg':
-            return self.listImg(request)
+            return self.listImg()
         # 列出首页新闻列表
-        elif action == 'pageNews':
-            return self.pageNews(request)
+        elif action == 'pageNewsHot':
+            return self.pageNewsHot()
         # 修改轮播图
         elif action == 'modifyImg':
             return self.pageImgModify(request)
@@ -126,13 +126,13 @@ class News:
         return jsonResponse(ret)
 
     @staticmethod
-    def listImg(request):
+    def listImg():
         ret = NewsImg.list_img()
         return jsonResponse(ret)
 
     @staticmethod
-    def pageNews(request):
-        ret = newsMgr.pagenews()
+    def pageNewsHot():
+        ret = newsMgr.pageNewsHot()
         return jsonResponse(ret)
 
     @staticmethod
