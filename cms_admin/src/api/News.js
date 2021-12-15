@@ -152,3 +152,18 @@ export function deleteNewsImg(data, that) {
         }
     })
 }
+
+// 获取新闻详情
+export function getOneNews(data, that) {
+    return request({
+        url: api,
+        method: 'post',
+        data: Object.assign({action: 'getOneNews'}, data)
+    }).then(res => {
+        if (res) {
+            that.contents = res['retlist'][0]
+        }
+
+    })
+}
+

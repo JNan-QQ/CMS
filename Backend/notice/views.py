@@ -51,6 +51,8 @@ class News:
         # 删除轮播图
         elif action == 'deleteImg':
             return self.pageImgDelete(request)
+        elif action == 'getOneNews':
+            return self.getOneNews(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -169,6 +171,12 @@ class News:
             return jsonResponse({'ret': 1, 'msg': '请使用管理员账号进行该操作！'})
 
         ret = NewsImg.add_img(request.params)
+        return jsonResponse(ret)
+
+    @staticmethod
+    def getOneNews(request):
+        news_id = request.params['news_id']
+        ret = newsMgr.getOneNews(news_id)
         return jsonResponse(ret)
 
 # class MessageR:

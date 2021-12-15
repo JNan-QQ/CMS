@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     # 添加的应用
     'login',
     'account',
-    'notice'
+    'notice',
+    'common',
 ]
 
 MIDDLEWARE = [

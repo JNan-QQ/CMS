@@ -37,7 +37,7 @@
             <el-main>
                 <router-view/>
             </el-main>
-            <el-footer>Footer</el-footer>
+            <el-footer><span>{{ CQ.content }} -- {{CQ.author}}</span></el-footer>
         </el-container>
     </div>
 </template>
@@ -48,6 +48,7 @@ import {ElMessage} from "element-plus"
 import {ArrowDown} from "@element-plus/icons"
 import {markRaw} from "vue"
 import userdata from '../../utils/gloab'
+import {listCq} from "../../api/common";
 
 export default {
     name: "HomeIndex",
@@ -58,7 +59,8 @@ export default {
             router_index: {
                 '1': '/front',
                 '5': '/common',
-            }
+            },
+            CQ: {},
         }
     },
     // 注册组件
@@ -66,6 +68,7 @@ export default {
     // 进入页面执行函数
     mounted() {
         this.before()
+        this.changeCq()
 
     },
     // 监听
@@ -113,7 +116,12 @@ export default {
                 id: 0,
                 usertype: 0
             }
-        }
+        },
+
+        // 随机名言
+        changeCq(){
+            listCq(this)
+        },
     },
 }
 </script>
@@ -147,6 +155,11 @@ export default {
         padding-left: 0;
         padding-right: 0;
         margin-top: 5px;
+    }
+
+    .el-footer{
+        text-align: center;
+        margin-bottom: 0;
     }
 }
 

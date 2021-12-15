@@ -17,7 +17,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-
 from login.views import FilesUpDown
 
 urlpatterns = [
@@ -28,6 +27,8 @@ urlpatterns = [
                   path('account/', include('account.urls')),
                   # 新闻、通知模块
                   path('notice/', include('notice.urls')),
+                  # 公共信息
+                  path('common/', include('common.urls')),
                   # 文件上传
                   path('files', FilesUpDown().handler),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -6,6 +6,7 @@ import Admin from '@/views/admin/index/'
 import News from '../views/admin/news.vue'
 import Account from '../views/admin/account.vue'
 import Homepage from '../views/admin/homepage.vue'
+import ContentView from '../views/home/contentView.vue'
 
 const routes = [
     {
@@ -38,6 +39,9 @@ const routes = [
             {
                 path: 'front',
                 component: Front
+            },{
+                path: 'contentView',
+                component: ContentView
             },
         ]
     }

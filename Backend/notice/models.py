@@ -147,11 +147,19 @@ class News(models.Model):
 
     @staticmethod
     def pageNewsHot():
-        school = News.objects.filter(status=2, news_type=1).values('title', 'create_time', 'author__realName')
-        soc = News.objects.filter(status=2, news_type=2).values('title', 'create_time', 'author__realName')
+        school = News.objects.filter(status=2, news_type=1).values('title', 'create_time', 'author__realName', 'id')
+        soc = News.objects.filter(status=2, news_type=2).values('title', 'create_time', 'author__realName', 'id')
         school_retlist = list(school)
         soc_retlist = list(soc)
         return {'ret': 0, 'school_retlist': school_retlist, 'soc_retlist': soc_retlist}
+
+    @staticmethod
+    def getOneNews(news_id):
+        qs = News.objects.filter(id=news_id).values('title', 'create_time', 'author__realName', 'content')
+        if not qs:
+            return {'ret': 1, 'msg': '未找到改新闻'}
+        retlist = list(qs)
+        return {'ret': 0, 'retlist': retlist}
 
 
 # 新闻首页轮播图
