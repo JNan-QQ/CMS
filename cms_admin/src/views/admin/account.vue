@@ -35,7 +35,9 @@
             <el-button type="danger" :icon="Delete" circle @click="deleteAccount(props.row)"></el-button>
         </el-table-column>
     </el-table>
-
+    <div class="page">
+        <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+    </div>
     <!-- 添加、编辑页面   -->
     <el-dialog v-model="editBtn" title="账号信息" width="30%" destroy-on-close center>
         <el-form ref="form" :model="newAccount" label-position="left" label-width="80px">
@@ -66,11 +68,10 @@
 </template>
 
 <script>
-import request from "../../utils/request"
 import {Delete, Edit, Loading, Search} from '@element-plus/icons'
 import {markRaw} from "vue";
-import {ElMessage, ElMessageBox} from "element-plus";
-import {addAccount, listAccount, modifyAccount,deleteAccount} from "../../api/Account";
+import {ElMessageBox} from "element-plus";
+import {accountMain} from "../../api/Account";
 
 export default {
     name: "account",
@@ -118,14 +119,13 @@ export default {
                 teacher: 100,
                 mgr: 1
             }
-            const that = this
             // 搜索过滤
             const search_items = {usertype: usertype[this.accountType]}
             if (this.select_type && this.select_value) {
                 search_items[this.select_type] = this.select_value
             }
-            // 发送请求
-            listAccount({search_items: search_items}, this)
+            // 发送列出账号请求
+            accountMain('list', this, {search_items: search_items})
         },
         // 编辑修改账号
         editBtnFunction(data) {
@@ -169,10 +169,10 @@ export default {
         modify_add_Account() {
             if ('user_id' in this.newAccount) {
                 // 修改请求
-                modifyAccount(this.newAccount, this)
+                accountMain('modify', this, this.newAccount)
             } else {
                 // 添加账号请求
-                addAccount(this.newAccount, this)
+                accountMain('add', this, this.newAccount)
             }
             this.newAccount = {}
         },
@@ -188,7 +188,7 @@ export default {
                     type: 'info',
                 }
             ).then(() => {
-                modifyAccount({user_id: user_id, password: '123456'}, this)
+                accountMain('modify', this, {user_id: user_id, password: '123456'})
             })
         },
 
@@ -203,7 +203,7 @@ export default {
                     type: 'info',
                 }
             ).then(() => {
-                deleteAccount({user_id: data['id']},this)
+                accountMain('delete', this, {user_id: data['id']})
             })
         },
 
@@ -218,4 +218,10 @@ export default {
 
 <style scoped>
 
+
+/*分页模块*/
+.page {
+    text-align: center;
+    margin: 10px auto auto;
+}
 </style>

@@ -2,7 +2,7 @@ import request from '../utils/request'
 import {ElMessage} from "element-plus";
 
 // 根据data里的数据类型列出账号
-export function listAccount(data, that) {
+function listAccount(data, that) {
     return request({
         url: `/api/account/`,
         method: 'post',
@@ -13,7 +13,7 @@ export function listAccount(data, that) {
 }
 
 // 修改账号
-export function modifyAccount(data, that) {
+function modifyAccount(data, that) {
     return request({
         url: `/api/account/`,
         method: 'post',
@@ -25,7 +25,7 @@ export function modifyAccount(data, that) {
 }
 
 // 添加账号
-export function addAccount(data, that) {
+function addAccount(data, that) {
     return request({
         url: `/api/account/`,
         method: 'post',
@@ -37,7 +37,7 @@ export function addAccount(data, that) {
 }
 
 // 删除账号
-export function deleteAccount(data, that) {
+function deleteAccount(data, that) {
     return request({
         url: `/api/account/`,
         method: 'post',
@@ -46,4 +46,18 @@ export function deleteAccount(data, that) {
         ElMessage({message: '用户删除成功！', type: 'success',})
         that.before()
     })
+}
+
+// 账号操作
+export function accountMain(action='', that,data={}) {
+    switch (action) {
+        case "list": //列出账号
+            return listAccount(data, that)
+        case "modify": //修改账号
+            return modifyAccount(data, that)
+        case "add": //添加账号
+            return addAccount(data,that)
+        case "delete": // 删除账号
+            return deleteAccount(data,that)
+    }
 }

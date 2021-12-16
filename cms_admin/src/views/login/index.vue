@@ -25,7 +25,7 @@ import {ElMessage} from "element-plus";
 import request from "../../utils/request";
 import { UserFilled,Promotion } from "@element-plus/icons"
 import {markRaw} from "vue";
-import {signin} from '../../api/Login'
+import {loginMain} from '../../api/Login'
 
 export default {
     name: "LoginIndex",
@@ -52,7 +52,8 @@ export default {
             }
 
             // 发起登陆请求
-            signin(this.form,this)
+            // signin(this.form,this)
+            loginMain('signin',this,this.form)
             this.loading = false
         },
     },

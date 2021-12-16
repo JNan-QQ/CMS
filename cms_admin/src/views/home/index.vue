@@ -37,13 +37,13 @@
             <el-main>
                 <router-view/>
             </el-main>
-            <el-footer><span>{{ CQ.content }} -- {{CQ.author}}</span></el-footer>
+            <el-footer><span>{{ CQ.content }} -- {{ CQ.author }}</span></el-footer>
         </el-container>
     </div>
 </template>
 
 <script>
-import {checklogin, signout} from "../../api/Login"
+import {loginMain} from "../../api/Login"
 import {ElMessage} from "element-plus"
 import {ArrowDown} from "@element-plus/icons"
 import {markRaw} from "vue"
@@ -79,7 +79,6 @@ export default {
             } else {
                 ElMessage('该页面还未配置奥！')
             }
-
         }
     },
 
@@ -87,12 +86,12 @@ export default {
     methods: {
         // 加载函数
         before() {
-            checklogin(this).then(() => {
+            loginMain('checkLogin', this).then(() => {
                 if (this.userdata['usertype'] === 1) {
                     this.router_index["5"] = '/admin'
                 }
+                this.$router.push('/front')
             })
-            this.$router.push('/front')
         },
 
         // 导航栏点击函数
@@ -109,7 +108,7 @@ export default {
 
         // 退出登录函数
         toLogout() {
-            signout()
+            loginMain('signout')
             this.userdata = {
                 realName: '未登录',
                 aviator: '',
@@ -119,7 +118,7 @@ export default {
         },
 
         // 随机名言
-        changeCq(){
+        changeCq() {
             listCq(this)
         },
     },
@@ -128,7 +127,7 @@ export default {
 
 <style lang="less">
 .home-container {
-    width: 65%;
+    width: 55%;
     min-height: 900px;
     margin: 0 auto;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -157,7 +156,7 @@ export default {
         margin-top: 5px;
     }
 
-    .el-footer{
+    .el-footer {
         text-align: center;
         margin-bottom: 0;
     }

@@ -108,7 +108,7 @@ import {
     Setting,
     User
 } from "@element-plus/icons"
-import {checklogin, signout} from "../../api/Login"
+import {loginMain} from "../../api/Login"
 import {markRaw} from "vue"
 import {ElMessage} from "element-plus"
 import userdata from '../../utils/gloab'
@@ -170,23 +170,25 @@ export default {
             }
             this.$router.push(page_path[this.activeIndex])
 
-        }
+        },
     },
 
     methods: {
         before() {
-            checklogin(this).then(() => {
-                console.log(this.userdata)
-                if (this.userdata.usertype === 1) {
-                    this.$router.push('/admin/homepage')
-                } else {
-                    ElMessage({
-                        message: '请使用管理员账号登陆',
-                        type: 'warning',
-                    })
-                    this.$router.push('/')
+            loginMain('checkLogin', this).then(() => {
+                    if (this.userdata.usertype === 1) {
+                        this.$router.push('/admin/homepage')
+                    } else {
+                        ElMessage({
+                            message: '请使用管理员账号登陆',
+                            type: 'warning',
+                        })
+                        this.$router.push('/')
+                    }
                 }
-            })
+            )
+
+
         },
 
         handleSelect(key, keyPath) {

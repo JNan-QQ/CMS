@@ -1,15 +1,16 @@
 import request from '../utils/request'
-import {ElMessage} from "element-plus";
+import {ElMessage} from "element-plus"
+import {ref} from "vue";
 
 const api = '/api/sign/'
+
 // 登录函数
-export function signin(data, that) {
+function signin(data, that) {
     return request({
         url: api,
         method: 'post',
         data: Object.assign({action: 'signin'}, data)
     }).then(res => {
-        console.log(res)
         if (res['ret'] === 0) {
             ElMessage({
                 message: '登陆成功！欢迎您：' + res['realName'],
@@ -22,7 +23,7 @@ export function signin(data, that) {
 }
 
 // 登出函数
-export function signout() {
+function signout() {
     return request({
         url: api,
         method: 'post',
@@ -31,7 +32,7 @@ export function signout() {
 }
 
 // 判断是否登录函数
-export function checklogin(that) {
+function checklogin(that) {
     return request({
         url: api,
         method: 'post',
@@ -49,4 +50,17 @@ export function checklogin(that) {
             that.userdata = res
         }
     })
+}
+
+// 登录函数
+export function loginMain(action = '', that = '', data = {}) {
+    switch (action) {
+        case "signin": //登录
+            return signin(data, that)
+        case "signout": //登出
+            return signout()
+        case "checkLogin": //检查是否登录
+            return checklogin(that)
+    }
+
 }
