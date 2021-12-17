@@ -1,5 +1,4 @@
 <template>
-
   <!--    路由出口函数    -->
   <router-view/>
 </template>

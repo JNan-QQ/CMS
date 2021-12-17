@@ -7,6 +7,7 @@ import News from '../views/admin/news.vue'
 import Account from '../views/admin/account.vue'
 import Homepage from '../views/admin/homepage.vue'
 import ContentView from '../views/home/contentView.vue'
+import CS from '../views/home/index-1'
 
 const routes = [
     {
@@ -44,7 +45,13 @@ const routes = [
                 component: ContentView
             },
         ]
-    }
+    },
+    {
+        path: '/cs',
+        name: 'cs',
+        component: CS,
+        children: []
+    },
 ]
 
 const router = createRouter(
