@@ -20,7 +20,8 @@
         <el-button type="success" plain size="small">批量添加</el-button>
     </div>
 
-    <el-table :data="accountData" border style="width: 100%;text-align: center">
+    <el-table :data="accountData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border
+              style="width: 100%;text-align: center">
         <el-table-column prop="id" label="id" min-width="10%" sortable/>
         <el-table-column prop="username" label="用户名" min-width="10%"/>
         <el-table-column prop="realName" label="姓名" min-width="10%"/>
@@ -36,7 +37,16 @@
         </el-table-column>
     </el-table>
     <div class="page">
-        <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+        <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[5,10,20]"
+            :page-size="pageSize"
+            layout="sizes, prev, pager, next, jumper, total"
+            :total="accountData.length">
+        </el-pagination>
     </div>
     <!-- 添加、编辑页面   -->
     <el-dialog v-model="editBtn" title="账号信息" width="30%" destroy-on-close center>
@@ -79,10 +89,16 @@ export default {
         return {
             // 用户数据列表
             accountData: [],
+            // 每页显示个数
+            pageSize: 5,
+            // 选择的页数
+            currentPage: 1,
+
             // 用户类型
             accountType: '',
             // 添加修改用户信息字典
             newAccount: {},
+
             // 引入ico图标
             Edit: markRaw(Edit), Loading: markRaw(Loading), Delete: markRaw(Delete), Search: markRaw(Search),
             // 编辑、添加按钮判定
@@ -91,6 +107,7 @@ export default {
             select_type: '',
             // 字段值
             select_value: '',
+
             // 专业过滤列表
             filtersMajor: [
                 {text: '计算机', value: '计算机'},
@@ -101,9 +118,6 @@ export default {
     components: {},
     watch: {
         '$route': 'before',
-        editBtn() {
-            console.log(this.editBtn)
-        }
     },
     mounted() {
         this.before()
@@ -211,6 +225,16 @@ export default {
         filterMajor(value, row) {
             return row.major === value
         },
+
+        //每页条数改变时触发 选择一页显示多少行
+        handleSizeChange(val) {
+            this.currentPage = 1;
+            this.pageSize = val;
+        },
+        //当前页改变时触发 跳转其他页
+        handleCurrentChange(val) {
+            this.currentPage = val;
+        }
 
     },
 }

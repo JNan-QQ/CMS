@@ -8,6 +8,7 @@ import Account from '../views/admin/account.vue'
 import Homepage from '../views/admin/homepage.vue'
 import ContentView from '../views/home/contentView.vue'
 import CS from '../views/home/index-1'
+import ExcelData from '../components/excelsData.vue'
 
 const routes = [
     {
@@ -29,6 +30,9 @@ const routes = [
             }, {
                 path: 'homepage',
                 component: Homepage
+            },{
+                path: 'addMost',
+                component: ExcelData
             },
         ]
     },

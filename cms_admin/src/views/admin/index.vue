@@ -123,7 +123,7 @@ export default {
             tps: ['success', '', 'danger', 'warning', 'info'],
             // 面包学导航
             index_page: [],
-            // 标签也
+            // 标签页
             index_table: [],
             activeName: '',
         }
