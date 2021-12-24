@@ -17,7 +17,7 @@
             </template>
         </el-input>
         <el-button type="primary" plain size="small" @click="addBtnFunction">添加</el-button>
-        <el-button type="success" plain size="small">批量添加</el-button>
+        <el-button type="success" plain size="small" @click="addMost">批量添加</el-button>
     </div>
 
     <el-table :data="accountData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border
@@ -234,6 +234,11 @@ export default {
         //当前页改变时触发 跳转其他页
         handleCurrentChange(val) {
             this.currentPage = val;
+        },
+
+        // 批量添加界面
+        addMost() {
+            this.$router.push('/admin/addMost?type=' + this.accountType)
         }
 
     },

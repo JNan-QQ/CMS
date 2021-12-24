@@ -1,4 +1,5 @@
 <template>
+    <div class="title">{{ accountType }}</div>
     <div>
         <div class="container">
             {{ upload_file || "导入" }}
@@ -27,7 +28,9 @@ export default {
     data() {
         return {
             upload_file: "",
-            lists: []
+            lists: [],
+            // 用户类型
+            accountType: '',
         };
     },
     methods: {
@@ -83,6 +86,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="less">
+.title{
+    text-align: center;
+    font-size: 20px;
+    color: #50ab36;
+}
 
 </style>
