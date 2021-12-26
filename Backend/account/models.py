@@ -212,3 +212,16 @@ class User(AbstractUser):
 
         except:
             return {'ret': 2, 'msg': f'未知错误\n{traceback.format_exc()}'}
+
+    @staticmethod
+    def checkInfo(data):
+        try:
+            # 根据 id 从数据库中找到相应的客户记录
+            account = User.objects.filter(username=data['username'])
+            account1 = User.objects.filter(No=data['No'])
+            if account.exists() or account1.exists():
+                return '编号重复'
+            else:
+                return '核对通过'
+        except:
+            return '核对出错'

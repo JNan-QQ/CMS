@@ -48,6 +48,15 @@ function deleteAccount(data, that) {
     })
 }
 
+// 删除账号
+function checkAccount(data) {
+    return request({
+        url: `/api/account/`,
+        method: 'post',
+        data: Object.assign({action: 'checkInfo'}, data)
+    })
+}
+
 // 账号操作
 export function accountMain(action='', that,data={}) {
     switch (action) {
@@ -59,5 +68,7 @@ export function accountMain(action='', that,data={}) {
             return addAccount(data,that)
         case "delete": // 删除账号
             return deleteAccount(data,that)
+        case "check":
+            return checkAccount(data)
     }
 }

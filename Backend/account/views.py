@@ -28,6 +28,8 @@ class Account:
             return self.listAccount(request)
         elif action == 'modify':
             return self.modifyAccount(request)
+        elif action == 'checkInfo':
+            return self.checkInfo(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -107,3 +109,17 @@ class Account:
                 ret = userAccount.modify_account(request.params)
 
                 return jsonResponse(ret)
+
+    @staticmethod
+    def checkInfo(request):
+        result = []
+        accountIds = request.params['data']
+        if isinstance(accountIds, list):
+            for data in accountIds:
+                ret = userAccount.checkInfo(data)
+                result.append(ret)
+        elif isinstance(accountIds, dict):
+            ret = userAccount.checkInfo(accountIds)
+            result.append(ret)
+
+        return jsonResponse({'ret': 0, 'retlist': result})
