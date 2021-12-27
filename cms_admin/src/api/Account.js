@@ -31,8 +31,12 @@ function addAccount(data, that) {
         method: 'post',
         data: Object.assign({action: 'add'}, data)
     }).then(res => {
-        ElMessage({message: '添加用户信息成功,id:' + res['id'], type: 'success',})
+        if (that !== ''){
+            ElMessage({message: '添加用户信息成功,id:' + res['id'], type: 'success',})
         that.before()
+        }else {
+            return res
+        }
     })
 }
 
@@ -58,7 +62,7 @@ function checkAccount(data) {
 }
 
 // 账号操作
-export function accountMain(action='', that,data={}) {
+export function accountMain(action='', that='',data={}) {
     switch (action) {
         case "list": //列出账号
             return listAccount(data, that)

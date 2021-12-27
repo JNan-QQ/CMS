@@ -122,4 +122,4 @@ class Account:
             ret = userAccount.checkInfo(accountIds)
             result.append(ret)
 
-        return jsonResponse({'ret': 0, 'retlist': result})
+        return jsonResponse({'ret': 0, 'retlist': result, 'flg': '编号重复' not in result and result != []})
