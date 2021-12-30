@@ -1,9 +1,10 @@
 import datetime
 import json
-from .models import userToken
-from shara.shara import jsonResponse
+
 from django.contrib.auth import authenticate, login, logout
-import time
+
+from shara.shara import jsonResponse
+from .models import userToken
 
 
 class user_Token:
@@ -66,7 +67,6 @@ class user_Token:
         logout(request)
         return jsonResponse({'ret': 0})
 
-
     # 判断是否激活
     def activation(self, request):
         # 获取设备码 cpu + 主板
@@ -90,14 +90,13 @@ class user_Token:
                     return jsonResponse({'ret': 1, 'msg': '一个账号只能激活三套设备，请使用已激活的设备！'})
 
                 res = userToken.modifyToken(data)
-                print(res)
                 if res['ret'] != 0:
                     return jsonResponse({'ret': 1, 'msg': '设备激活失败'})
 
             # 判断是否过期
             endTime = machineCode.get('endTime', None)
             if str(endTime) < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"):
-                return jsonResponse({'ret': 1, 'msg': '已过期'})
+                return jsonResponse({'ret': 1, 'msg': '已过期', 'activeCode': ''})
 
             # 还回校验码
             now_time = datetime.datetime.now().strftime("%Y%m%d%H%M")
@@ -112,11 +111,12 @@ class user_Token:
 
     @staticmethod  # 密码表 A - Z = 1 - 26
     def cipherTable(str1):
-        list1 = list(str1)
+        k = '105201314'
+        k = k + k + k + k + k + k
         str2 = ''
-        for i in list1:
+        for i, j in zip(str1, k):
             if i.isalpha():
-                str2 += str(ord(i) - 64)
+                str2 += str(ord(i) - 64 + ord(j))
             else:
                 str2 += i
         return str2
