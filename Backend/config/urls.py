@@ -18,6 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from login.views import FilesUpDown
+from userToken.views import user_Token
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
@@ -31,4 +32,6 @@ urlpatterns = [
                   path('common/', include('common.urls')),
                   # 文件上传
                   path('files', FilesUpDown().handler),
+                  # 网络验证
+                  path('Token', user_Token().handler),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -13,7 +13,7 @@ class User(AbstractUser):
     id = models.BigAutoField(primary_key=True)
 
     # 用户类型
-    # 1： 超管 | 100： 教师  | 1000：学生
+    # 1： 超管 | 100： 教师  | 1000：学生 | 10：产品用户
     usertype = models.PositiveIntegerField()
 
     # 真实姓名

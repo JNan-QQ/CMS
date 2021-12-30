@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'account',
     'notice',
     'common',
+    'userToken',
 ]
 
 MIDDLEWARE = [
