@@ -87,16 +87,18 @@ class user_Token:
                 elif not machineCode3:
                     data['machineCode3'] = code
                 else:
-                    return jsonResponse({'ret': 1, 'msg': '一个账号只能激活三套设备，请使用已激活的设备！'})
+                    return jsonResponse({'ret': 1, 'msg': '一个账号只能激活三套设备，请使用已激活的设备！', 'activeCode': ''})
 
                 res = userToken.modifyToken(data)
                 if res['ret'] != 0:
-                    return jsonResponse({'ret': 1, 'msg': '设备激活失败'})
+                    return jsonResponse({'ret': 1, 'msg': '设备激活失败', 'activeCode': ''})
 
             # 判断是否过期
             endTime = machineCode.get('endTime', None)
             if str(endTime) < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"):
-                return jsonResponse({'ret': 1, 'msg': '已过期', 'activeCode': ''})
+                print(str(endTime) < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                print(str(endTime), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                return jsonResponse({'ret': 1, 'msg': '已过期', 'activeCode': '', 'endTime': str(endTime)})
 
             # 还回校验码
             now_time = datetime.datetime.now().strftime("%Y%m%d%H%M")

@@ -16,8 +16,16 @@ function signin(data, that) {
                 message: '登陆成功！欢迎您：' + res['realName'],
                 type: 'success',
             })
-            // 跳转到首页
-            that.$router.push('/')
+
+            if (res['usertype'] === 10){
+                // 跳转到产品界面
+                that.$router.push('/order')
+
+            }else {
+                // 跳转到首页
+                that.$router.push('/')
+            }
+
         }
     })
 }

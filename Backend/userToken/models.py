@@ -51,8 +51,15 @@ class userToken(models.Model):
                 userCode = userToken.objects.get(user__id=user_id)
             except:
                 return {'ret': 1}
-            if 'endTime' in data:
-                userCode.endTime = data['endTime']
+            if 'days' in data:
+                if str(userCode.endTime) < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"):
+                    userCode.endTime = (datetime.datetime.now() + datetime.timedelta(days=data['days'])).strftime(
+                        "%Y-%m-%d %H:%M:%S")
+                else:
+                    userCode.endTime = (
+                            datetime.datetime.strptime(userCode.endTime, "%Y-%m-%d %H:%M:%S") + datetime.timedelta(
+                                days=data['days'])).strftime("%Y-%m-%d %H:%M:%S")
+                userCode.endTime = data
             if 'machineCode1' in data:
                 userCode.machineCode1 = data['machineCode1']
             if 'machineCode2' in data:
@@ -67,7 +74,7 @@ class userToken(models.Model):
             return {'ret': 1, 'msg': '修改失败！'}
 
 
-class order:
+class order(models.Model):
     id = models.BigAutoField(primary_key=True)
     # 用户
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -78,31 +85,38 @@ class order:
     # 创建时间
     create_time = models.DateField(auto_now=True)
 
+    product = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        db_table = "cms_Order"
+
     @staticmethod
     def add_order(data):
         try:
             order.objects.create(
-                user=User.objects.get(user__id=data['user_id']),
-                orderNo=data['order_id'],
+                user=User.objects.get(id=data['user_id']),
+                orderNo=data['orderNo'],
                 status=1,
+                product=data['product']
             )
             return {"ret": 0}
         except:
+            traceback.print_exc()
             return {'ret': 1}
 
     @staticmethod
     def modify_order(data):
         try:
-            order_id = data['order_id']
+            orderNo = data['orderNo']
             try:
                 # 根据 id 从数据库中找到相应的客户记录
-                orderLs = userToken.objects.get(orderNo=order_id)
+                orderLs = userToken.objects.get(orderNo=orderNo)
             except:
                 return {'ret': 1}
 
             orderLs.status = 2
             orderLs.save()
-            return {'ret': 0}
+            return {'ret': 0, 'user_id': orderLs.user, 'product': orderLs.product}
         except:
             traceback.print_exc()
             return {'ret': 1, 'msg': '修改失败！'}

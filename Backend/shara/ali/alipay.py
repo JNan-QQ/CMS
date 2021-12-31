@@ -37,12 +37,13 @@ class AliPay(object):
         else:
             self.__gateway = "https://openapi.alipay.com/gateway.do"
 
-    def direct_pay(self, desc, orderNo, price, return_url=None, **kwargs):
+    def direct_pay(self, subject, out_trade_no, total_amount, return_url=None, **kwargs):
         biz_content = {
-            "desc": desc,
-            "orderNo": orderNo,
-            "price": price,
+            "subject": subject,
+            "out_trade_no": out_trade_no,
+            "total_amount": total_amount,
             "product_code": "FAST_INSTANT_TRADE_PAY",
+            # "qr_pay_mode":4
         }
 
         biz_content.update(kwargs)
