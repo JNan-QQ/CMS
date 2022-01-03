@@ -4,7 +4,7 @@ import {ElMessage} from "element-plus";
 // 根据data里的数据类型列出账号
 function listAccount(data, that) {
     return request({
-        url: `/api/account/`,
+        url: `/account/`,
         method: 'post',
         data: Object.assign({action: 'list'}, data)
     }).then(res => {
@@ -15,7 +15,7 @@ function listAccount(data, that) {
 // 修改账号
 function modifyAccount(data, that) {
     return request({
-        url: `/api/account/`,
+        url: `/account/`,
         method: 'post',
         data: Object.assign({action: 'modify'}, data)
     }).then(() => {
@@ -27,7 +27,7 @@ function modifyAccount(data, that) {
 // 添加账号
 function addAccount(data, that) {
     return request({
-        url: `/api/account/`,
+        url: `/account/`,
         method: 'post',
         data: Object.assign({action: 'add'}, data)
     }).then(res => {
@@ -43,7 +43,7 @@ function addAccount(data, that) {
 // 删除账号
 function deleteAccount(data, that) {
     return request({
-        url: `/api/account/`,
+        url: `/account/`,
         method: 'post',
         data: Object.assign({action: 'delete'}, data)
     }).then(res => {
@@ -55,7 +55,7 @@ function deleteAccount(data, that) {
 // 删除账号
 function checkAccount(data) {
     return request({
-        url: `/api/account/`,
+        url: `/account/`,
         method: 'post',
         data: Object.assign({action: 'checkInfo'}, data)
     })

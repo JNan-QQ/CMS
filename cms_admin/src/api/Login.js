@@ -1,8 +1,7 @@
 import request from '../utils/request'
 import {ElMessage} from "element-plus"
-import {ref} from "vue";
 
-const api = '/api/sign/'
+const api = '/sign/'
 
 // 登录函数
 function signin(data, that) {

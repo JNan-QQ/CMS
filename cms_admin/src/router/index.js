@@ -16,7 +16,8 @@ const routes = [
         path: '/login',
         name: 'login',
         component: Login
-    },{
+    },
+    {
         path: '/order',
         name: 'order',
         component: Order
@@ -35,7 +36,7 @@ const routes = [
             }, {
                 path: 'homepage',
                 component: Homepage
-            },{
+            }, {
                 path: 'addMost',
                 component: ExcelData
             },
@@ -49,7 +50,7 @@ const routes = [
             {
                 path: 'front',
                 component: Front
-            },{
+            }, {
                 path: 'contentView',
                 component: ContentView
             },
@@ -66,7 +67,7 @@ const routes = [
 const router = createRouter(
     {
         history: createWebHashHistory(),
-        routes
+        routes,
     })
 
 export default router

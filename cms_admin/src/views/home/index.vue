@@ -89,6 +89,8 @@ export default {
             loginMain('checkLogin', this).then(() => {
                 if (this.userdata['usertype'] === 1) {
                     this.router_index["5"] = '/admin'
+                } else if (this.userdata['usertype'] === 10) {
+                    this.$router.push('/order')
                 }
                 this.$router.push('/front')
             })

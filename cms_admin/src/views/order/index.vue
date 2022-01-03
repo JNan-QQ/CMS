@@ -18,7 +18,7 @@
                 <p>日志定位：客户端LOG4J+数据库记录测试过程日志，2种方式都可以通过Web端实时查看定位问题。</p>
             </el-tab-pane>
             <el-tab-pane label="套餐">
-                <el-card class="box-card" v-for="product in products">
+                <el-card class="box-card" v-for="product in productsList">
                     <template #header>
                         <div class="card-header">
                             <span>{{ product['title'] }}</span>
@@ -26,42 +26,86 @@
                         </div>
                     </template>
                     <div>
-                        <p>时长：{{ product['time'] }}</p>
-                        <p>价格：{{ product['price'] }}</p>
+                        <p>时长：{{ product['timeDays'] }} 天</p>
+                        <p>价格：{{ product['price'] }} 元</p>
                         <p>说明：{{ product['desc'] }}</p>
                     </div>
                 </el-card>
             </el-tab-pane>
-            <el-tab-pane label="订单查询">Config</el-tab-pane>
-            <el-tab-pane label="个人中心">Task</el-tab-pane>
+            <el-tab-pane label="订单查询">
+                <el-button type="primary" @click="listOrder" style="float: right">刷新</el-button>
+                <el-table :data="orderList" stripe style="width: auto" height="600">
+                    <el-table-column prop="orderNo" label="订单号" width="220"/>
+                    <el-table-column prop="money" label="付款金额" width="180"/>
+                    <el-table-column prop="product" label="套餐" width="180"/>
+                    <el-table-column prop="create_time" label="创建时间" width="180"/>
+                    <el-table-column prop="status" label="订单状态"/>
+                </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="个人中心">
+                <el-descriptions :column="2">
+                    <el-descriptions-item label="用户名">{{ userInfo['user__username'] }}</el-descriptions-item>
+                    <el-descriptions-item label="服务截止时间">
+                        <el-tag size="small">{{ userInfo['endTime'] }}</el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="设备1">{{ userInfo['machineCode1'] }}   </el-descriptions-item>
+                    <el-descriptions-item label="设备2">{{ userInfo['machineCode2'] }}</el-descriptions-item>
+                    <el-descriptions-item label="设备3">{{ userInfo['machineCode3'] }}</el-descriptions-item>
+                </el-descriptions>
+            </el-tab-pane>
         </el-tabs>
     </div>
 </template>
 
 <script>
-import {ElMessage} from "element-plus";
 import request from "../../utils/request";
-import {UserFilled, Promotion} from "@element-plus/icons"
-import {markRaw} from "vue";
-import {loginMain} from '../../api/Login'
 
 export default {
     name: "LoginIndex",
     data() {
         return {
-            products: [
-                {title: '包月套餐', time: '一月', price: 100.00, desc: '按月收费，当套餐到期后将无法使用。不享受优惠活动', id: 1},
-                {title: '包年套餐', time: '一年', price: 1000.00, desc: '按年收费，当套餐到期后将无法使用。享受优惠活动', id: 2}
-            ]
+            productsList: [],
+            orderList: [],
+            userInfo: {}
         }
     },
     components: {},
+    mounted() {
+        this.listOrder()
+        this.listProducts()
+        this.listUserInfo()
+    },
     methods: {
+        before() {
+        },
         createOrder(id) {
-            request.get(`/api/Order?action=createOrder&product_id=${id}`).then(res => {
+            request.get(`/Order?action=createOrder&product_id=${id}`).then(res => {
                     window.open(res['url'])
                 }
             )
+        },
+        listOrder() {
+            request.get('/Order?action=listOrder').then(res => {
+                this.orderList = res['retlist']
+                for (let i = 0; i < this.orderList.length; i++) {
+                    const status = this.orderList[i]['status']
+                    if (status === 1) {
+                        this.orderList[i]['status'] = '未付款'
+                    } else if (status === 2) {
+                        this.orderList[i]['status'] = '已付款'
+                    }
+                }
+            })
+        },
+        listProducts() {
+            request.get('/Product?action=listProducts').then(res => {
+                this.productsList = res['retlist']
+            })
+        },
+        listUserInfo() {
+            request.get('/Token?action=userInfo').then(res => {
+                this.userInfo = res['retlist']
+            })
         },
     },
 }

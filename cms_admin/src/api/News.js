@@ -1,7 +1,7 @@
 import request from '../utils/request'
 import {ElMessage} from "element-plus";
 
-const api = `/api/notice/news`
+const api = `/notice/news`
 
 // 根据data里的数据类型列出新闻
 export function listNews(data, that) {

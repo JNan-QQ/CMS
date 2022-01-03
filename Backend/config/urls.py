@@ -17,9 +17,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+
 from login.views import FilesUpDown
 from shara.ali.aliApi import aliPay
-from userToken.views import user_Token
+from userToken.views import user_Token, aliPayView, Product
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
@@ -35,5 +36,8 @@ urlpatterns = [
                   path('files', FilesUpDown().handler),
                   # 网络验证
                   path('Token', user_Token().handler),
-                  path('Order', aliPay().handler),
+                  path('Order', aliPayView().handler),
+                  path('Product', Product().handler),
+                  path('up_order', aliPay().update_order),
+                  path('result', aliPay().pay_result),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

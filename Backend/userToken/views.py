@@ -3,8 +3,9 @@ import json
 
 from django.contrib.auth import authenticate, login, logout
 
+from shara.ali.aliApi import aliPay as Ap
 from shara.shara import jsonResponse
-from .models import userToken
+from .models import userToken, order, products
 
 
 class user_Token:
@@ -28,6 +29,8 @@ class user_Token:
             return self.signout(request)
         elif action == 'machineCode':
             return self.activation(request)
+        elif action == 'userInfo':
+            return self.userInfo(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -67,6 +70,11 @@ class user_Token:
         logout(request)
         return jsonResponse({'ret': 0})
 
+    @staticmethod
+    def userInfo(request):
+        ret = userToken.listUser({'user_id': request.session['user_id']})
+        return jsonResponse(ret)
+
     # 判断是否激活
     def activation(self, request):
         # 获取设备码 cpu + 主板
@@ -80,11 +88,11 @@ class user_Token:
             # 未激活设备尝试写入设备码
             if code not in [machineCode1, machineCode2, machineCode3]:
                 data = {'user_id': request.session['user_id']}
-                if not machineCode1:
+                if machineCode1 is None:
                     data['machineCode1'] = code
-                elif not machineCode2:
+                elif machineCode2 is None:
                     data['machineCode2'] = code
-                elif not machineCode3:
+                elif machineCode3 is None:
                     data['machineCode3'] = code
                 else:
                     return jsonResponse({'ret': 1, 'msg': '一个账号只能激活三套设备，请使用已激活的设备！', 'activeCode': ''})
@@ -96,9 +104,7 @@ class user_Token:
             # 判断是否过期
             endTime = machineCode.get('endTime', None)
             if str(endTime) < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"):
-                print(str(endTime) < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-                print(str(endTime), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-                return jsonResponse({'ret': 1, 'msg': '已过期', 'activeCode': '', 'endTime': str(endTime)})
+                return jsonResponse({'ret': 1, 'msg': '账号套餐已过期', 'activeCode': '', 'endTime': str(endTime)})
 
             # 还回校验码
             now_time = datetime.datetime.now().strftime("%Y%m%d%H%M")
@@ -122,3 +128,73 @@ class user_Token:
             else:
                 str2 += i
         return str2
+
+
+class aliPayView:
+    alipay = Ap()
+
+    def handler(self, request):
+
+        # 将请求参数统一放入request 的 params 属性中，方便后续处理
+        # GET请求 参数 在 request 对象的 GET属性中
+        if request.method == 'GET':
+            request.params = request.GET
+
+        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
+        elif request.method in ['POST', 'PUT', 'DELETE']:
+            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+            request.params = json.loads(request.body)
+
+        # 根据不同的action分派给不同的函数进行处理
+        action = request.params['action']
+        if action == 'createOrder':
+            return self.alipay.createOrder(request)
+        elif action == 'listOrder':
+            return self.listOrder(request)
+        else:
+            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+
+    @staticmethod
+    def listOrder(request):
+        ret = order.list_order({'user_id': request.session['user_id'], 'usertype': request.session['usertype']})
+        return jsonResponse(ret)
+
+
+class Product:
+    def handler(self, request):
+
+        # 将请求参数统一放入request 的 params 属性中，方便后续处理
+        # GET请求 参数 在 request 对象的 GET属性中
+        if request.method == 'GET':
+            request.params = request.GET
+
+        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
+        elif request.method in ['POST', 'PUT', 'DELETE']:
+            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+            request.params = json.loads(request.body)
+
+        # 根据不同的action分派给不同的函数进行处理
+        action = request.params['action']
+        if action == 'listProducts':
+            return self.listProducts(request)
+        elif action == 'addProduct':
+            return self.addProduct(request)
+        elif action == 'modifyProduct':
+            return self.modifyProduct(request)
+        else:
+            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+
+    @staticmethod
+    def listProducts(request):
+        ret = products.list_products({'usertype': request.session['usertype']})
+        return jsonResponse(ret)
+
+    @staticmethod
+    def addProduct(request):
+        ret = products.add_products(request.params)
+        return jsonResponse(ret)
+
+    @staticmethod
+    def modifyProduct(request):
+        ret = products.modify_products(request.params)
+        return jsonResponse(ret)

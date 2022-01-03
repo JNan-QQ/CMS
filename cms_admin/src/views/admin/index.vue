@@ -215,14 +215,14 @@ export default {
 
         // 退出登录函数
         toLogout() {
-            signout()
+            loginMain('signout')
             this.userdata = {
                 realName: '未登录',
                 aviator: '',
                 id: 0,
                 usertype: 0
             }
-            this.$router.push('/')
+            this.$router.push('/login')
         }
     }
 
