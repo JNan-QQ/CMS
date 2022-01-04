@@ -10,6 +10,7 @@ import Homepage from '../views/admin/homepage.vue'
 import ContentView from '../views/home/contentView.vue'
 import CS from '../views/home/index-1'
 import ExcelData from '../components/excelsData.vue'
+import Tools from '../views/tools/'
 
 const routes = [
     {
@@ -53,6 +54,9 @@ const routes = [
             }, {
                 path: 'contentView',
                 component: ContentView
+            }, {
+                path: 'tools',
+                component: Tools
             },
         ]
     },

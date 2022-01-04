@@ -22,7 +22,6 @@
 
 <script>
 import {ElMessage} from "element-plus";
-import request from "../../utils/request";
 import { UserFilled,Promotion } from "@element-plus/icons"
 import {markRaw} from "vue";
 import {loginMain} from '../../api/Login'

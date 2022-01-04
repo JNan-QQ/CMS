@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 
 from shara.ali.aliApi import aliPay as Ap
 from shara.shara import jsonResponse
-from .models import userToken, order, products
+from .models import userToken, order, products, machineCodes
 
 
 class user_Token:
@@ -73,6 +73,8 @@ class user_Token:
     @staticmethod
     def userInfo(request):
         ret = userToken.listUser({'user_id': request.session['user_id']})
+        ret1 = machineCodes.list_code({'user_id': request.session['user_id']})
+        ret['retlist'].update(ret1)
         return jsonResponse(ret)
 
     # 判断是否激活
@@ -81,28 +83,16 @@ class user_Token:
         code = request.params['code']
         if request.session['is_login']:
             # 判断设备激活状态
-            machineCode = userToken.objects.filter(user__id=request.session['user_id']).values()[0]
-            machineCode1 = machineCode.get('machineCode1')
-            machineCode2 = machineCode.get('machineCode2')
-            machineCode3 = machineCode.get('machineCode3')
-            # 未激活设备尝试写入设备码
-            if code not in [machineCode1, machineCode2, machineCode3]:
-                data = {'user_id': request.session['user_id']}
-                if machineCode1 is None:
-                    data['machineCode1'] = code
-                elif machineCode2 is None:
-                    data['machineCode2'] = code
-                elif machineCode3 is None:
-                    data['machineCode3'] = code
-                else:
-                    return jsonResponse({'ret': 1, 'msg': '一个账号只能激活三套设备，请使用已激活的设备！', 'activeCode': ''})
+            if not machineCodes.objects.filter(user__id=request.session['user_id'], machineCode=code).exists():
+                res = machineCodes.add_code({'user_id': request.session['user_id'], 'machineCode': code})
+                if res['ret'] == 1:
+                    return jsonResponse(res)
 
-                res = userToken.modifyToken(data)
-                if res['ret'] != 0:
-                    return jsonResponse({'ret': 1, 'msg': '设备激活失败', 'activeCode': ''})
+            # 判断设备激活状态
+            user_token = userToken.objects.filter(user__id=request.session['user_id']).values()[0]
 
             # 判断是否过期
-            endTime = machineCode.get('endTime', None)
+            endTime = user_token.get('endTime', None)
             if str(endTime) < datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"):
                 return jsonResponse({'ret': 1, 'msg': '账号套餐已过期', 'activeCode': '', 'endTime': str(endTime)})
 

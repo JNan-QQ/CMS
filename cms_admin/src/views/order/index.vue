@@ -18,19 +18,21 @@
                 <p>日志定位：客户端LOG4J+数据库记录测试过程日志，2种方式都可以通过Web端实时查看定位问题。</p>
             </el-tab-pane>
             <el-tab-pane label="套餐">
-                <el-card class="box-card" v-for="product in productsList">
-                    <template #header>
-                        <div class="card-header">
-                            <span>{{ product['title'] }}</span>
-                            <el-button class="button" @click="createOrder(product['id'])">订购</el-button>
+                <div style="display: flex;flex-direction: row;flex-wrap: wrap;">
+                    <el-card class="box-card" v-for="product in productsList">
+                        <template #header>
+                            <div class="card-header">
+                                <span>{{ product['title'] }}</span>
+                                <el-button class="button" @click="createOrder(product['id'])">订购</el-button>
+                            </div>
+                        </template>
+                        <div>
+                            <p>时长：{{ product['timeDays'] }} 天</p>
+                            <p>价格：{{ product['price'] }} 元</p>
+                            <p>说明：{{ product['desc'] }}</p>
                         </div>
-                    </template>
-                    <div>
-                        <p>时长：{{ product['timeDays'] }} 天</p>
-                        <p>价格：{{ product['price'] }} 元</p>
-                        <p>说明：{{ product['desc'] }}</p>
-                    </div>
-                </el-card>
+                    </el-card>
+                </div>
             </el-tab-pane>
             <el-tab-pane label="订单查询">
                 <el-button type="primary" @click="listOrder" style="float: right">刷新</el-button>
@@ -43,14 +45,17 @@
                 </el-table>
             </el-tab-pane>
             <el-tab-pane label="个人中心">
-                <el-descriptions :column="2">
-                    <el-descriptions-item label="用户名">{{ userInfo['user__username'] }}</el-descriptions-item>
-                    <el-descriptions-item label="服务截止时间">
+                <el-descriptions :column="3">
+                    <el-descriptions-item label="用户名：">{{ userInfo['user__username'] }}</el-descriptions-item>
+                    <el-descriptions-item label="服务截止时间：">
                         <el-tag size="small">{{ userInfo['endTime'] }}</el-tag>
                     </el-descriptions-item>
-                    <el-descriptions-item label="设备1">{{ userInfo['machineCode1'] }}   </el-descriptions-item>
-                    <el-descriptions-item label="设备2">{{ userInfo['machineCode2'] }}</el-descriptions-item>
-                    <el-descriptions-item label="设备3">{{ userInfo['machineCode3'] }}</el-descriptions-item>
+                    <el-descriptions-item label="">
+                        <el-button type="danger" size="small" @click="toLogout">退出登录</el-button>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="设备1：">{{ userInfo['machineCode1'] }}</el-descriptions-item>
+                    <el-descriptions-item label="设备2：">{{ userInfo['machineCode2'] }}</el-descriptions-item>
+                    <el-descriptions-item label="设备3：">{{ userInfo['machineCode3'] }}</el-descriptions-item>
                 </el-descriptions>
             </el-tab-pane>
         </el-tabs>
@@ -59,6 +64,8 @@
 
 <script>
 import request from "../../utils/request";
+import {loginMain} from "../../api/Login";
+import userdata from '../../utils/gloab'
 
 export default {
     name: "LoginIndex",
@@ -66,7 +73,8 @@ export default {
         return {
             productsList: [],
             orderList: [],
-            userInfo: {}
+            userInfo: {},
+            userdata
         }
     },
     components: {},
@@ -106,6 +114,17 @@ export default {
             request.get('/Token?action=userInfo').then(res => {
                 this.userInfo = res['retlist']
             })
+        },
+        // 退出登录函数
+        toLogout() {
+            loginMain('signout')
+            this.userdata = {
+                realName: '未登录',
+                aviator: '',
+                id: 0,
+                usertype: 0
+            }
+            this.$router.push('/login')
         },
     },
 }

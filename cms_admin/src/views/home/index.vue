@@ -1,20 +1,23 @@
 <template>
     <div class="home-container">
-        <el-dropdown>
-            <div class="avatar" @click="toLogin">
-                <el-avatar :src="userdata.aviator" size="medium" class="avatar_img" fit="fill"></el-avatar>
-                <div class="user">{{ userdata.realName }}</div>
-                <el-icon>
-                    <arrow-down class="zk"/>
-                </el-icon>
-            </div>
-            <template #dropdown>
-                <el-dropdown-menu>
-                    <el-dropdown-item v-if="userdata.realName !== '未登录'" @click="toLogout">退出登录</el-dropdown-item>
-                    <el-dropdown-item v-else @click="toLogin">登录</el-dropdown-item>
-                </el-dropdown-menu>
-            </template>
-        </el-dropdown>
+        <div class="ava">
+            <el-dropdown>
+                <div class="avatar" @click="toLogin">
+                    <el-avatar :src="userdata.aviator" size="medium" class="avatar_img" fit="fill"></el-avatar>
+                    <div class="user">{{ userdata.realName }}</div>
+                    <el-icon>
+                        <arrow-down class="zk"/>
+                    </el-icon>
+                </div>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item v-if="userdata.realName !== '未登录'" @click="toLogout">退出登录</el-dropdown-item>
+                        <el-dropdown-item v-else @click="toLogin">登录</el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+            <div><router-link to="home/tools"><el-icon size="25" class="tools"><tools/></el-icon></router-link></div>
+        </div>
         <el-container>
             <el-header>
                 <el-menu :default-active="activeIndex" class="header"
@@ -45,7 +48,7 @@
 <script>
 import {loginMain} from "../../api/Login"
 import {ElMessage} from "element-plus"
-import {ArrowDown} from "@element-plus/icons"
+import {ArrowDown, Tools} from "@element-plus/icons"
 import {markRaw} from "vue"
 import userdata from '../../utils/gloab'
 import {listCq} from "../../api/common";
@@ -64,7 +67,7 @@ export default {
         }
     },
     // 注册组件
-    components: {ArrowDown: markRaw(ArrowDown)},
+    components: {ArrowDown: markRaw(ArrowDown), Tools: markRaw(Tools)},
     // 进入页面执行函数
     mounted() {
         this.before()
@@ -79,6 +82,13 @@ export default {
             } else {
                 ElMessage('该页面还未配置奥！')
             }
+        },
+        userdata() {
+            if (this.userdata['usertype'] === 1) {
+                this.router_index["5"] = '/admin'
+            } else if (this.userdata['usertype'] === 10) {
+                this.$router.push('/order')
+            }
         }
     },
 
@@ -86,14 +96,8 @@ export default {
     methods: {
         // 加载函数
         before() {
-            loginMain('checkLogin', this).then(() => {
-                if (this.userdata['usertype'] === 1) {
-                    this.router_index["5"] = '/admin'
-                } else if (this.userdata['usertype'] === 10) {
-                    this.$router.push('/order')
-                }
-                this.$router.push('/front')
-            })
+            loginMain('checkLogin', this)
+            this.$router.push('/front')
         },
 
         // 导航栏点击函数
@@ -134,28 +138,47 @@ export default {
     margin: 0 auto;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 
-    .avatar {
+    .ava {
         display: flex;
-        height: 50px;
+        justify-content: space-between;
 
-        .user {
-            line-height: 50px;
-            margin-right: 10px;
+        .avatar {
+            display: flex;
+            height: 50px;
+
+            .user {
+                line-height: 50px;
+                margin-right: 10px;
+            }
+
+            .avatar_img {
+                margin: auto 10px;
+            }
+
+            .el-icon {
+                margin: auto 0;
+            }
         }
 
-        .avatar_img {
-            margin: auto 10px;
+        .tools{
+            padding-top: 12px;
+            padding-bottom: 12px;
+            margin: auto 10px auto auto;
+            :hover{
+                background-color: #a8dc99;
+            }
         }
 
-        .el-icon {
-            margin: auto 0;
-        }
     }
+
 
     .el-header {
         padding-left: 0;
         padding-right: 0;
         margin-top: 5px;
+    }
+    .el-main{
+        min-height: 700px;
     }
 
     .el-footer {
