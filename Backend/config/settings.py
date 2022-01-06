@@ -24,7 +24,7 @@ SECRET_KEY = '6-h+zu)dyb+d_b9^$x4w*=kt-awfx$k#c@f5=1buv-1cwg(==*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', ]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web']
 
 # Application definition
 
@@ -87,6 +87,19 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',   # 数据库引擎
+#         'NAME': 'cms',       # 数据库名
+#         'USER': 'cms_jn',        # 数据库 用户名
+#         'PASSWORD': '123456',# 数据库 用户密码
+#         'HOST': 'db',   # 数据库服务主机名
+#         'PORT': '3306',        # 数据库服务端口
+#         'CONN_MAX_AGE': 0      # mysql服务端口
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
