@@ -84,7 +84,7 @@ export function modifyNewsImg(data, that) {
     }).then(res => {
         if (res) {
             if (that.baseImg !== '') {
-                request.get('/api/files?action=delete&files_path=' + that.baseImg)
+                request.get('/files?action=delete&files_path=' + that.baseImg)
             }
             that.dialogVisible = false
             that.before()

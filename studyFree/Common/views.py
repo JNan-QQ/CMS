@@ -1,10 +1,5 @@
 import json
-import os
-import random
-import string
-import time
 
-from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 
 from .lib.shara import jsonResponse
@@ -31,6 +26,8 @@ class Login:
             return self.signin(request)
         elif action == 'signout':
             return self.signout(request)
+        elif action == 'checkLogin':
+            return self.checkLogin(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -53,9 +50,11 @@ class Login:
                 request.session['user_id'] = user.id
                 request.session['realName'] = user.realName
                 request.session['aviator'] = str(user.aviator)
+                request.session['username'] = user.username
 
                 return jsonResponse(
-                    {'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName})
+                    {'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName,
+                     'username': user.username})
             else:
                 return jsonResponse({'ret': 0, 'msg': '用户已经被禁用'})
 
@@ -69,5 +68,11 @@ class Login:
         logout(request)
         return jsonResponse({'ret': 0})
 
-
-
+    @staticmethod
+    def checkLogin(request):
+        if request.session.get('is_login', False):
+            return jsonResponse({'ret': 0, 'id': request.session['user_id'], 'usertype': request.session['usertype'],
+                                 'realName': request.session['realName'], 'aviator': request.session['aviator'],
+                                 'username': request.session['username']})
+        else:
+            return jsonResponse({'ret': 302, 'msg': '未登录'})

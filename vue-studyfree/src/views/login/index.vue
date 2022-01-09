@@ -21,13 +21,22 @@
             <div class="register-container">
                 <span class="register" @click="loginOrRegister=false">注册</span>
             </div>
-            <div class="action-container" @click="onSubmit">
-                <span>提交</span>
+            <div class="action-container">
+                <el-button type="warning" plain @click="onSubmit" :disabled="btnStatus">提交</el-button>
             </div>
         </div>
     </div>
 
     <div class="register-containers" v-else>
+        <div class="right-container">
+            <div class="login-containers" @click="loginOrRegister=true">
+                <span class="login">登录</span>
+            </div>
+            <div class="action-container">
+                <el-button type="warning" plain @click="onSubmit" :disabled="btnStatus">提交</el-button>
+            </div>
+        </div>
+
         <div class="left-container">
             <div class="title"><span>注册</span></div>
             <div class="input-container">
@@ -51,20 +60,12 @@
                 </el-form>
             </div>
         </div>
-        <div class="right-container">
-            <div class="login-containers" @click="loginOrRegister=true">
-                <span class="login">登录</span>
-            </div>
-            <div class="action-container" @click="onSubmit">
-                <span>提交</span>
-            </div>
-        </div>
+
     </div>
 </template>
 
 <script>
-import {ElMessage, ElLoading} from "element-plus";
-import {UserFilled, Promotion} from "@element-plus/icons"
+import {Promotion, UserFilled} from "@element-plus/icons"
 import {markRaw} from "vue";
 import {sign} from "@/api/Login";
 
@@ -73,6 +74,7 @@ export default {
     data() {
         return {
             loginOrRegister: true,
+            btnStatus: false,
             loginForm: {
                 username: '',
                 password: '',
@@ -90,23 +92,29 @@ export default {
                 password: [{required: true, message: 'Please input password', trigger: 'blur'}],
                 phone: [{required: true, max: 11, min: 11, message: 'Please input phone', trigger: 'blur'}],
                 code: [{required: true, message: 'Please input right code', trigger: 'blur'}]
-            }
+            },
+            isLogin: this.$store.state.userdata.isLogin
         }
     },
     components: {UserFilled: markRaw(UserFilled), Promotion: markRaw(Promotion)},
+    mounted() {
+    },
     methods: {
         onSubmit() {
+            this.btnStatus = true
             if (this.loginOrRegister) {
                 // 登录
-                const res = sign(this.loginForm)
-                console.log(res)
-
+                sign(this.loginForm, this).then(res => {
+                    if (res['ret'] === 0){
+                        this.$store.commit('changeUserInfo', res)
+                        this.$router.push('/')
+                    }
+                })
             } else {
                 // 注册
-                const res = sign(this.registerForm)
-                console.log(res)
+                sign(this.registerForm)
             }
-
+            this.btnStatus = false
         },
     },
 }
@@ -125,7 +133,6 @@ html {
 body {
     background-image: linear-gradient(to bottom right, rgb(180, 189, 241), rgb(193, 160, 238));
 }
-
 
 .login-container {
     width: 530px;
@@ -211,33 +218,13 @@ body {
         }
 
         .action-container {
-            font-size: 10px;
-            color: #fff;
             text-align: center;
-            position: relative;
-            top: 200px;
-
-            span {
-                border: 1px solid rgb(237, 221, 22);
-                padding: 10px;
-                display: inline;
-                line-height: 20px;
-                border-radius: 20px;
-                position: absolute;
-                bottom: 10px;
-                left: calc(72px - 20px);
-                transition: .2s;
-                cursor: pointer;
-
-                :hover {
-                    background-color: rgb(237, 221, 22);
-                    color: rgb(95, 76, 194);
-                }
-            }
+            margin-top: 150px;
         }
-
     }
+
 }
+
 
 .register-containers {
     width: 530px;
@@ -250,9 +237,9 @@ body {
 
     .left-container {
         display: inline-block;
-        width: 260px;
-        border-top-left-radius: 15px;
-        border-bottom-left-radius: 15px;
+        width: 292px;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
         padding: 54px;
         background-image: linear-gradient(to bottom right, rgb(118, 76, 163), rgb(92, 103, 211));
 
@@ -304,7 +291,7 @@ body {
     }
 
     .right-container {
-        width: 145px;
+        width: 130px;
         display: inline-block;
         height: calc(100% - 120px);
         vertical-align: top;
@@ -323,32 +310,14 @@ body {
         }
 
         .action-container {
-            font-size: 10px;
-            color: #fff;
             text-align: center;
-            position: relative;
-            top: 200px;
-
-            span {
-                border: 1px solid rgb(237, 221, 22);
-                padding: 10px;
-                display: inline;
-                line-height: 20px;
-                border-radius: 20px;
-                position: absolute;
-                bottom: 10px;
-                left: calc(72px - 20px);
-                transition: .2s;
-                cursor: pointer;
-
-                :hover {
-                    background-color: rgb(237, 221, 22);
-                    color: rgb(95, 76, 194);
-                }
-            }
+            margin-top: 260px;
         }
 
+
     }
+
 }
+
 
 </style>
