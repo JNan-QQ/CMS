@@ -10,13 +10,17 @@ export function sign(data,that='') {
     })
 }
 
-// 登录函数
+// 检查是否登录
 export function checkLogin(that) {
     return request({
         url: 'sign',
         method: 'post',
         data: {action:'checkLogin'}
     }).then(res => {
-        that.$store.commit('changeUserInfo', res)
+        if (res){
+            that.$store.commit('changeUserInfo', res)
+        } else{
+            that.$store.commit('deleteUserInfo')
+        }
     })
 }

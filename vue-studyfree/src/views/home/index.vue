@@ -5,25 +5,32 @@
                       style="width: 180px; height: 38px"></el-image>
             <div class="navbar-collapse">
                 <ul class="navbar-nav">
-                    <li class="nav-item position-relative"><a>文章</a><i class="iconfont  ksd-bgd-left">热门</i></li>
-                    <li class="nav-item position-relative"><a>笔记</a></li>
-                    <li><a>技巧</a></li>
-                    <li v-if="false"><a>工具</a></li>
+                    <router-link to="/Article">
+                        <li><a>文章</a><i class="bgd-left">热门</i></li>
+                    </router-link>
+                    <router-link to="/Note">
+                        <li><a>笔记</a></li>
+                    </router-link>
+                    <router-link to="/Skill">
+                        <li><a>技巧</a></li>
+                    </router-link>
+                    <router-link to="/Tool">
+                        <li v-if="false"><a>工具</a></li>
+                    </router-link>
                 </ul>
                 <router-link to="/login" v-if="!userdata.isLogin">
                     <el-button type="primary" :icon="Avatar">登陆</el-button>
                 </router-link>
                 <div class="inLogin" v-else>
-                    <div class="inHome">
+                    <div class="inHome" v-if="inHome">
                         <el-icon>
                             <home-filled/>
                         </el-icon>
-                        <span>进入首页</span></div>
+                        <router-link to="/"><span>进入首页</span></router-link>
+                    </div>
                     <el-dropdown trigger="click">
                         <div class="drop">
-                            <el-avatar :size="38"
-                                       src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                            ></el-avatar>
+                            <el-avatar :size="38" :src="userdata.aviator"></el-avatar>
                             <span>{{ userdata.username }}</span>
                             <el-icon>
                                 <caret-bottom/>
@@ -125,7 +132,12 @@
                                         </ul>
                                     </div>
                                 </el-dropdown-item>
-                                <el-dropdown-item><el-icon><moon /></el-icon>退出登陆</el-dropdown-item>
+                                <el-dropdown-item @click="logout">
+                                    <el-icon>
+                                        <moon/>
+                                    </el-icon>
+                                    退出登陆
+                                </el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -133,19 +145,7 @@
             </div>
         </div>
     </div>
-    <div class="main-view">
-        <div class="product_name">
-            <el-image :src="require('../../assets/studyfree_home.png')" fit="fill"
-                      style="width: 360px;"></el-image>
-        </div>
-        <p class="product-desc">为每个想学习知识的人提供一个少走弯路的平台</p>
-        <p class="product-desc product-desc1">生活明朗，万物可爱，人间值得，未来可期</p>
-        <div class="button-area">
-            <el-button :icon="Notebook" size="large" color="#28c58d">文章</el-button>
-            <el-button :icon="Document" size="large" color="#4d2c8b">笔记</el-button>
-            <el-button :icon="Flag" size="large" color="#b1149e">技巧</el-button>
-        </div>
-    </div>
+    <router-view></router-view>
     <footer class="blog-footer">
         <p>
             <a>关于我们</a>
@@ -177,7 +177,8 @@ import {
     Moon
 } from '@element-plus/icons';
 import {markRaw} from "vue";
-import {checkLogin} from "../../api/Login";
+import {checkLogin, sign} from "../../api/Login";
+import {getCq} from "@/api/common";
 
 export default {
     name: "index",
@@ -185,22 +186,47 @@ export default {
         return {
             Avatar: markRaw(Avatar), Notebook: markRaw(Notebook), Document: markRaw(Document), Flag: markRaw(Flag),
             userdata: this.$store.state.userdata,
+            inHome: false,
+            cq:''
         }
     },
-    components: {CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy,Moon},
+    components: {CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
     mounted() {
+        this.$router.push('/home')
         checkLogin(this)
     },
-    methods: {}
+    watch: {},
+    methods: {
+        logout() {
+            sign({action: 'signout'}).then(res => {
+                if (res) {
+                    checkLogin(this)
+                    this.userdata = {
+                        username: '',
+                        realName: '',
+                        aviator: '',
+                        coins: 0,
+                        usertype: 0,
+                        isLogin: false
+                    }
+                }
+            })
+        },
+    }
 }
 </script>
 
 <style lang="less">
 
+a:link,a:visited{
+ text-decoration:none;  /*超链接无下划线*/
+}
+
 .navbar {
     position: relative;
     text-align: center;
     height: 60px;
+    color: #FFFFFF;
 
     .container {
         width: 100%;
@@ -221,7 +247,6 @@ export default {
                 display: flex;
                 align-items: center;
                 flex-direction: row;
-                color: #FFFFFF;
 
                 .inHome {
                     margin-right: 60px;
@@ -271,7 +296,7 @@ export default {
                     background-color: #1e9fff;
                 }
 
-                .ksd-bgd-left {
+                .bgd-left {
                     position: relative;
                     right: 26px;
                     top: -10px;
@@ -288,47 +313,6 @@ export default {
             }
         }
 
-    }
-}
-
-.main-view {
-    position: absolute;
-    left: 0;
-    top: 44%;
-    transform: translateY(-50%);
-    box-sizing: border-box;
-    max-width: 960px;
-    text-align: center;
-    padding: 40px;
-    margin: 0 auto;
-    right: 0;
-
-    .product_name {
-        display: inline-block;
-    }
-
-    .product-desc {
-        height: 36px;
-        font-size: 28px;
-        font-family: Avenir-Medinum, serif;
-        margin: 20px 10px 0;
-        color: #FFFFFF;
-    }
-
-    .product-desc1 {
-        font-size: 16px;
-    }
-
-    .button-area {
-        font: 14px "Microsoft YaHei UI Light";
-        margin: 55px 0 0;
-
-        .el-button {
-            margin-right: 10px;
-            margin-left: 10px;
-            padding: 0 40px;
-            color: #FFFFFF;
-        }
     }
 }
 

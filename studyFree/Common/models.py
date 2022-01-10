@@ -1,3 +1,4 @@
+import random
 import traceback
 
 from django.contrib.auth.hashers import make_password
@@ -160,3 +161,22 @@ class User(AbstractUser):
 
         except:
             return {'ret': 2, 'msg': f'未知错误\n{traceback.format_exc()}'}
+
+
+# 名人名言
+class CelebrityQuotes(models.Model):
+    # 名言id
+    id = models.BigAutoField(primary_key=True)
+    # 名言内容
+    content = models.CharField(max_length=100, null=True, blank=True)
+    # 作者
+    author = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        db_table = "study_cq"
+
+    @staticmethod  # 随机列出已经名言
+    def listQuotes():
+        retlist = random.choice(list(CelebrityQuotes.objects.values()))
+        # total指定了 一共有多少数据
+        return {'ret': 0, 'retlist': retlist}
