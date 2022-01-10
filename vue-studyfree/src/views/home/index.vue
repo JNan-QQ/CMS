@@ -192,10 +192,15 @@ export default {
     },
     components: {CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
     mounted() {
-        this.$router.push('/home')
+        this.$router.push(this.$store.state.nowUrl)
         checkLogin(this)
     },
-    watch: {},
+    watch: {
+        $route(){
+            const url = this.$route.fullPath
+            this.$store.commit('upDataUrl', url)
+        },
+    },
     methods: {
         logout() {
             sign({action: 'signout'}).then(res => {

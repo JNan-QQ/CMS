@@ -5,11 +5,11 @@
                 <p class="product-desctext">开开心心学习，快快乐乐生活</p>
             </div>
             <div class="tag_items">
-                <el-tag size="large">Tag 1</el-tag>
-                <el-tag class="ml-2" type="success">Tag 2</el-tag>
-                <el-tag class="ml-2" type="info">Tag 3</el-tag>
-                <el-tag class="ml-2" type="warning">Tag 4</el-tag>
-                <el-tag class="ml-2" type="danger">Tag 5</el-tag>
+                <ul>
+                    <router-link :to="'/Article?tag_id='+item.id" v-for="(item,index) in tagList">
+                        <li :class="{active: isActive === index}" @click="getTagContent(index)">{{ item.tagName }}</li>
+                    </router-link>
+                </ul>
             </div>
         </div>
 
@@ -18,7 +18,18 @@
 
 <script>
 export default {
-    name: "article"
+    name: "article",
+    data() {
+        return {
+            isActive: 0,
+            tagList: [{id: 1, tagName: 'Python'}, {id: 2, tagName: 'Java'}],
+        }
+    },
+    methods: {
+        getTagContent(i) {
+            this.isActive = i;
+        }
+    },
 }
 </script>
 
@@ -55,13 +66,39 @@ export default {
         text-align: center;
         margin-top: 40px;
 
-        .el-tag {
-            margin-left: 6px;
-            margin-right: 6px;
-            background-color:transparent;
-            color: #FFFFFF;
+        ul {
+            list-style: none;
+
+            li {
+                display: inline-block;
+                margin-right: 10px;
+                margin-left: 10px;
+                font: 14px Helvetica Neue;
+                color: #FFFFFF;
+                border-radius: 4px;
+                border: 1px solid var(--el-border-color-base);
+                padding: 5px 10px;
+                width: 65px;
+
+
+            }
+
+            li.active {
+                background-color: aquamarine;
+                color: #fa9507;
+            }
+
+            li:hover {
+                background-color: aquamarine;
+            }
+
+            li:active {
+                color: #04121c;
+            }
         }
+
     }
 }
+
 
 </style>

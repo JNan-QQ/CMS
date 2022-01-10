@@ -9,7 +9,8 @@ export default createStore({
             coins: 0,
             usertype: 0,
             isLogin: false
-        }
+        },
+        nowUrl: localStorage.nowUrl || '/home'
     },
     mutations: {
         changeUserInfo(state, payload) {
@@ -31,7 +32,11 @@ export default createStore({
                 usertype: 0,
                 isLogin: false
             }
-        }
+        },
+        upDataUrl(state, url){
+            state.nowUrl = url
+            localStorage.nowUrl = url
+        },
     },
     actions: {},
     modules: {}
