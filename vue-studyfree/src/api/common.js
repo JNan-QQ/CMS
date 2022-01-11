@@ -7,3 +7,20 @@ export function getCq() {
         method: 'get'
     })
 }
+
+// 获取文章页面tags
+export function getSlideTags() {
+    return request({
+        url: 'frontEnd/article?action=slideTags',
+        method: 'get'
+    })
+}
+
+// 获取文章页面content
+export function getContentTags(data) {
+    return request({
+        url: 'frontEnd/article',
+        method: 'post',
+        data:data
+    })
+}

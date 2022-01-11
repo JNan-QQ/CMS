@@ -6,9 +6,9 @@
             </div>
             <div class="tag_items">
                 <ul>
-                    <router-link :to="'/Article?tag_id='+item.id" v-for="(item,index) in tagList">
-                        <li :class="{active: isActive === index}" @click="getTagContent(index)">{{ item.tagName }}</li>
-                    </router-link>
+                    <li v-for="(item,index) in tagList" :class="{active: isActive === index}"
+                        @click="getTagContent(index)">{{ item.tag_name }}
+                    </li>
                 </ul>
             </div>
         </div>
@@ -17,18 +17,38 @@
 </template>
 
 <script>
+import {getContentTags, getSlideTags} from "@/api/common";
+
 export default {
     name: "article",
     data() {
         return {
             isActive: 0,
-            tagList: [{id: 1, tagName: 'Python'}, {id: 2, tagName: 'Java'}],
+            tagList: [{id: 1, tag_name: 'Python'}, {id: 2, tag_name: 'Java'}],
+            contentTagList: []
         }
+    },
+    watch: {
+        isActive() {
+            const tag_id = this.tagList[this.isActive].id
+            getContentTags({action: 'contentTags', 'tag_id': tag_id}).then(res => {
+                if (res) {
+                    this.contentTagList = res['retlist']
+                }
+            })
+        }
+    },
+    mounted() {
+        getSlideTags().then(res => {
+            if (res) {
+                this.tagList = res['retlist']
+            }
+        })
     },
     methods: {
         getTagContent(i) {
             this.isActive = i;
-        }
+        },
     },
 }
 </script>

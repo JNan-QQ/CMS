@@ -15,7 +15,7 @@
                         <li><a>技巧</a></li>
                     </router-link>
                     <router-link to="/Tool">
-                        <li v-if="false"><a>工具</a></li>
+                        <li v-if="userdata.isLogin"><a>工具</a></li>
                     </router-link>
                 </ul>
                 <router-link to="/login" v-if="!userdata.isLogin">
@@ -192,8 +192,10 @@ export default {
     },
     components: {CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
     mounted() {
-        this.$router.push(this.$store.state.nowUrl)
+        // this.$router.push(this.$store.state.nowUrl)
         checkLogin(this)
+        this.jumpUrl()
+
     },
     watch: {
         $route(){
@@ -216,6 +218,11 @@ export default {
                     }
                 }
             })
+        },
+        jumpUrl(){
+            if (this.$route.path === '/'){
+                this.$router.push('/home')
+            }
         },
     }
 }
