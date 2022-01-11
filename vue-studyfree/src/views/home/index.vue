@@ -26,7 +26,7 @@
                         <el-icon>
                             <home-filled/>
                         </el-icon>
-                        <router-link to="/"><span>进入首页</span></router-link>
+                        <router-link to="/home"><span>进入首页</span></router-link>
                     </div>
                     <el-dropdown trigger="click">
                         <div class="drop">
@@ -146,18 +146,6 @@
         </div>
     </div>
     <router-view></router-view>
-    <footer class="blog-footer">
-        <p>
-            <a>关于我们</a>
-            <span>|</span>
-            <a>加入我们</a>
-            <span>|</span>
-            <a>联系我们</a>
-        </p>
-        <p>
-            <span>EveryOne © 个人学习备忘网站 </span><a>待备案 - 20220122 </a>
-        </p>
-    </footer>
 </template>
 
 <script>
@@ -201,6 +189,7 @@ export default {
         $route(){
             const url = this.$route.fullPath
             this.$store.commit('upDataUrl', url)
+            this.inHome = url !== '/home';
         },
     },
     methods: {
@@ -267,6 +256,7 @@ a:link,a:visited{
                 .drop {
                     display: flex;
                     align-items: center;
+                    color: #FFFFFF;
 
                     span {
                         margin-left: 3px;
@@ -326,27 +316,6 @@ a:link,a:visited{
         }
 
     }
-}
-
-.blog-footer {
-    position: absolute;
-    bottom: 5%;
-    right: 0;
-    left: 0;
-    padding: 40px 16px;
-    font-size: 12px;
-    color: #FFFFFF;
-    text-align: center;
-
-    p {
-        margin-top: 10px;
-
-        span {
-            margin-left: 10px;
-            margin-right: 10px;
-        }
-    }
-
 }
 
 
@@ -421,7 +390,7 @@ a:link,a:visited{
 }
 
 @media (min-width: 1200px) {
-    .container, .container-lg, .container-md, .container-sm, .container-xl {
+    .container, .container-lg, .container-md, .container-sm, .container-xl,.courseListBox{
         max-width: 1140px;
     }
 }

@@ -18,6 +18,18 @@
             </router-link>
         </div>
     </div>
+    <footer class="blog-footer">
+        <p>
+            <a>关于我们</a>
+            <span>|</span>
+            <a>加入我们</a>
+            <span>|</span>
+            <a>联系我们</a>
+        </p>
+        <p>
+            <span>EveryOne © 个人学习备忘网站 </span><a>待备案 - 20220122 </a>
+        </p>
+    </footer>
 </template>
 
 <script>
@@ -42,7 +54,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 
 .main-view {
     position: absolute;
@@ -83,6 +95,27 @@ export default {
             color: #FFFFFF;
         }
     }
+}
+
+.blog-footer {
+    position: absolute;
+    bottom: 5%;
+    right: 0;
+    left: 0;
+    padding: 40px 16px;
+    font-size: 12px;
+    color: #FFFFFF;
+    text-align: center;
+
+    p {
+        margin-top: 10px;
+
+        span {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    }
+
 }
 
 </style>

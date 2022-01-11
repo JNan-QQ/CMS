@@ -3,7 +3,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Login from '@/views/login'
 import Index from '@/views/home'
 import home from '@/views/home/home.vue'
-import article from "@/views/home/article";
+import article from "@/views/home/articleView.vue";
 
 
 const routes = [
