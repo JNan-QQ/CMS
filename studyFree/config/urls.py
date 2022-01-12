@@ -16,11 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import FrontEnd.urls
-from Common.views import Login, CQ
+from Common.views import Login, CQ, FileStream
+
+from django.views import static  # 新增
+from django.conf import settings  # 新增
+from django.conf.urls import url  # 新增
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('sign', Login().handler),
     path('cq', CQ().handler),
     path('frontEnd/', include(FrontEnd.urls)),
+    path('fileStream', FileStream().handler),
+    # 以下是新增
+    url(r'^static/(?P<path>.*)$', static.serve,
+        {'document_root': settings.STATIC_ROOT}, name='static'),
 ]
