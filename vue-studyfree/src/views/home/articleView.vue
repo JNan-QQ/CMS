@@ -19,13 +19,15 @@
                     <span>第{{ chineseIndex[index] }}阶段：{{ tag2.tag_name }}</span>
                 </h2>
                 <div class="path-course-r">
-                    <div class="content" v-for="tag3 in tag2.content">
+                    <div class="content" v-for="tag3 in tag2.content" @click="toMarkdown">
                         <el-image fit="fill" src="	https://www.kuangstudy.com/assert/course/c1/04.jpg"></el-image>
                         <div>
                             <h3>{{ tag3.tag_name }}</h3>
                             <p>这是一个描述</p>
                             <div class="views">
-                                <el-icon> <pointer/></el-icon>
+                                <el-icon>
+                                    <pointer/>
+                                </el-icon>
                                 <span>23354</span></div>
                         </div>
                     </div>
@@ -33,7 +35,7 @@
             </div>
         </div>
     </div>
-    <footer class="blog-footer">
+    <div class="blog-footer">
         <p>
             <a>关于我们</a>
             <span>|</span>
@@ -41,10 +43,10 @@
             <span>|</span>
             <a>联系我们</a>
         </p>
-        <p>
+        <p class="down">
             <span>EveryOne © 个人学习备忘网站 </span><a>待备案 - 20220122 </a>
         </p>
-    </footer>
+    </div>
 </template>
 
 <script>
@@ -88,20 +90,25 @@ export default {
         getTagContent(i) {
             this.isActive = i;
         },
+        toMarkdown() {
+            this.$router.push('/md')
+        }
     },
 }
 </script>
 
 <style lang="less" scoped>
 .main-article {
-    height: auto;
-    background-color: #e0dddd;
+    //background-color: #e0dddd;
     position: relative;
+    height:calc(100vh - 140px);
+    overflow-y:auto;
 
     .slide-item-table {
         height: 280px;
         background-image: url("../../assets/coursebg.jpg");
         border-top: #FFFFFF solid 1px;
+        border-bottom: #FFFFFF solid 1px;
         color: #FFFFFF;
 
         .text-center {
@@ -167,7 +174,7 @@ export default {
         padding-right: 15px;
         padding-left: 15px;
         width: 100%;
-        position: relative;
+        min-height: 310px;
 
         .course_stage_item {
             position: relative;
@@ -178,7 +185,7 @@ export default {
             h2 {
                 color: #1E9FFF;
                 font-size: 22px;
-                padding-top: 3px;
+                padding-top: 0;
                 font-weight: bold;
 
                 .cro_icon1 {
@@ -186,8 +193,8 @@ export default {
                     height: 30px;
                     background-color: #1E9FFF;
                     position: absolute;
-                    left: -44px;
-                    top: 4px;
+                    left: -42px;
+                    top: 0;
                     border-radius: 50%;
                     z-index: 3;
                     text-align: center;
@@ -209,6 +216,7 @@ export default {
                     padding: 15px;
                     background-color: #FFFFFF;
                     margin: 1.5%;
+                    border-radius: 4px;
 
                     .el-image {
                         height: 66.66%;
@@ -240,7 +248,8 @@ export default {
                         .views {
                             text-align: right;
                             margin-top: 5px;
-                            .el-icon{
+
+                            .el-icon {
                                 margin-right: 2px;
                             }
                         }
@@ -255,20 +264,24 @@ export default {
 }
 
 .blog-footer {
-    right: 0;
-    left: 0;
-    padding: 40px 16px;
+    padding: 20px 16px;
     font-size: 12px;
     color: #FFFFFF;
     text-align: center;
+    height: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
     p {
-        margin-top: 10px;
-
         span {
             margin-left: 10px;
             margin-right: 10px;
         }
+    }
+    p.down{
+        margin-top: 10px;
     }
 
 }

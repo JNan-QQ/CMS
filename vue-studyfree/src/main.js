@@ -9,15 +9,8 @@ import VueParticles from 'vue-particles'
 
 // makeDown 编辑器
 import 'github-markdown-css'
-import highlight from 'highlight.js';
-Vue.use(highlight)
-//封装成一个指令
-Vue.directive('highlight', (el) => {
-  let blocks = el.querySelectorAll('pre code')
-  blocks.forEach((block) => {
-    highlight.highlightBlock(block)
-  })
-})
+// import highlight from 'highlight.js';
+
 
 // element ui 逐渐库
 import ElementPlus from 'element-plus'

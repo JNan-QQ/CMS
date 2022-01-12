@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : mysql8.0
+Source Server         : localhost_3306
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-12 17:13:07
+Date: 2022-01-12 23:00:58
 */
 
 SET FOREIGN_KEY_CHECKS=0;

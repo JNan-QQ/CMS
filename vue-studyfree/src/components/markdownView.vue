@@ -1,5 +1,5 @@
 <template>
-    <div class="markdown-body" v-html="articleContent" v-highlight></div>
+    <div class="markdown-body" v-html="articleContent"></div>
 </template>
 
 <script>
@@ -29,6 +29,7 @@ export default {
     max-width: 980px;
     margin: 0 auto;
     padding: 45px;
+    position: relative;
 }
 
 @media (max-width: 767px) {

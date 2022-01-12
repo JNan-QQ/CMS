@@ -32,6 +32,6 @@ export default {
 #particles-js {
     width: 100%;
     height: calc(100% - 100px);
-    position: absolute;
+    position: fixed;
 }
 </style>

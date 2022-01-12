@@ -146,6 +146,7 @@
         </div>
     </div>
     <router-view></router-view>
+
 </template>
 
 <script>
@@ -157,16 +158,15 @@ import {
     Document,
     Flag,
     HomeFilled,
+    Moon,
     Notebook,
     Position,
     Setting,
     Star,
-    Trophy,
-    Moon
+    Trophy
 } from '@element-plus/icons';
 import {markRaw} from "vue";
 import {checkLogin, sign} from "../../api/Login";
-import {getCq} from "@/api/common";
 
 export default {
     name: "index",
@@ -175,7 +175,7 @@ export default {
             Avatar: markRaw(Avatar), Notebook: markRaw(Notebook), Document: markRaw(Document), Flag: markRaw(Flag),
             userdata: this.$store.state.userdata,
             inHome: false,
-            cq:''
+            cq: ''
         }
     },
     components: {CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
@@ -186,10 +186,11 @@ export default {
 
     },
     watch: {
-        $route(){
+        $route() {
             const url = this.$route.fullPath
             this.$store.commit('upDataUrl', url)
-            this.inHome = url !== '/home';
+            console.log(url)
+            this.inHome = url !== '/home'
         },
     },
     methods: {
@@ -208,10 +209,14 @@ export default {
                 }
             })
         },
-        jumpUrl(){
-            if (this.$route.path === '/'){
+        jumpUrl() {
+            if (this.$route.path === '/') {
                 this.$router.push('/home')
+            }else {
+                this.inHome = this.$route.path !== '/home';
             }
+
+
         },
     }
 }
@@ -219,15 +224,16 @@ export default {
 
 <style lang="less">
 
-a:link,a:visited{
- text-decoration:none;  /*超链接无下划线*/
+a:link, a:visited {
+    text-decoration: none; /*超链接无下划线*/
 }
 
 .navbar {
-    position: relative;
+    position: sticky;
     text-align: center;
     height: 60px;
     color: #FFFFFF;
+    top: 0;
 
     .container {
         width: 100%;
@@ -251,6 +257,14 @@ a:link,a:visited{
 
                 .inHome {
                     margin-right: 60px;
+                    display: flex;
+                    align-items: center;
+                    span{
+                        color: #FFFFFF;
+                        margin-left: 5px;
+                        font-size: 14px;
+                    }
+
                 }
 
                 .drop {
@@ -390,7 +404,7 @@ a:link,a:visited{
 }
 
 @media (min-width: 1200px) {
-    .container, .container-lg, .container-md, .container-sm, .container-xl,.courseListBox{
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .courseListBox {
         max-width: 1140px;
     }
 }
