@@ -1,10 +1,13 @@
 import json
+import os.path
+import traceback
 
 from django.shortcuts import render
 
 # Create your views here.
 from Common.lib.shara import jsonResponse
-from FrontEnd.models import Tags
+from FrontEnd.models import Tags, ArticleContent
+from config import settings
 
 
 class Article:
@@ -27,6 +30,8 @@ class Article:
             return self.listSlideTags(request)
         elif action == 'contentTags':
             return self.listContentTags(request)
+        elif action == 'markdownContent':
+            return self.list_md_content(request)
 
     @staticmethod
     def listSlideTags(request):
@@ -39,3 +44,20 @@ class Article:
         data = {'tage_id': request.params['tag_id']}
         ret = Tags.list_tags(data)
         return jsonResponse(ret)
+
+    @staticmethod
+    def list_md_content(request):
+        tag_id = request.params['tag_id']
+
+        try:
+            filePathDict = ArticleContent.list({'tag_id': tag_id})
+            filePath = os.path.join(settings.BASE_DIR, 'static', filePathDict['filePath'])
+            if filePathDict:
+                with open(filePath, 'r', encoding='utf8') as f:
+                    mdContent = f.read()
+                return jsonResponse({'ret': 0, 'mdContent': mdContent})
+            else:
+                return jsonResponse({'ret': 0, 'mdContent': '没有找到该文章，请联系管理员添加！'})
+        except:
+            traceback.print_exc()
+            return jsonResponse({'ret': 0, 'mdContent': '404'})

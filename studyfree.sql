@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost_3306
+Source Server         : mysql8.0
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-12 23:00:58
+Date: 2022-01-13 16:52:12
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -61,7 +61,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of auth_permission
@@ -98,6 +98,10 @@ INSERT INTO `auth_permission` VALUES ('29', 'Can add tags', '8', 'add_tags');
 INSERT INTO `auth_permission` VALUES ('30', 'Can change tags', '8', 'change_tags');
 INSERT INTO `auth_permission` VALUES ('31', 'Can delete tags', '8', 'delete_tags');
 INSERT INTO `auth_permission` VALUES ('32', 'Can view tags', '8', 'view_tags');
+INSERT INTO `auth_permission` VALUES ('33', 'Can add article content', '9', 'add_articlecontent');
+INSERT INTO `auth_permission` VALUES ('34', 'Can change article content', '9', 'change_articlecontent');
+INSERT INTO `auth_permission` VALUES ('35', 'Can delete article content', '9', 'delete_articlecontent');
+INSERT INTO `auth_permission` VALUES ('36', 'Can view article content', '9', 'view_articlecontent');
 
 -- ----------------------------
 -- Table structure for `django_admin_log`
@@ -134,7 +138,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_content_type
@@ -145,6 +149,7 @@ INSERT INTO `django_content_type` VALUES ('2', 'auth', 'permission');
 INSERT INTO `django_content_type` VALUES ('7', 'Common', 'celebrityquotes');
 INSERT INTO `django_content_type` VALUES ('6', 'Common', 'user');
 INSERT INTO `django_content_type` VALUES ('4', 'contenttypes', 'contenttype');
+INSERT INTO `django_content_type` VALUES ('9', 'FrontEnd', 'articlecontent');
 INSERT INTO `django_content_type` VALUES ('8', 'FrontEnd', 'tags');
 INSERT INTO `django_content_type` VALUES ('5', 'sessions', 'session');
 
@@ -158,7 +163,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_migrations
@@ -185,6 +190,8 @@ INSERT INTO `django_migrations` VALUES ('19', 'sessions', '0001_initial', '2022-
 INSERT INTO `django_migrations` VALUES ('20', 'Common', '0002_celebrityquotes', '2022-01-10 07:15:55.048956');
 INSERT INTO `django_migrations` VALUES ('21', 'FrontEnd', '0001_initial', '2022-01-11 04:53:22.391935');
 INSERT INTO `django_migrations` VALUES ('22', 'FrontEnd', '0002_alter_tags_tag_id', '2022-01-11 04:53:22.397980');
+INSERT INTO `django_migrations` VALUES ('23', 'FrontEnd', '0003_articlecontent', '2022-01-13 02:52:03.558768');
+INSERT INTO `django_migrations` VALUES ('24', 'FrontEnd', '0004_alter_articlecontent_filepath', '2022-01-13 03:12:34.212729');
 
 -- ----------------------------
 -- Table structure for `django_session`
@@ -204,6 +211,29 @@ CREATE TABLE `django_session` (
 INSERT INTO `django_session` VALUES ('0c6zb7pf0bc6zxgro2ra3g7ryoim0twd', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n7F1u:tWSEAnKZv41A_GpT4SWHIEA8hhlzddaXtKDdY0c61c8', '2022-01-25 11:09:30.644724');
 INSERT INTO `django_session` VALUES ('e6sahijys29j5hfvy6751fr91qovja77', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n6kfJ:ZPczdusOfMQomPpZmVgOVpxMdt9VMfXPp4heDYNy28E', '2022-01-24 02:44:09.539123');
 INSERT INTO `django_session` VALUES ('wtw0aoj6keoz68hl10p1jzaavb0nilah', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n7Czc:3u9cy44esO0ewzOAIMZYRSleM-GYtDdcrxL_MvfE3n0', '2022-01-25 08:59:00.942018');
+
+-- ----------------------------
+-- Table structure for `study_articlecontent`
+-- ----------------------------
+DROP TABLE IF EXISTS `study_articlecontent`;
+CREATE TABLE `study_articlecontent` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `status` int unsigned NOT NULL,
+  `images` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `filePath` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `tag_id_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `study_articleContent_tag_id_id_9b6029d1_fk_study_tags_id` (`tag_id_id`),
+  CONSTRAINT `study_articleContent_tag_id_id_9b6029d1_fk_study_tags_id` FOREIGN KEY (`tag_id_id`) REFERENCES `study_tags` (`id`),
+  CONSTRAINT `study_articlecontent_chk_1` CHECK ((`status` >= 0))
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- ----------------------------
+-- Records of study_articlecontent
+-- ----------------------------
+INSERT INTO `study_articlecontent` VALUES ('1', '1', 'images/python-default.png', 'md/编写测试用例.md', '5');
+INSERT INTO `study_articlecontent` VALUES ('2', '1', 'images/python-default.png', null, '6');
+INSERT INTO `study_articlecontent` VALUES ('3', '1', 'images/python-default.png', null, '7');
 
 -- ----------------------------
 -- Table structure for `study_cq`

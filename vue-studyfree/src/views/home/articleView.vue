@@ -19,8 +19,8 @@
                     <span>第{{ chineseIndex[index] }}阶段：{{ tag2.tag_name }}</span>
                 </h2>
                 <div class="path-course-r">
-                    <div class="content" v-for="tag3 in tag2.content" @click="toMarkdown">
-                        <el-image fit="fill" src="	https://www.kuangstudy.com/assert/course/c1/04.jpg"></el-image>
+                    <div class="content" v-for="tag3 in tag2.content" @click="toMarkdown(tag3.id)">
+                        <el-image fit="fill" :src="`api/static/` + tag3.images"></el-image>
                         <div>
                             <h3>{{ tag3.tag_name }}</h3>
                             <p>这是一个描述</p>
@@ -58,8 +58,12 @@ export default {
     data() {
         return {
             isActive: 0,
-            tagList: [{id: 1, tag_name: 'Python'}, {id: 2, tag_name: 'Java'}],
-            contentTagList: [{id: 1, tag_name: '', content: [{id: 1, tag_name: ''}]}],
+            tagList: [{id: 0, tag_name: ''}],
+            contentTagList: [{
+                id: 0,
+                tag_name: '',
+                content: [{id: 1, tag_name: '', images: 'images/python-default.png'}]
+            }],
             chineseIndex: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
         }
     },
@@ -78,20 +82,27 @@ export default {
         getSlideTags().then(res => {
             if (res) {
                 this.tagList = res['retlist']
+                getContentTags({action: 'contentTags', 'tag_id': this.tagList[this.isActive].id}).then(res => {
+                    if (res) {
+                        this.contentTagList = res['retlist']
+                    }
+                })
             }
         })
-        getContentTags({action: 'contentTags', 'tag_id': this.tagList[this.isActive].id}).then(res => {
-            if (res) {
-                this.contentTagList = res['retlist']
-            }
-        })
+
+
     },
     methods: {
         getTagContent(i) {
             this.isActive = i;
         },
-        toMarkdown() {
-            this.$router.push('/md')
+        toMarkdown(id) {
+            // this.$router.push('/?id=' + id)
+            let routeUrl = this.$router.resolve({
+                path: '/md',
+                query: {id: id}
+            })
+            window.open(routeUrl.href, '_blank')
         }
     },
 }
@@ -101,8 +112,8 @@ export default {
 .main-article {
     //background-color: #e0dddd;
     position: relative;
-    height:calc(100vh - 140px);
-    overflow-y:auto;
+    height: calc(100vh - 140px);
+    overflow-y: auto;
 
     .slide-item-table {
         height: 280px;
@@ -273,6 +284,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    border-top: #FFFFFF solid 1px;
 
     p {
         span {
@@ -280,7 +292,8 @@ export default {
             margin-right: 10px;
         }
     }
-    p.down{
+
+    p.down {
         margin-top: 10px;
     }
 
