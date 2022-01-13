@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : mysql8.0
+Source Server         : localhost_3306
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-13 16:52:12
+Date: 2022-01-13 19:45:20
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -219,8 +219,8 @@ DROP TABLE IF EXISTS `study_articlecontent`;
 CREATE TABLE `study_articlecontent` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `status` int unsigned NOT NULL,
-  `images` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
-  `filePath` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `images` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `filePath` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `tag_id_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
   KEY `study_articleContent_tag_id_id_9b6029d1_fk_study_tags_id` (`tag_id_id`),

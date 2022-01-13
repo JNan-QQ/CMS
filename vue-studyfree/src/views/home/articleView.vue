@@ -23,12 +23,15 @@
                         <el-image fit="fill" :src="`api/static/` + tag3.images"></el-image>
                         <div>
                             <h3>{{ tag3.tag_name }}</h3>
-                            <p>这是一个描述</p>
                             <div class="views">
-                                <el-icon>
-                                    <pointer/>
-                                </el-icon>
-                                <span>23354</span></div>
+                                <span class="desc">这是一个描述</span>
+                                <div class="hot">
+                                    <el-icon>
+                                        <pointer/>
+                                    </el-icon>
+                                    <span>23354</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -114,6 +117,7 @@ export default {
     position: relative;
     height: calc(100vh - 140px);
     overflow-y: auto;
+    background-color: #414444;
 
     .slide-item-table {
         height: 280px;
@@ -221,21 +225,21 @@ export default {
                 margin-top: 15px;
 
                 .content {
-                    width: 20%;
+                    width: 23%;
                     height: 250px;
                     text-align: center;
-                    padding: 15px;
+                    padding: 10px;
                     background-color: #FFFFFF;
                     margin: 1.5%;
                     border-radius: 4px;
 
                     .el-image {
-                        height: 66.66%;
+                        height: 70%;
                         border-radius: 4px;
                     }
 
                     div {
-                        height: 33.33%;
+                        height: 30%;
 
                         h3 {
                             font-size: 16px;
@@ -245,23 +249,28 @@ export default {
                             text-align: left;
                         }
 
-                        p {
-                            line-height: 20px;
-                            margin-bottom: 10px;
-                            font-size: 13px;
-                            color: #999;
-                            display: -webkit-box;
-                            display: flex;
-                            -webkit-box-pack: justify;
-                            justify-content: space-between;
-                        }
-
                         .views {
-                            text-align: right;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            height: 16px;
                             margin-top: 5px;
 
-                            .el-icon {
-                                margin-right: 2px;
+                            .desc {
+                                max-width: 65%;
+                                overflow: hidden; //超出的文本隐藏
+                                text-overflow: ellipsis; //溢出用省略号显示
+                                white-space: nowrap; //溢出不换行
+                            }
+
+                            .hot {
+                                height: 16px;
+                                width: 30%;
+                                text-align: right;
+
+                                span {
+                                    margin-left: 2px;
+                                }
                             }
                         }
 
