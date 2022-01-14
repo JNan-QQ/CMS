@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost_3306
+Source Server         : mysql8.0
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-13 19:45:20
+Date: 2022-01-14 17:17:08
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -61,7 +61,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of auth_permission
@@ -102,6 +102,10 @@ INSERT INTO `auth_permission` VALUES ('33', 'Can add article content', '9', 'add
 INSERT INTO `auth_permission` VALUES ('34', 'Can change article content', '9', 'change_articlecontent');
 INSERT INTO `auth_permission` VALUES ('35', 'Can delete article content', '9', 'delete_articlecontent');
 INSERT INTO `auth_permission` VALUES ('36', 'Can view article content', '9', 'view_articlecontent');
+INSERT INTO `auth_permission` VALUES ('37', 'Can add pay config', '10', 'add_payconfig');
+INSERT INTO `auth_permission` VALUES ('38', 'Can change pay config', '10', 'change_payconfig');
+INSERT INTO `auth_permission` VALUES ('39', 'Can delete pay config', '10', 'delete_payconfig');
+INSERT INTO `auth_permission` VALUES ('40', 'Can view pay config', '10', 'view_payconfig');
 
 -- ----------------------------
 -- Table structure for `django_admin_log`
@@ -138,7 +142,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_content_type
@@ -151,6 +155,7 @@ INSERT INTO `django_content_type` VALUES ('6', 'Common', 'user');
 INSERT INTO `django_content_type` VALUES ('4', 'contenttypes', 'contenttype');
 INSERT INTO `django_content_type` VALUES ('9', 'FrontEnd', 'articlecontent');
 INSERT INTO `django_content_type` VALUES ('8', 'FrontEnd', 'tags');
+INSERT INTO `django_content_type` VALUES ('10', 'Pay', 'payconfig');
 INSERT INTO `django_content_type` VALUES ('5', 'sessions', 'session');
 
 -- ----------------------------
@@ -163,7 +168,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_migrations
@@ -192,6 +197,8 @@ INSERT INTO `django_migrations` VALUES ('21', 'FrontEnd', '0001_initial', '2022-
 INSERT INTO `django_migrations` VALUES ('22', 'FrontEnd', '0002_alter_tags_tag_id', '2022-01-11 04:53:22.397980');
 INSERT INTO `django_migrations` VALUES ('23', 'FrontEnd', '0003_articlecontent', '2022-01-13 02:52:03.558768');
 INSERT INTO `django_migrations` VALUES ('24', 'FrontEnd', '0004_alter_articlecontent_filepath', '2022-01-13 03:12:34.212729');
+INSERT INTO `django_migrations` VALUES ('25', 'Pay', '0001_initial', '2022-01-14 04:59:18.431532');
+INSERT INTO `django_migrations` VALUES ('26', 'Pay', '0002_auto_20220114_1639', '2022-01-14 08:39:27.815852');
 
 -- ----------------------------
 -- Table structure for `django_session`
@@ -208,9 +215,30 @@ CREATE TABLE `django_session` (
 -- ----------------------------
 -- Records of django_session
 -- ----------------------------
-INSERT INTO `django_session` VALUES ('0c6zb7pf0bc6zxgro2ra3g7ryoim0twd', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n7F1u:tWSEAnKZv41A_GpT4SWHIEA8hhlzddaXtKDdY0c61c8', '2022-01-25 11:09:30.644724');
-INSERT INTO `django_session` VALUES ('e6sahijys29j5hfvy6751fr91qovja77', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n6kfJ:ZPczdusOfMQomPpZmVgOVpxMdt9VMfXPp4heDYNy28E', '2022-01-24 02:44:09.539123');
-INSERT INTO `django_session` VALUES ('wtw0aoj6keoz68hl10p1jzaavb0nilah', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n7Czc:3u9cy44esO0ewzOAIMZYRSleM-GYtDdcrxL_MvfE3n0', '2022-01-25 08:59:00.942018');
+INSERT INTO `django_session` VALUES ('16u3flb5pgev6ba5fvjdtp4rui91jjsp', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n8Ft3:Gz-YbGE1dWxY-1l-C7wireZEIxmuHEknoKXYmdwFv_s', '2022-01-28 06:16:33.102840');
+INSERT INTO `django_session` VALUES ('3f3fcxjzm9kkt5md95s2kwq4agh5n0il', 'e30:1n8Fpf:kYWQ7OyDNgsTnD6V2AN-_wRTy-KYNUtazn0znuaWrwU', '2022-01-28 06:13:03.186106');
+
+-- ----------------------------
+-- Table structure for `pay_config`
+-- ----------------------------
+DROP TABLE IF EXISTS `pay_config`;
+CREATE TABLE `pay_config` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `coins` int DEFAULT NULL,
+  `exp` int DEFAULT NULL,
+  `lv` int DEFAULT NULL,
+  `deadline` datetime(6) NOT NULL,
+  `user_id_id` bigint NOT NULL,
+  `qd` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pay_config_user_id_id_3a9ecdb7_fk_study_user_id` (`user_id_id`),
+  CONSTRAINT `pay_config_user_id_id_3a9ecdb7_fk_study_user_id` FOREIGN KEY (`user_id_id`) REFERENCES `study_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- ----------------------------
+-- Records of pay_config
+-- ----------------------------
+INSERT INTO `pay_config` VALUES ('1', '99999999', '14345', '4', '2022-01-21 13:01:16.000000', '1', '1');
 
 -- ----------------------------
 -- Table structure for `study_articlecontent`
@@ -309,7 +337,7 @@ CREATE TABLE `study_user` (
 -- ----------------------------
 -- Records of study_user
 -- ----------------------------
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-11 11:09:30.542902', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', null, 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-14 06:16:33.094135', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', null, 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
 
 -- ----------------------------
 -- Table structure for `study_user_groups`

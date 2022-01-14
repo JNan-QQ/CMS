@@ -1,9 +1,11 @@
+import datetime
 import json
 import os
-
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-
+from django.contrib.sessions.models import Session
+from django.db.models import Q
+from Pay.models import PayConfig
 from .lib.shara import jsonResponse
 from .models import CelebrityQuotes
 
@@ -46,6 +48,15 @@ class Login:
             if user.is_active:
                 login(request, user)
                 # 在session中存入用户类型
+                # 登录之后获取获取最新的session_key
+                session_key = request.session.session_key
+                # 删除非当前用户session_key的记录
+                for session in Session.objects.filter(~Q(session_key=session_key),
+                                                      expire_date__gte=datetime.datetime.now()):
+                    data = session.get_decoded()
+                    if data.get('_auth_user_id', None) == str(request.user.id):
+                        session.delete()
+
                 request.session['usertype'] = user.usertype
                 request.session['is_login'] = True
                 request.session['user_id'] = user.id
@@ -134,3 +145,58 @@ class FileStream:
             return jsonResponse({'ret': 0, 'mdContent': mdContent})
         except KeyError:
             return jsonResponse({'ret': 1})
+
+
+class Download:
+    def handler(self, request):
+        # 将请求参数统一放入request 的 params 属性中，方便后续处理
+        # GET请求 参数 在 request 对象的 GET属性中
+        if request.method == 'GET':
+            request.params = request.GET
+
+        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
+        elif request.method in ['POST', 'PUT', 'DELETE']:
+            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+            request.params = json.loads(request.body)
+
+        # 根据不同的action分派给不同的函数进行处理
+        action = request.params['action']
+
+        # 添加新闻
+        if action == 'free':
+            return self.free(request)
+
+    @staticmethod
+    def free(request):
+        try:
+            price = request.params['price']
+            res = PayConfig.modify(
+                {'user_id': request.session['user_id'], 'coins': -int(price), 'exp': 10 * int(price)})
+            return jsonResponse(res)
+        except:
+            return jsonResponse({'ret': 1, 'msg': '请先登录，再下载文章'})
+
+
+class Others:
+    def handler(self, request):
+        # 将请求参数统一放入request 的 params 属性中，方便后续处理
+        # GET请求 参数 在 request 对象的 GET属性中
+        if request.method == 'GET':
+            request.params = request.GET
+
+        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
+        elif request.method in ['POST', 'PUT', 'DELETE']:
+            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+            request.params = json.loads(request.body)
+
+        # 根据不同的action分派给不同的函数进行处理
+        action = request.params['action']
+
+        # 添加新闻
+        if action == 'qd':
+            return self.qd(request)
+
+    @staticmethod
+    def qd(request):
+        res = PayConfig.modify({'user_id': request.session['user_id'], 'exp': 500, 'coins': 50, 'qd': True})
+        return jsonResponse(res)

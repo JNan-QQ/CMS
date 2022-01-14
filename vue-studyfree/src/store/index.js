@@ -5,10 +5,12 @@ export default createStore({
         userdata: {
             username: '',
             realName: '',
-            aviator:'',
+            aviator: '',
             coins: 0,
+            lv: 0,
+            deadline: '',
             usertype: 0,
-            isLogin: false
+            isLogin: false,
         },
         nowUrl: localStorage.nowUrl || '/home'
     },
@@ -19,7 +21,7 @@ export default createStore({
                     state.userdata[key] = payload[key]
                 }
             }
-            if (!state.userdata.isLogin){
+            if (!state.userdata.isLogin) {
                 state.userdata.isLogin = true
             }
         },
@@ -27,13 +29,15 @@ export default createStore({
             state.userdata = {
                 username: '',
                 realName: '',
-                aviator:'',
+                aviator: '',
                 coins: 0,
+                lv: 0,
+                deadline: '',
                 usertype: 0,
-                isLogin: false
+                isLogin: false,
             }
         },
-        upDataUrl(state, url){
+        upDataUrl(state, url) {
             state.nowUrl = url
             localStorage.nowUrl = url
         },

@@ -63,7 +63,7 @@
                                             </ul>
                                         </div>
                                         <div style="text-align: center;">
-                                            <el-button>签到</el-button>
+                                            <el-button @click="qd">签到</el-button>
                                         </div>
                                     </div>
                                 </el-dropdown-item>
@@ -77,9 +77,10 @@
                                                     </el-icon>
                                                     个人中心
                                                 </div>
+                                                <span v-if="userdata.usertype===1005">付费用户</span>
                                                 <span>普通用户</span>
                                             </li>
-                                            <li class="items">
+                                            <li class="items" v-if="false">
                                                 <div>
                                                     <el-icon>
                                                         <cloudy/>
@@ -94,7 +95,7 @@
                                                     </el-icon>
                                                     等级
                                                 </div>
-                                                <span>Lv0</span>
+                                                <span>Lv{{ userdata.lv }}</span>
                                             </li>
                                             <li class="items">
                                                 <div>
@@ -103,7 +104,7 @@
                                                     </el-icon>
                                                     F币
                                                 </div>
-                                                <span>50 币</span>
+                                                <span>{{ userdata.coins }} 币</span>
                                             </li>
                                             <li class="items">
                                                 <div>
@@ -167,6 +168,9 @@ import {
 } from '@element-plus/icons';
 import {markRaw} from "vue";
 import {checkLogin, sign} from "../../api/Login";
+import {getUserConfig} from "@/api/pay";
+import {qianDao} from "@/api/common";
+import {ElMessage} from "element-plus";
 
 export default {
     name: "index",
@@ -180,10 +184,9 @@ export default {
     },
     components: {CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
     mounted() {
-        // this.$router.push(this.$store.state.nowUrl)
         checkLogin(this)
         this.jumpUrl()
-
+        getUserConfig(this)
     },
     watch: {
         $route() {
@@ -212,12 +215,13 @@ export default {
         jumpUrl() {
             if (this.$route.path === '/') {
                 this.$router.push('/home')
-            }else {
+            } else {
                 this.inHome = this.$route.path !== '/home';
             }
-
-
         },
+        qd() {
+            qianDao()
+        }
     }
 }
 </script>
@@ -259,7 +263,8 @@ a:link, a:visited {
                     margin-right: 60px;
                     display: flex;
                     align-items: center;
-                    span{
+
+                    span {
                         color: #FFFFFF;
                         margin-left: 5px;
                         font-size: 14px;

@@ -55,7 +55,7 @@ class Article:
             if filePathDict:
                 with open(filePath, 'r', encoding='utf8') as f:
                     mdContent = f.read()
-                return jsonResponse({'ret': 0, 'mdContent': mdContent})
+                return jsonResponse({'ret': 0, 'mdContent': mdContent, 'title': filePathDict['tag_id__tag_name']})
             else:
                 return jsonResponse({'ret': 0, 'mdContent': '没有找到该文章，请联系管理员添加！'})
         except:

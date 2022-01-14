@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+
+import Common.urls
 import FrontEnd.urls
-from Common.views import Login, CQ, FileStream
+import Pay.urls
+from Common.views import Login, CQ, FileStream, Download
 
 from django.views import static  # 新增
 from django.conf import settings  # 新增
@@ -26,7 +29,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('sign', Login().handler),
     path('cq', CQ().handler),
+    path('download', Download().handler),
     path('frontEnd/', include(FrontEnd.urls)),
+    path('pay/', include(Pay.urls)),
+    path('common/', include(Common.urls)),
     path('fileStream', FileStream().handler),
     # 以下是新增
     url(r'^static/(?P<path>.*)$', static.serve,
