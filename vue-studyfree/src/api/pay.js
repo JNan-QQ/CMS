@@ -8,7 +8,6 @@ export function getUserConfig(that) {
         params:{action:'userConfig'}
     }).then(res => {
         if (res){
-            console.log(res)
             that.$store.commit('changeUserInfo', res['retlist'][0])
         } else{
             that.$store.commit('deleteUserInfo')

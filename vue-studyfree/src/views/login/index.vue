@@ -3,11 +3,11 @@
         <div class="left-container">
             <div class="title"><span>登录</span></div>
             <div class="input-container">
-                <el-form :model="loginForm" :rules="rules">
-                    <el-form-item style="margin-bottom: 0" prop="username">
+                <el-form :model="loginForm">
+                    <el-form-item style="margin-bottom: 0">
                         <el-input v-model="loginForm.username" placeholder="用户名" clearable/>
                     </el-form-item>
-                    <el-form-item style="margin-bottom: 0" prop="password">
+                    <el-form-item style="margin-bottom: 0">
                         <el-input v-model="loginForm.password" placeholder="密码" type="password" show-password
                                   clearable/>
                     </el-form-item>
@@ -22,7 +22,7 @@
                 <span class="register" @click="loginOrRegister=false">注册</span>
             </div>
             <div class="action-container">
-                <el-button type="warning" plain @click="onSubmit" :disabled="btnStatus">提交</el-button>
+                <el-button plain @click="onSubmit" :loading="btnSubmitStatus">提交</el-button>
             </div>
         </div>
     </div>
@@ -33,28 +33,28 @@
                 <span class="login">登录</span>
             </div>
             <div class="action-container">
-                <el-button type="warning" plain @click="onSubmit" :disabled="btnStatus">提交</el-button>
+                <el-button type="warning" plain @click="onSubmit" :loading="btnSubmitStatus">提交</el-button>
             </div>
         </div>
 
         <div class="left-container">
             <div class="title"><span>注册</span></div>
             <div class="input-container">
-                <el-form :model="registerForm" :rules="rules">
-                    <el-form-item style="margin-bottom: 0" prop="username">
+                <el-form :model="registerForm">
+                    <el-form-item style="margin-bottom: 0">
                         <el-input v-model="registerForm.username" placeholder="请输入用户名" clearable/>
                     </el-form-item>
-                    <el-form-item style="margin-bottom: 0" prop="password">
+                    <el-form-item style="margin-bottom: 0">
                         <el-input v-model="registerForm.password" placeholder="请输入密码" type="password" show-password
                                   clearable/>
                     </el-form-item>
-                    <el-form-item style="margin-bottom: 0;" prop="phone">
+                    <el-form-item style="margin-bottom: 0;">
                         <div style="display: flex;flex-wrap: nowrap;align-items: center;">
-                            <el-input v-model="registerForm.phone" placeholder="请输入手机号" clearable/>
-                            <el-button type="success">获取验证码</el-button>
+                            <el-input v-model="registerForm.email" placeholder="请输入邮箱" clearable type="email"/>
+                            <el-button @click="getCode" :loading="btnCodeStatus">获取验证码</el-button>
                         </div>
                     </el-form-item>
-                    <el-form-item style="margin-bottom: 0;" prop="code">
+                    <el-form-item style="margin-bottom: 0;">
                         <el-input v-model="registerForm.code" placeholder="验证码" clearable/>
                     </el-form-item>
                 </el-form>
@@ -66,15 +66,18 @@
 
 <script>
 import {Promotion, UserFilled} from "@element-plus/icons"
-import {markRaw} from "vue";
-import {sign} from "@/api/Login";
+import {markRaw} from "vue"
+import {sign} from "../../api/Login"
+import {getEmailCode} from "../../api/common"
+import {ElMessage} from "element-plus"
 
 export default {
     name: "LoginIndex",
     data() {
         return {
             loginOrRegister: true,
-            btnStatus: false,
+            btnSubmitStatus: false,
+            btnCodeStatus: false,
             loginForm: {
                 username: '',
                 password: '',
@@ -83,15 +86,9 @@ export default {
             registerForm: {
                 username: '',
                 password: '',
-                phone: '',
+                email: '',
                 code: '',
                 action: 'register'
-            },
-            rules: {
-                username: [{required: true, message: 'Please input username', trigger: 'blur'}],
-                password: [{required: true, message: 'Please input password', trigger: 'blur'}],
-                phone: [{required: true, max: 11, min: 11, message: 'Please input phone', trigger: 'blur'}],
-                code: [{required: true, message: 'Please input right code', trigger: 'blur'}]
             },
             isLogin: this.$store.state.userdata.isLogin
         }
@@ -101,21 +98,33 @@ export default {
     },
     methods: {
         onSubmit() {
-            this.btnStatus = true
+            this.btnSubmitStatus = true
             if (this.loginOrRegister) {
                 // 登录
                 sign(this.loginForm, this).then(res => {
-                    if (res['ret'] === 0){
+                    if (res) {
                         this.$store.commit('changeUserInfo', res)
                         this.$router.push('/')
                     }
+                    this.btnSubmitStatus = false
                 })
             } else {
                 // 注册
-                sign(this.registerForm)
+                sign(this.registerForm).then(res => {
+                    if (res) {
+                        ElMessage({
+                            message: '恭喜你注册成功，请登陆',
+                            type: 'success',
+                        })
+                        this.$router.push('/home')
+                    }
+                    this.btnSubmitStatus = false
+                })
             }
-            this.btnStatus = false
         },
+        getCode() {
+            getEmailCode(this.registerForm.email,this)
+        }
     },
 }
 </script>

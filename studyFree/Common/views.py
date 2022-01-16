@@ -1,13 +1,16 @@
 import datetime
 import json
 import os
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.db.models import Q
+
 from Pay.models import PayConfig
-from .lib.shara import jsonResponse
-from .models import CelebrityQuotes
+from .lib.email_my import SendEmail
+from .lib.shara import jsonResponse, generate_random_str
+from .models import CelebrityQuotes, User, EmailCode
 
 
 class Login:
@@ -31,6 +34,8 @@ class Login:
             return self.signout(request)
         elif action == 'checkLogin':
             return self.checkLogin(request)
+        elif action == 'register':
+            return self.register(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -88,6 +93,32 @@ class Login:
                                  'username': request.session['username']})
         else:
             return jsonResponse({'ret': 302, 'msg': '未登录'})
+
+    @staticmethod
+    def register(request):
+        email = request.params['email']
+        code = request.params['code']
+        res = EmailCode.checkCode(email, code)
+
+        if res['ret'] == 1:
+            return jsonResponse(res)
+        data = {
+            'username': request.params['username'],
+            'password': request.params['password'],
+            'email': request.params['email'],
+            'usertype': 1000,
+            'realName': ''
+        }
+        res = User.add_account(data)
+        if res['ret'] == 1:
+            return jsonResponse(res)
+
+        user_id = res['id']
+        res1 = PayConfig.add({'user_id': user_id})
+
+        Login.signin(request)
+
+        return jsonResponse(res1)
 
 
 class CQ:
@@ -195,8 +226,19 @@ class Others:
         # 添加新闻
         if action == 'qd':
             return self.qd(request)
+        elif action == 'emailCode':
+            return self.emailCode(request)
 
     @staticmethod
     def qd(request):
         res = PayConfig.modify({'user_id': request.session['user_id'], 'exp': 500, 'coins': 50, 'qd': True})
+        return jsonResponse(res)
+
+    @staticmethod
+    def emailCode(request):
+        code = generate_random_str()
+        res = SendEmail.sendEmail('【studyfree】 注册验证', f'你本次注册的六位验证码为：-> {code} <-,五分钟内有效。', [request.params['email']])
+        if not res:
+            return jsonResponse({'ret': 1, 'msg': '验证码邮件发送失败，请稍后重试'})
+        res = EmailCode.add({'email': request.params['email'], 'code': code})
         return jsonResponse(res)

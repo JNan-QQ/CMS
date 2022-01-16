@@ -9,8 +9,6 @@ import VueParticles from 'vue-particles'
 
 // makeDown 编辑器
 import 'github-markdown-css'
-// import highlight from 'highlight.js';
-
 
 // element ui 逐渐库
 import ElementPlus from 'element-plus'

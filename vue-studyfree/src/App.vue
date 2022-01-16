@@ -19,11 +19,16 @@
 
     <!--    路由出口函数    -->
     <router-view/>
+
 </template>
 
 <script>
 export default {
-    name: 'App'
+    name: 'App',
+    data() {
+        return {
+        }
+    },
 }
 
 </script>

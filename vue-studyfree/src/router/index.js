@@ -4,6 +4,9 @@ import Login from '@/views/login'
 import Index from '@/views/home'
 import home from '@/views/home/home.vue'
 import article from "@/views/home/articleView.vue"
+import note from "@/views/home/noteView.vue"
+import skill from "@/views/home/skillView.vue"
+import tool from "@/views/home/toolView.vue"
 import markdownView from "@/components/markdownView.vue"
 
 
@@ -21,6 +24,15 @@ const routes = [
             },{
                 path: 'Article',
                 component: article
+            },{
+                path: 'Note',
+                component: note
+            },{
+                path: 'Skill',
+                component: skill
+            },{
+                path: 'Tool',
+                component: tool
             },
         ]
     },{

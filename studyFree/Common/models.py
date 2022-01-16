@@ -1,3 +1,4 @@
+import datetime
 import random
 import traceback
 
@@ -20,8 +21,8 @@ class User(AbstractUser):
     # 真实姓名
     realName = models.CharField(max_length=30, db_index=True)
 
-    # 真实姓名
-    phone = models.CharField(max_length=11, null=True, blank=True)
+    # 邮箱
+    email = models.CharField(max_length=30, null=True, blank=True)
 
     # aviator
     aviator = models.CharField(max_length=500, null=True, blank=True)
@@ -52,12 +53,13 @@ class User(AbstractUser):
                 password=make_password(data['password']),
                 usertype=data['usertype'],
                 realName=data['realName'],
-                phone=data['phone'],
+                email=data['email'],
                 desc=data['desc']
             )
 
             return {'ret': 0, 'id': user.id}
         except:
+            traceback.print_exc()
             return {'ret': 1, 'msg': '添加用户信息失败！'}
 
     @staticmethod
@@ -180,3 +182,67 @@ class CelebrityQuotes(models.Model):
         retlist = random.choice(list(CelebrityQuotes.objects.values()))
         # total指定了 一共有多少数据
         return {'ret': 0, 'retlist': retlist}
+
+
+# 验证码
+class EmailCode(models.Model):
+    # id
+    id = models.BigAutoField(primary_key=True)
+    # code
+    code = models.CharField(max_length=100, null=True, blank=True, default='123456')
+    # 状态
+    status = models.PositiveIntegerField(default=1)
+    # email
+    email = models.CharField(max_length=100, null=True, blank=True)
+    # time
+    time = models.DateTimeField(auto_now=datetime.datetime.now)
+
+    class Meta:
+        db_table = "study_email_code"
+
+    @staticmethod
+    def add(data):
+        try:
+            if EmailCode.objects.filter(email=data['email']).exists():
+                data['status'] = 1
+                res = EmailCode.modify(data)
+                return res
+            else:
+                emailCode = EmailCode.objects.create(
+                    email=data['email'],
+                    code=data['code']
+                )
+                return {'ret': 0, 'code_id': emailCode.id, 'msg': '6位验证码，已发送到你的邮箱'}
+        except:
+            traceback.print_exc()
+            return {'ret': 1, 'msg': '验证码添加失败'}
+
+    @staticmethod
+    def modify(data):
+        try:
+            if 'flg' not in data:
+                data['flg'] = True
+            email = EmailCode.objects.get(email=data['email'])
+            if (email.time + datetime.timedelta(seconds=300)) >= datetime.datetime.now() and data['flg']:
+                return {'ret': 1, 'msg': '请五分钟后在发送，注册'}
+            if 'code' in data:
+                email.code = data['code']
+            if 'status' in data:
+                email.status = data['status']
+
+            email.save()
+
+            return {'ret': 0, 'msg': '6位验证码，已发送到你的邮箱'}
+        except:
+            return {'ret': 1, 'msg': '验证码异常'}
+
+    @staticmethod
+    def checkCode(email, code):
+        try:
+            if EmailCode.objects.filter(email=email, code=code, status=1).exists():
+                res = EmailCode.modify({'status': 2, 'email': email, 'flg': False})
+                return res
+            else:
+                return {'ret': 1, 'msg': '验证码错误，请重新输入'}
+        except:
+            return {'ret': 1, 'msg': '验证码可能已过期'}

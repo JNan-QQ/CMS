@@ -63,7 +63,7 @@
                                             </ul>
                                         </div>
                                         <div style="text-align: center;">
-                                            <el-button @click="qd">签到</el-button>
+                                            <el-button @click="qd">{{ userdata.qd }}</el-button>
                                         </div>
                                     </div>
                                 </el-dropdown-item>
@@ -78,7 +78,8 @@
                                                     个人中心
                                                 </div>
                                                 <span v-if="userdata.usertype===1005">付费用户</span>
-                                                <span>普通用户</span>
+                                                <span v-else-if="userdata.usertype===1">管理员</span>
+                                                <span v-else>普通用户</span>
                                             </li>
                                             <li class="items" v-if="false">
                                                 <div>
@@ -106,7 +107,7 @@
                                                 </div>
                                                 <span>{{ userdata.coins }} 币</span>
                                             </li>
-                                            <li class="items">
+                                            <li class="items" v-if="userdata.usertype===1 || userdata.usertype===1005">
                                                 <div>
                                                     <el-icon>
                                                         <trophy/>
@@ -170,7 +171,7 @@ import {markRaw} from "vue";
 import {checkLogin, sign} from "../../api/Login";
 import {getUserConfig} from "@/api/pay";
 import {qianDao} from "@/api/common";
-import {ElMessage} from "element-plus";
+import {ElLoading} from "element-plus";
 
 export default {
     name: "index",
@@ -179,7 +180,6 @@ export default {
             Avatar: markRaw(Avatar), Notebook: markRaw(Notebook), Document: markRaw(Document), Flag: markRaw(Flag),
             userdata: this.$store.state.userdata,
             inHome: false,
-            cq: ''
         }
     },
     components: {CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
@@ -206,8 +206,11 @@ export default {
                         realName: '',
                         aviator: '',
                         coins: 0,
+                        lv: 0,
+                        deadline: '',
                         usertype: 0,
-                        isLogin: false
+                        isLogin: false,
+                        qd: false
                     }
                 }
             })

@@ -8,5 +8,5 @@ from django.urls import path
 from Common.views import Others
 
 urlpatterns = [
-    path('qd', Others().handler),
+    path('other', Others().handler),
 ]

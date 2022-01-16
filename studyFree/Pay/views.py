@@ -1,4 +1,5 @@
 import json
+
 from Common.lib.shara import jsonResponse
 from Pay.models import PayConfig
 
@@ -24,5 +25,8 @@ class payConfig:
 
     @staticmethod
     def userConfig(request):
-        res = PayConfig.list({'user_id': request.session['user_id']})
-        return jsonResponse(res)
+        if request.session.get('is_login', None):
+            res = PayConfig.list({'user_id': request.session['user_id']})
+            return jsonResponse(res)
+        else:
+            return jsonResponse({'ret': 0, 'retlist': []})

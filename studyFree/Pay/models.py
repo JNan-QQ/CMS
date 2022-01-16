@@ -1,6 +1,7 @@
 import datetime
-import traceback
+
 from django.db import models
+
 from Common.models import User
 
 
@@ -17,7 +18,7 @@ class PayConfig(models.Model):
     # 等级
     lv = models.IntegerField(null=True, blank=True, default=0)
     # 网上服务截止时间
-    deadline = models.DateTimeField(default=datetime.datetime.now())
+    deadline = models.DateTimeField(default=datetime.datetime.now)
     # 是否签到
     qd = models.BooleanField(default=False)
 
@@ -27,7 +28,7 @@ class PayConfig(models.Model):
     @staticmethod
     def list(data):
         try:
-            qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('coins', 'lv', 'deadline')
+            qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('coins', 'lv', 'deadline', 'qd')
             qs = list(qs)
             return {'ret': 0, 'retlist': qs}
         except:
@@ -69,7 +70,7 @@ class PayConfig(models.Model):
                 pay_config.exp += data['exp']
 
                 # 1:100,2:1000,3:5000,4:10000,5:50000,6:99999
-                exps = pay_config.exp + data['exp']
+                exps = pay_config.exp
                 if exps < 100:
                     pay_config.lv = 0
                 elif exps < 1000:

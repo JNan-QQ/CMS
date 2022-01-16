@@ -50,10 +50,10 @@ export function downloadFree(price) {
     })
 }
 
-// 下载文章扣费
+// 签到
 export function qianDao() {
     return request({
-        url: 'common/qd',
+        url: 'common/other',
         method: 'get',
         params: {action: 'qd'}
     }).then(res => {
@@ -63,5 +63,23 @@ export function qianDao() {
                 type: 'success',
             })
         }
+    })
+}
+
+// 获取验证码
+export function getEmailCode(email, that) {
+    that.btnCodeStatus = true
+    return request({
+        url: 'common/other',
+        method: 'post',
+        data: {action: 'emailCode', email: email}
+    }).then(res => {
+        if (res) {
+            ElMessage({
+                message: res['msg'],
+                type: 'success',
+            })
+        }
+        that.btnCodeStatus = false
     })
 }
