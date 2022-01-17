@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import {getContentTags, getSlideTags} from "@/api/common";
+import {getArticleContentTags, getSlideTags} from "@/api/common";
 import {Pointer} from '@element-plus/icons';
 
 export default {
@@ -74,7 +74,7 @@ export default {
     watch: {
         isActive() {
             const tag_id = this.tagList[this.isActive].id
-            getContentTags({action: 'contentTags', 'tag_id': tag_id}).then(res => {
+            getArticleContentTags({action: 'contentTags', 'tag_id': tag_id}).then(res => {
                 if (res) {
                     this.contentTagList = res['retlist']
                 }
@@ -85,7 +85,7 @@ export default {
         getSlideTags().then(res => {
             if (res) {
                 this.tagList = res['retlist']
-                getContentTags({action: 'contentTags', 'tag_id': this.tagList[this.isActive].id}).then(res => {
+                getArticleContentTags({action: 'contentTags', 'tag_id': this.tagList[this.isActive].id}).then(res => {
                     if (res) {
                         this.contentTagList = res['retlist']
                     }

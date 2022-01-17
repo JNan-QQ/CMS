@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost_3306
+Source Server         : mysql8.0
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-16 20:36:13
+Date: 2022-01-17 16:50:57
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -61,7 +61,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of auth_permission
@@ -114,6 +114,10 @@ INSERT INTO `auth_permission` VALUES ('45', 'Can add email code', '12', 'add_ema
 INSERT INTO `auth_permission` VALUES ('46', 'Can change email code', '12', 'change_emailcode');
 INSERT INTO `auth_permission` VALUES ('47', 'Can delete email code', '12', 'delete_emailcode');
 INSERT INTO `auth_permission` VALUES ('48', 'Can view email code', '12', 'view_emailcode');
+INSERT INTO `auth_permission` VALUES ('49', 'Can add note book', '13', 'add_notebook');
+INSERT INTO `auth_permission` VALUES ('50', 'Can change note book', '13', 'change_notebook');
+INSERT INTO `auth_permission` VALUES ('51', 'Can delete note book', '13', 'delete_notebook');
+INSERT INTO `auth_permission` VALUES ('52', 'Can view note book', '13', 'view_notebook');
 
 -- ----------------------------
 -- Table structure for `django_admin_log`
@@ -150,7 +154,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_content_type
@@ -164,6 +168,7 @@ INSERT INTO `django_content_type` VALUES ('11', 'Common', 'phonecode');
 INSERT INTO `django_content_type` VALUES ('6', 'Common', 'user');
 INSERT INTO `django_content_type` VALUES ('4', 'contenttypes', 'contenttype');
 INSERT INTO `django_content_type` VALUES ('9', 'FrontEnd', 'articlecontent');
+INSERT INTO `django_content_type` VALUES ('13', 'FrontEnd', 'notebook');
 INSERT INTO `django_content_type` VALUES ('8', 'FrontEnd', 'tags');
 INSERT INTO `django_content_type` VALUES ('10', 'Pay', 'payconfig');
 INSERT INTO `django_content_type` VALUES ('5', 'sessions', 'session');
@@ -178,7 +183,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_migrations
@@ -214,6 +219,8 @@ INSERT INTO `django_migrations` VALUES ('28', 'Pay', '0003_alter_payconfig_deadl
 INSERT INTO `django_migrations` VALUES ('29', 'Common', '0004_alter_phonecode_status', '2022-01-15 00:29:04.242596');
 INSERT INTO `django_migrations` VALUES ('30', 'Common', '0005_auto_20220115_1614', '2022-01-15 16:15:04.984521');
 INSERT INTO `django_migrations` VALUES ('31', 'Common', '0006_auto_20220115_1637', '2022-01-15 16:37:36.164763');
+INSERT INTO `django_migrations` VALUES ('32', 'FrontEnd', '0005_notebook', '2022-01-17 15:21:54.920745');
+INSERT INTO `django_migrations` VALUES ('33', 'FrontEnd', '0006_alter_notebook_content', '2022-01-17 15:39:49.495747');
 
 -- ----------------------------
 -- Table structure for `django_session`
@@ -231,7 +238,7 @@ CREATE TABLE `django_session` (
 -- Records of django_session
 -- ----------------------------
 INSERT INTO `django_session` VALUES ('3f3fcxjzm9kkt5md95s2kwq4agh5n0il', 'e30:1n8Fpf:kYWQ7OyDNgsTnD6V2AN-_wRTy-KYNUtazn0znuaWrwU', '2022-01-28 06:13:03.186106');
-INSERT INTO `django_session` VALUES ('so1798z1ldegxfldazgwhz2ryl1vyuni', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n8zv2:F4dkuW-5R60cJ3cqFQSjtp4o2TOo5tmB7X-viZEKX6U', '2022-01-30 15:25:40.297297');
+INSERT INTO `django_session` VALUES ('qnn9b91jm704d1p5nhxh6mgwau0efkj0', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n9Le4:aA17DnMt-qB3VB0iP1OrhX1JxnYcjJBrEXYyIGFMwnY', '2022-01-31 14:37:36.293498');
 
 -- ----------------------------
 -- Table structure for `pay_config`
@@ -308,9 +315,9 @@ INSERT INTO `study_cq` VALUES ('3', '休息与工作的关系，正如眼睑与�
 DROP TABLE IF EXISTS `study_email_code`;
 CREATE TABLE `study_email_code` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `code` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `status` int unsigned NOT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `time` datetime(6) NOT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `study_email_code_chk_1` CHECK ((`status` >= 0))
@@ -320,6 +327,31 @@ CREATE TABLE `study_email_code` (
 -- Records of study_email_code
 -- ----------------------------
 INSERT INTO `study_email_code` VALUES ('1', 'M2ZWGZ', '2', '896333574@qq.com', '2022-01-15 21:48:20.468639');
+
+-- ----------------------------
+-- Table structure for `study_notebook`
+-- ----------------------------
+DROP TABLE IF EXISTS `study_notebook`;
+CREATE TABLE `study_notebook` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `status` int unsigned NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `content` longtext COLLATE utf8mb4_unicode_520_ci,
+  `time` datetime(6) NOT NULL,
+  `user_id_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `study_notebook_user_id_id_a3be7223_fk_study_user_id` (`user_id_id`),
+  CONSTRAINT `study_notebook_user_id_id_a3be7223_fk_study_user_id` FOREIGN KEY (`user_id_id`) REFERENCES `study_user` (`id`),
+  CONSTRAINT `study_notebook_chk_1` CHECK ((`status` >= 0))
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- ----------------------------
+-- Records of study_notebook
+-- ----------------------------
+INSERT INTO `study_notebook` VALUES ('1', '1', '默认标题', '1', '2022-01-17 15:33:52.080650', '1');
+INSERT INTO `study_notebook` VALUES ('2', '1', '默认标题', '2', '2022-01-17 15:34:04.958010', '1');
+INSERT INTO `study_notebook` VALUES ('3', '1', '默认标题', '3', '2022-01-17 15:34:24.242875', '1');
+INSERT INTO `study_notebook` VALUES ('4', '1', '默认标题', '请在此输入内容，支持markdown语法', '2022-01-17 15:40:21.302742', '1');
 
 -- ----------------------------
 -- Table structure for `study_tags`
@@ -358,7 +390,7 @@ CREATE TABLE `study_user` (
   `username` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `first_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `last_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
-  `email` varchar(30) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `email` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `is_staff` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   `date_joined` datetime(6) NOT NULL,
@@ -376,7 +408,7 @@ CREATE TABLE `study_user` (
 -- ----------------------------
 -- Records of study_user
 -- ----------------------------
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-16 15:25:40.104825', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-17 14:37:36.273004', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$QSlfBsdK117kakMSLBnnVB$ZpY7ckayrYsm5JcZFNNLIfZqFCovwu3KUXK7AEJayQw=', '2022-01-15 00:34:52.490355', '0', 'jncss', '', '', '', '0', '1', '2022-01-15 00:30:11.559788', '3', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$Osk4XCKVnxM4ylyB5HTnwE$IR+XenJSlvDq9pem6PZiNcgJS/iV0yp2mVzZx/iLtyo=', '2022-01-15 00:35:24.336949', '0', 'jn11', '', '', '', '0', '1', '2022-01-15 00:34:42.048282', '4', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$rbn7NoRJqb1wgxKqH1XhTd$Cl9TpJ2NtpD3FX9Yikozdu+ilBJKtwegCpO4itKMQBQ=', null, '0', 'cs11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 16:41:37.327930', '5', '1000', '', null, '无评价');

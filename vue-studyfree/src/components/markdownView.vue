@@ -16,7 +16,7 @@
 
 <script>
 import {marked} from "marked"
-import {downloadFree, getContent} from "@/api/common";
+import {downloadFree, getArticleContent} from "@/api/common";
 import {DArrowLeft} from "@element-plus/icons";
 import {ElMessage, ElMessageBox} from "element-plus";
 
@@ -32,7 +32,7 @@ export default {
     components: {DArrowLeft},
     mounted() {
         const param = this.$route.query
-        getContent({action: 'markdownContent', tag_id: param['id']}).then(res => {
+        getArticleContent({action: 'markdownContent', tag_id: param['id']}).then(res => {
             this.baseArticleContent = res['mdContent']
             this.title = res['title']
             this.articleContent = marked(res['mdContent'])

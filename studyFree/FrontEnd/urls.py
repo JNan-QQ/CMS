@@ -5,8 +5,9 @@
 # @Tool      :PyCharm
 
 from django.urls import path
-from FrontEnd.views import Article
+from FrontEnd.views import Article, Note
 
 urlpatterns = [
     path('article', Article().handler),
+    path('notebook', Note().handler),
 ]

@@ -24,7 +24,7 @@ export function getSlideTags() {
 }
 
 // 获取文章页面content名称
-export function getContentTags(data) {
+export function getArticleContentTags(data) {
     return request({
         url: 'frontEnd/article',
         method: 'post',
@@ -32,12 +32,21 @@ export function getContentTags(data) {
     })
 }
 
-// 获取文章页面content名称
-export function getContent(data) {
+// 获取文章页面content内容
+export function getArticleContent(data) {
     return request({
         url: 'frontEnd/article',
         method: 'get',
         params: data
+    })
+}
+
+// 获取笔记页面content内容
+export function getNoteContent(data) {
+    return request({
+        url: 'frontEnd/notebook',
+        method: 'post',
+        data: data
     })
 }
 
