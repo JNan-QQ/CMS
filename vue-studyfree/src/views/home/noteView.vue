@@ -15,16 +15,24 @@
                         <el-collapse-item :name="index + 1">
                             <template #title>
                                 {{ item['title'] }}
-                                <el-icon class="header-icon" style="margin-left: 2px" @click="cc"><edit/></el-icon>
+                                <el-icon class="header-icon" style="margin-left: 2px" @click="modifyTitle(item.id)">
+                                    <edit/>
+                                </el-icon>
                             </template>
                             <div
                                 style="margin: 2px;display: flex;justify-content: right;border-bottom: #eeeeee solid 2px">
                                 <el-button @click="isEdit=true" v-if="!isEdit">编辑</el-button>
                                 <el-button v-if="isEdit" @click="isEdit=false">返回</el-button>
-                                <el-button>删除</el-button>
+                                <el-button v-if="isEdit" @click="saveNoteBook(item.id,item.content)"
+                                           :loading="saveLoading">保存
+                                </el-button>
+                                <el-button @click="deleteNoteBook(item.id)">删除</el-button>
                             </div>
                             <div style="margin: 2px;">
-                                <md-editor v-if="isEdit" v-model="item.content"/>
+                                <md-editor v-if="isEdit" v-model="item.content"
+                                           @onSave="saveNoteBook(item.id,item.content)"
+                                           @onUploadImg="onUploadImg"
+                                />
                                 <md-editor v-else v-model="item.content" previewOnly/>
                             </div>
                         </el-collapse-item>
@@ -50,8 +58,10 @@
 <script>
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import {getNoteContent} from "@/api/common";
+import {noteContent} from "../../api/common";
 import {Edit} from "@element-plus/icons";
+import {ElMessage, ElMessageBox} from "element-plus";
+import request from "../../api/request";
 
 export default {
     name: "noteView",
@@ -59,28 +69,72 @@ export default {
         return {
             isEdit: false,
             activeName: 1,
-            bjList: []
+            bjList: [],
+            saveLoading: false
         }
     },
-    components: {MdEditor,Edit},
+    components: {MdEditor, Edit},
     mounted() {
         this.before()
     },
     methods: {
         before() {
-            getNoteContent({action: 'listNoteBook'}).then(res => {
+            noteContent({action: 'listNoteBook'}).then(res => {
                 if (res) {
                     this.bjList = res['retlist']
                 }
             })
         },
         addNoteBook() {
-            getNoteContent({action: 'addNoteBook'}).then(res => {
+            noteContent({action: 'addNoteBook'}).then(res => {
                 this.before()
             })
         },
-        cc(){
-            console.log('123')
+        deleteNoteBook(id) {
+            noteContent({action: 'deleteNoteBook', 'note_id': id}).then(res => {
+                this.before()
+            })
+        },
+        saveNoteBook(id, text) {
+            this.saveLoading = true
+            noteContent({action: 'modifyNoteBook', 'note_id': id, 'content': text}).then(res => {
+                this.before();
+                this.saveLoading = false
+                ElMessage({
+                    message: '保存成功',
+                    type: 'success',
+                })
+            })
+        },
+        modifyTitle(id) {
+            ElMessageBox.prompt('Please input your title', 'Tip', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+            }).then(({value}) => {
+                noteContent({action: 'modifyNoteBook', 'note_id': id, 'title': value}).then(res => {
+                    this.before()
+                    ElMessage({
+                        message: '修改成功',
+                        type: 'success',
+                    })
+                })
+            })
+        },
+        async onUploadImg(files, callback) {
+            const file_name = `img_${this.bjList[this.activeName-1].id}_1234.png`
+            const res = await Promise.all(
+                Array.from(files).map((file) => {
+                    return new Promise((rev, rej) => {
+                        const form = new FormData();
+                        form.append('file', file);
+                        form.append('action','uploadImg')
+                        form.append('file_name',file_name)
+                        request.post('/common/other', form).then((res) => rev(res)).catch((error) => rej(error));
+                    });
+                })
+            );
+            console.log(res)
+            callback(res.map((item) => '/api/' + item.url));
         }
     },
 }
@@ -94,7 +148,7 @@ export default {
     background-color: #414444;
 
     .slide-item-table {
-        height: 280px;
+        height: 200px;
         background-image: url("../../assets/coursebg.jpg");
         border-top: #FFFFFF solid 1px;
         border-bottom: #FFFFFF solid 1px;
@@ -102,7 +156,7 @@ export default {
 
         .text-center {
             text-align: center;
-            margin-top: 110px;
+            margin-top: 60px;
             margin-bottom: 10px;
 
             .slider_title {

@@ -120,3 +120,41 @@ class NoteBook(models.Model):
             return {'ret': 0, 'retlist': qs}
         except:
             return {'ret': 1, 'msg': '获取笔记列表失败'}
+
+    @staticmethod
+    def delete_note(data):
+        note_id = data['note_id']
+        try:
+            # 根据 id 从数据库中找到相应的客户记录
+            note = NoteBook.objects.get(id=note_id)
+        except:
+            return {
+                'ret': 1,
+                'msg': f'id 为`{note_id}`的笔记不存在'
+            }
+        if note.user_id.id == data['user_id']:
+            note.delete()
+        return {'ret': 0}
+
+    @staticmethod
+    def modify(data):
+        note_id = data['note_id']
+        try:
+            # 根据 id 从数据库中找到相应的客户记录
+            note = NoteBook.objects.get(id=note_id)
+        except:
+            return {
+                'ret': 1,
+                'msg': f'id 为`{note_id}`的笔记不存在'
+            }
+        if note.user_id.id == data['user_id']:
+            if 'title' in data:
+                note.title = data['title']
+            if 'content' in data:
+                note.content = data['content']
+            if 'status' in data:
+                note.status = data['status']
+
+            note.save()
+            return {'ret': 0}
+        return {'ret': 1, 'msg': '修改失败'}

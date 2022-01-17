@@ -42,7 +42,7 @@ export function getArticleContent(data) {
 }
 
 // 获取笔记页面content内容
-export function getNoteContent(data) {
+export function noteContent(data) {
     return request({
         url: 'frontEnd/notebook',
         method: 'post',

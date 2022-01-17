@@ -8,6 +8,7 @@ from django.contrib.sessions.models import Session
 from django.db.models import Q
 
 from Pay.models import PayConfig
+from .forms import handle_uploaded_file
 from .lib.email_my import SendEmail
 from .lib.shara import jsonResponse, generate_random_str
 from .models import CelebrityQuotes, User, EmailCode
@@ -210,6 +211,8 @@ class Download:
 
 class Others:
     def handler(self, request):
+
+        action = None
         # 将请求参数统一放入request 的 params 属性中，方便后续处理
         # GET请求 参数 在 request 对象的 GET属性中
         if request.method == 'GET':
@@ -218,16 +221,22 @@ class Others:
         # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
         elif request.method in ['POST', 'PUT', 'DELETE']:
             # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
+            try:
+                request.params = json.loads(request.body)
+            except:
+                action = request.POST['action']
 
         # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
+        if not action:
+            action = request.params['action']
 
         # 添加新闻
         if action == 'qd':
             return self.qd(request)
         elif action == 'emailCode':
             return self.emailCode(request)
+        elif action == 'uploadImg':
+            return self.uploadImg(request)
 
     @staticmethod
     def qd(request):
@@ -242,3 +251,12 @@ class Others:
             return jsonResponse({'ret': 1, 'msg': '验证码邮件发送失败，请稍后重试'})
         res = EmailCode.add({'email': request.params['email'], 'code': code})
         return jsonResponse(res)
+
+    @staticmethod
+    def uploadImg(request):
+        File = request.FILES.get("file", None)
+        file_name = request.POST['file_name']
+        if File:
+            f_path = os.path.join(settings.BASE_DIR, 'static/images', file_name)
+            handle_uploaded_file(request.FILES['file'], f_path)
+            return jsonResponse({'ret': 0, 'url': f'static/images/{file_name}'})

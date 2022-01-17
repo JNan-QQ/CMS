@@ -2,8 +2,6 @@ import json
 import os.path
 import traceback
 
-from django.shortcuts import render
-
 # Create your views here.
 from Common.lib.shara import jsonResponse
 from FrontEnd.models import Tags, ArticleContent, NoteBook
@@ -32,6 +30,8 @@ class Article:
             return self.listContentTags(request)
         elif action == 'markdownContent':
             return self.list_md_content(request)
+        else:
+            return jsonResponse({'ret': 1, "msg": 'action参数错误'})
 
     @staticmethod
     def listSlideTags(request):
@@ -83,6 +83,12 @@ class Note:
             return self.addNoteBook(request)
         elif action == 'listNoteBook':
             return self.listNoteBook(request)
+        elif action == 'deleteNoteBook':
+            return self.deleteNoteBook(request)
+        elif action == 'modifyNoteBook':
+            return self.modifyNoteBook(request)
+        else:
+            return jsonResponse({'ret': 1, "msg": 'action参数错误'})
 
     @staticmethod
     def addNoteBook(request):
@@ -103,5 +109,27 @@ class Note:
             return {'ret': 1, 'msg': '未登录，请先登录'}
 
         ret = NoteBook.list({'user_id': user_id})
+
+        return jsonResponse(ret)
+
+    @staticmethod
+    def deleteNoteBook(request):
+        try:
+            user_id = request.session['user_id']
+        except:
+            return {'ret': 1, 'msg': '未登录，请先登录'}
+
+        ret = NoteBook.delete_note({'user_id': user_id, 'note_id': request.params['note_id']})
+
+        return jsonResponse(ret)
+
+    @staticmethod
+    def modifyNoteBook(request):
+        try:
+            request.params['user_id'] = request.session['user_id']
+        except:
+            return {'ret': 1, 'msg': '未登录，请先登录'}
+
+        ret = NoteBook.modify(request.params)
 
         return jsonResponse(ret)

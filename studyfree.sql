@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : mysql8.0
+Source Server         : localhost_3306
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-17 16:50:57
+Date: 2022-01-18 00:06:40
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -238,7 +238,7 @@ CREATE TABLE `django_session` (
 -- Records of django_session
 -- ----------------------------
 INSERT INTO `django_session` VALUES ('3f3fcxjzm9kkt5md95s2kwq4agh5n0il', 'e30:1n8Fpf:kYWQ7OyDNgsTnD6V2AN-_wRTy-KYNUtazn0znuaWrwU', '2022-01-28 06:13:03.186106');
-INSERT INTO `django_session` VALUES ('qnn9b91jm704d1p5nhxh6mgwau0efkj0', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n9Le4:aA17DnMt-qB3VB0iP1OrhX1JxnYcjJBrEXYyIGFMwnY', '2022-01-31 14:37:36.293498');
+INSERT INTO `django_session` VALUES ('bgtf826l8jwctd63ttfc95myllqnp1hg', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n9PlY:0Fzi1Gcu8pszjx9GOKN_9ReFhrEQiUY6LX1sjW1La-E', '2022-01-31 19:01:36.239431');
 
 -- ----------------------------
 -- Table structure for `pay_config`
@@ -335,23 +335,20 @@ DROP TABLE IF EXISTS `study_notebook`;
 CREATE TABLE `study_notebook` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `status` int unsigned NOT NULL,
-  `title` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
-  `content` longtext COLLATE utf8mb4_unicode_520_ci,
+  `title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `content` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci,
   `time` datetime(6) NOT NULL,
   `user_id_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
   KEY `study_notebook_user_id_id_a3be7223_fk_study_user_id` (`user_id_id`),
   CONSTRAINT `study_notebook_user_id_id_a3be7223_fk_study_user_id` FOREIGN KEY (`user_id_id`) REFERENCES `study_user` (`id`),
   CONSTRAINT `study_notebook_chk_1` CHECK ((`status` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of study_notebook
 -- ----------------------------
-INSERT INTO `study_notebook` VALUES ('1', '1', '默认标题', '1', '2022-01-17 15:33:52.080650', '1');
-INSERT INTO `study_notebook` VALUES ('2', '1', '默认标题', '2', '2022-01-17 15:34:04.958010', '1');
-INSERT INTO `study_notebook` VALUES ('3', '1', '默认标题', '3', '2022-01-17 15:34:24.242875', '1');
-INSERT INTO `study_notebook` VALUES ('4', '1', '默认标题', '请在此输入内容，支持markdown语法', '2022-01-17 15:40:21.302742', '1');
+INSERT INTO `study_notebook` VALUES ('9', '1', '123', '---\ntitle: 编写测试用例\ndate: 2021-01-20 10:34:59\ntags: Test\n---\n\n## 概述\n\n采用什么方法才能写出比较完善的测试用例呢？\n\n要做好两类事情\n![](/api/static/images/123456)\n\n\n- 不断地 搜集需求，整理需求\n- 采用一定的方法，根据整理的需求编写测试用例。\n\n## 搜集、整理需求\n\n### 过程描述\n\n在编写测试用例前，最重要的前提是什么？\n\n就是要尽可能的 `搜集` 完整系统的 `需求、设计` 。\n\n但是注意：即使开发人员给的需求、设计文档看起来已经比较全面，规范了，测试人员仍然要自己 `整理、分类、组合` 需求。\n\n因为 实践证明，开发人员 **不可能** 给出 `详细到、格式规范到 可以直接对应 产生测试用例` 的 需求、设计文档。\n\n里面肯定 有遗漏、或者细节不清楚 的地方，甚至会有 矛盾、错误\n\n所以我们在 `需求整理` 过程中：\n\n- 寻找是否有遗漏的 需求点（测试点）\n\n  有不少隐含 需求点（测试点） ，是需求文档中没有提到的，需要你自己找出来\n\n  或者 有的功能点 文档 只是一带而过，细节没有描述清楚，必须要搞清楚\n\n- 发现需求设计 有 矛盾错误的地方，及时和 产品组、开发人员 沟通\n\n- 不断的将需求进行 合理的 分类、组合， 记录在你自己的测试需求文档中\n\n  需求文档中，功能的分类组织的形式，并不一定是最好的，甚至可能是不正确的，测试人员需要根据自己的经验重新组织\n\n  而且，我们需要把前面发现 开发人员给的需求设计文档中 的 遗漏、细节不清楚的地方 在自己的 测试需求文档中记录下来。\n\n知道了这些要点后，具体怎么操作呢？\n\n- 反复看需求文档几遍，先搞懂文章中的各个功能点的含义\n\n- 创建自己的 测试需求文档，重新整理、分类记录功能点\n\n  整理记录过程中，详细的品读需求，思考，有意识的 关注上面说到的注意点\n\n- 上面的过程 从 需求阶段 到 测试阶段不断迭代\n\n  因为产品的整个开发过程中，决定 会 不断的改变，前面的需求设计文档里面的内容未必是有效的。\n\n  所以要根据 搜集到的 改变的信息，不断的重复上面的过程。\n\n  实际上，测试需求文档 和 测试用例 是 直到测试过程中，都应该不断更新的。\n\n最终的 测试需求文档，就是做为 测试用例 的输入材料。\n\n```vue\nimport {createApp} from \'vue\'\nimport App from \'./App.vue\'\nimport router from \'./router\'\nimport store from \'./store\'\n\n// 全局样式\nimport \'./styles/index.less\'\nimport VueParticles from \'vue-particles\'\n\n// makeDown 编辑器\nimport \'github-markdown-css\'\n\n\n// element ui 逐渐库\nimport ElementPlus from \'element-plus\'\n\n// 加载element 逐渐库 样式\nimport \'element-plus/dist/index.css\'\n\ncreateApp(App).use(store).use(ElementPlus).use(router).use(VueParticles).mount(\'#app\')\n\n```\n\n## 编写测试用例\n\n需求整理好以后，采用什么方法才能写出比较完善的测试用例呢？\n\n网上流传的编写测试用例方法有很多，我们总结最重要的就是\n\n- 根据测试需求建立用例分类\n- 边界值法\n- 错误猜测法\n- 因素/场景组合法\n\n### 建立用例分类\n\n很好理解，就是根据前面 整理的测试需求 对应写出测试功能点分类\n\n### 边界值\n\n边界值往往是系统处理最容易出问题的地方。\n\n边界值法 就是 对测试输入的边界内、边界上、边界外 的三种取值 都做覆盖的测试。\n\n比如用户注册功能，要求用户名的长度为 6-20 个字符, 那么就应该对 用户名字符串长度为 0，3，5，6，7，15，19，20，21，1000 等这些取值都进行覆盖，比较稳妥。\n\n需求设计文档，往往对边界情况没有明确写出来，需要测试人员 和 开发 人工沟通确定后，写出测试需求。\n\n### 错误猜测\n\n其实上面讲的边界值法，就是典型的错误猜测。\n\n还有其他的错误猜测\n\n比如：\n\n测试管理员登录功能， 那么系统中是否 有老师、学生 账号，对管理员登录是否有影响呢？\n\n再比如，在 `老师` 登录界面，却输入 `学生` 账号、密码，系统是否能正确提示呢？\n\n不好说，所以这些也可以在写测试用例时，作为考虑因素。可以标记为测试优先级 较低。\n\n有些场景的错误猜测类型的测试用例，是通用的，可以作为经验 记录下来。\n\n比如，用户注册功能，测试 用户名中是否包含中文、标点符号等。\n\n再比如，用户登录功能，测试 用户不从登录界面登录，直接访问登录成功后的页面。\n\n错误猜测，虽说 是凭 经验 和 直觉，实际上 和 你对系统实现内部机制 了解程度 紧密相关的。\n\n你越了解系统的实现细节和原理，越了解相关基础知识，错误猜测的 直觉 越准确，写的测试用例越有针对性。\n\n比如这个功能说明\n\n```\n创建题目时，可以为题目添加解题视频，解题视频格式只支持 mp4 格式的视频。\n```\n\n一般测试人员可以想到，编写测试用例涵盖上传 mp4 格式的视频 和 其他格式的视频。\n\n但是如果你了解多媒体的知识，就会知道 mp4 只是一个多媒体容器格式（container）。里面的视频 还有多种压缩格式，比如 MPEG-H Part 2 (H.265/HEVC), MPEG-4 Part 10 (H.264/AVC) 和 MPEG-4 Part 2。\n\n那么这些格式的视频是不是也应该都测试一下呢，测试用例优先级有多高呢？\n\n如果 你了解 产品 的实现原理， 就可以做出准确的判断\n\n如果你没有这方面的基础知识，是无论如何想不到这样的 测试用例的，并且不能做出比较准确的判断的。\n\n所以前面课程，我们说，测试人员也要尽可能的了解 系统的内部实现，并且学习相关基础知识。\n\n### 因素/场景组合\n\n因素/场景组合法，类似网上流传的 判定表 方法。\n\n测试用例 本质上 就是 描述：\n\n在 `某种场景条件` 下，对系统的进行怎样的操作（输入），系统应该有什么的反映（输出）。\n\n所谓 某种场景 ，就是系统处于什么样 的 `环境` ，包括 `外部环境` 和 `内部数据环境` 。\n\n- 外部环境\n\n  比如：硬件（CPU/内存/硬盘/网卡 等）配置、网络带宽配置、温度、操作系统、数据库、缓存软件系统 等\n\n  外部环境通常是对 `性能测试` 影响比较大。\n\n- 内部数据环境\n\n  指 软件系统的内部数据设置。\n\n  比如： 数据库关键记录 数量的设置 对 `性能测试` 影响 至关重要。\n\n  而对 `功能测试` 来说，一个功能，其相关业务数据状态，对行为的影响是 决定性的。\n\n  比如：\n\n  要测试 老师创建作业任务 要下发给学生 这个功能 ，那么 `老师所在班级的有没有学生` 这个数据状态 就是 影响 行为的 重要场景/因素。\n\n  再比如：\n\n  要测试 老师 编辑、删除作业的功能， 那么 该作业是否已经发布给学生就是 影响 行为的 重要场景/因素。\n\n所以 测试用例的完善性，很大情况下，取决于你能找到多少 产品在使用过程中的 ，导致系统行为的 `场景` 或者 `因素` 。\n\n因素组合法，就是 尽可能多的找到 这些 因素，记录下来，在写测试用例的时候 进行 `组合` 。\n', '2022-01-17 23:58:35.194147', '1');
 
 -- ----------------------------
 -- Table structure for `study_tags`
@@ -408,7 +405,7 @@ CREATE TABLE `study_user` (
 -- ----------------------------
 -- Records of study_user
 -- ----------------------------
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-17 14:37:36.273004', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-17 19:01:35.888456', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$QSlfBsdK117kakMSLBnnVB$ZpY7ckayrYsm5JcZFNNLIfZqFCovwu3KUXK7AEJayQw=', '2022-01-15 00:34:52.490355', '0', 'jncss', '', '', '', '0', '1', '2022-01-15 00:30:11.559788', '3', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$Osk4XCKVnxM4ylyB5HTnwE$IR+XenJSlvDq9pem6PZiNcgJS/iV0yp2mVzZx/iLtyo=', '2022-01-15 00:35:24.336949', '0', 'jn11', '', '', '', '0', '1', '2022-01-15 00:34:42.048282', '4', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$rbn7NoRJqb1wgxKqH1XhTd$Cl9TpJ2NtpD3FX9Yikozdu+ilBJKtwegCpO4itKMQBQ=', null, '0', 'cs11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 16:41:37.327930', '5', '1000', '', null, '无评价');
