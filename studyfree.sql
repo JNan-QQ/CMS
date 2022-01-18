@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : mysql8.0
+Source Server         : localhost_3306
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-18 16:59:54
+Date: 2022-01-18 23:28:42
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -238,7 +238,7 @@ CREATE TABLE `django_session` (
 -- Records of django_session
 -- ----------------------------
 INSERT INTO `django_session` VALUES ('3f3fcxjzm9kkt5md95s2kwq4agh5n0il', 'e30:1n8Fpf:kYWQ7OyDNgsTnD6V2AN-_wRTy-KYNUtazn0znuaWrwU', '2022-01-28 06:13:03.186106');
-INSERT INTO `django_session` VALUES ('jjief2tguqil1x51g5rtvpo3gvid04t0', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n9hFC:SH4lGE_axOcO8Q57eqEvVGXl0i3_ppeJ_n8wvlCTk2Y', '2022-02-01 13:41:22.957412');
+INSERT INTO `django_session` VALUES ('y2xay359zyw6gakwclpzuqw65jquj1is', '.eJxVUe9P2zAQ_V8itZ_AcX45caUIDdgYKzBUMSQmpOpin2O3iZMlDu028b_jQj9sknX23Xv37Hv-G6xhcno9jTisjQwWQRSc_FurQGzRHgC5AVt3RHTWDaYiBwo5oiO57SQ250fufwIaRu27E8XyQiismMpzWRVxFmMuUpZGEacSExVnosjTPKKp4AVKroDRnMssoiBUxb3oQc797jFYRCeBGddNVxsbLNww4Qf4PoDHBoTmDlpPDJ6njEvxPDHOqJeAFwOuGzygnevHRRi6EaPTtiXCksrYmlh0odOhkeHq9IIkHIqI0RQ5xpIVFVDMEkwFIHBIE3k2mG35WFlR7K5XqD4t97v5YKbyoD5LYBYrv0xbk91eaPDetT5XpkG_xdRPnrwffKiEZAxSiDKy6es56m1583R5efVw_-f7N97_vMMHz7pvr3qW3xbp8ovefH668aVfetntf9iv4yyR_u6xKee9keV1W6_AP6akR-fshyEb43_Rgg1e3wDt0aNW:1n9mPc:vt28o0mGeCfvN7OjbMCoABaGSqInzpEddcJgFAv0UPQ', '2022-02-01 19:12:28.612173');
 
 -- ----------------------------
 -- Table structure for `pay_config`
@@ -405,7 +405,7 @@ CREATE TABLE `study_user` (
 -- ----------------------------
 -- Records of study_user
 -- ----------------------------
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-18 13:41:22.938865', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-18 19:12:28.299337', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$QSlfBsdK117kakMSLBnnVB$ZpY7ckayrYsm5JcZFNNLIfZqFCovwu3KUXK7AEJayQw=', '2022-01-15 00:34:52.490355', '0', 'jncss', '', '', '', '0', '1', '2022-01-15 00:30:11.559788', '3', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$Osk4XCKVnxM4ylyB5HTnwE$IR+XenJSlvDq9pem6PZiNcgJS/iV0yp2mVzZx/iLtyo=', '2022-01-15 00:35:24.336949', '0', 'jn11', '', '', '', '0', '1', '2022-01-15 00:34:42.048282', '4', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$rbn7NoRJqb1wgxKqH1XhTd$Cl9TpJ2NtpD3FX9Yikozdu+ilBJKtwegCpO4itKMQBQ=', null, '0', 'cs11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 16:41:37.327930', '5', '1000', '', null, '无评价');
