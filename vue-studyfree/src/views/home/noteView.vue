@@ -58,7 +58,7 @@
 <script>
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import {noteContent} from "../../api/common";
+import {noteContent} from "@/api/common";
 import {Edit} from "@element-plus/icons";
 import {ElMessage, ElMessageBox} from "element-plus";
 import request from "../../api/request";
@@ -121,7 +121,7 @@ export default {
             })
         },
         async onUploadImg(files, callback) {
-            const file_name = `img_${this.bjList[this.activeName-1].id}_1234.png`
+            const file_name = `img_notebook_${this.bjList[this.activeName-1].id}_timeR.png`
             const res = await Promise.all(
                 Array.from(files).map((file) => {
                     return new Promise((rev, rej) => {

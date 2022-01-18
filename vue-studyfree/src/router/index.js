@@ -8,7 +8,7 @@ import note from "@/views/home/noteView.vue"
 import skill from "@/views/home/skillView.vue"
 import tool from "@/views/home/toolView.vue"
 import markdownView from "@/components/markdownView.vue"
-
+import myCenter from "@/views/mycenter"
 
 
 
@@ -44,6 +44,10 @@ const routes = [
         path: '/md',
         name: 'MarkDownView',
         component: markdownView
+    },{
+        path: '/myCenter',
+        name: 'myCenter',
+        component: myCenter
     },
 ]
 

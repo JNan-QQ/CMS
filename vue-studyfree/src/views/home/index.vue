@@ -70,7 +70,7 @@
                                 <el-dropdown-item>
                                     <div class="login-items">
                                         <ul>
-                                            <li class="items">
+                                            <li class="items" @click="this.$router.push('/myCenter')">
                                                 <div>
                                                     <el-icon>
                                                         <home-filled/>

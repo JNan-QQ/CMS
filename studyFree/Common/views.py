@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import time
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -256,6 +257,7 @@ class Others:
     def uploadImg(request):
         File = request.FILES.get("file", None)
         file_name = request.POST['file_name']
+        file_name = file_name.replace('timeR', str(int(time.time())))
         if File:
             f_path = os.path.join(settings.BASE_DIR, 'static/images', file_name)
             handle_uploaded_file(request.FILES['file'], f_path)

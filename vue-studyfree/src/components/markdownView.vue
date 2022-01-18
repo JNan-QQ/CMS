@@ -11,7 +11,8 @@
             </div>
         </div>
     </div>
-    <div class="markdown-body" v-html="articleContent"></div>
+    <!--    <div class="markdown-body" v-html="articleContent"></div>-->
+    <md-editor v-model="articleContent" previewOnly/>
 </template>
 
 <script>
@@ -19,6 +20,8 @@ import {marked} from "marked"
 import {downloadFree, getArticleContent} from "@/api/common";
 import {DArrowLeft} from "@element-plus/icons";
 import {ElMessage, ElMessageBox} from "element-plus";
+import MdEditor from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
 
 export default {
     name: "markdownView",
@@ -26,10 +29,10 @@ export default {
         return {
             articleContent: "",
             baseArticleContent: "",
-            title:"",
+            title: "",
         }
     },
-    components: {DArrowLeft},
+    components: {DArrowLeft, MdEditor},
     mounted() {
         const param = this.$route.query
         getArticleContent({action: 'markdownContent', tag_id: param['id']}).then(res => {
@@ -132,8 +135,19 @@ export default {
     overflow-y: auto;
 }
 
+.md-previewOnly {
+    box-sizing: border-box;
+    min-width: 200px;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 45px;
+    position: relative;
+    height: calc(90vh - 10px);
+    overflow-y: auto;
+}
+
 @media (max-width: 767px) {
-    .markdown-body {
+    .markdown-body, .md-previewOnly {
         padding: 15px;
     }
 }
