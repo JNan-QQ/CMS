@@ -84,10 +84,12 @@ class User(AbstractUser):
                 account.realName = data['realName']
             if 'desc' in data:
                 account.desc = data['desc']
-            if 'phone' in data:
-                account.desc = data['phone']
+            if 'email' in data:
+                account.desc = data['email']
             if 'password' in data:
                 account.password = make_password(data['password'])
+            if 'usertype' in data:
+                account.usertype = data['usertype']
             # 注意，一定要执行save才能将修改信息保存到数据库
             account.save()
             return {'ret': 0}

@@ -92,3 +92,18 @@ export function getEmailCode(email, that) {
         that.btnCodeStatus = false
     })
 }
+
+export function Account(data) {
+    return request({
+        url: 'common/account',
+        method: 'post',
+        data: data
+    }).then(res => {
+        if (res) {
+            ElMessage({
+                type: 'success',
+                message: '修改成功!',
+            })
+        }
+    })
+}

@@ -34,7 +34,7 @@
         </div>
         <div class="right">
             <div class="top-btn">
-                <el-button :icon="Delete" circle></el-button>
+                <el-button :icon="Delete" circle @click="this.$router.go(-1);"></el-button>
             </div>
             <div v-if="activeIndex==='1'" class="content one">
                 <el-card class="box-card">
@@ -48,10 +48,17 @@
                         <span>用户名：</span><span class="item-content username">{{ userdata.username }}</span>
                     </div>
                     <div class="item">
-                        <span>姓　名：</span><span class="item-content realName">{{ userdata.realName }}</span>
-                        <el-input v-model="userdata.realName">
-                            <template #append><el-button type="success" :icon="Check"></el-button></template>
-                        </el-input>
+                        <span>姓　名：</span><span class="item-content realName" v-if="!editRealName">{{
+                            userdata.realName
+                        }}</span>
+                        <div style="display: flex" v-if="editRealName">
+                            <el-input v-model="newUserdata.realName"></el-input>
+                            <el-button type="success" :icon="Check"></el-button>
+                            <el-button type="danger" :icon="Close" @click="editRealName=false;"></el-button>
+                        </div>
+                        <el-icon style="margin-left: 10px;color: #105c94" v-else @click="editRealName=true;">
+                            <edit/>
+                        </el-icon>
                     </div>
                     <div class="item">
                         <span>Ｆ　币：</span><span class="item-content coins">{{ userdata.coins }}</span>
@@ -66,16 +73,31 @@
             </div>
             <div v-else-if="activeIndex==='2'">2</div>
             <div v-else-if="activeIndex==='3'">3</div>
-            <div v-else-if="activeIndex==='4'">4</div>
+            <div v-else-if="activeIndex==='4'">
+                <div>
+                    <span>开启高级模式：</span>
+                    <el-switch @change="changeUserType"
+                               v-model="heightSwitch"
+                               :disabled="heightSwitch"
+                               inline-prompt
+                               active-color="#13ce66"
+                               inactive-color="#ff4949"
+                               active-text="Y"
+                               inactive-text="N">
+                    </el-switch>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import {Setting, InfoFilled, Tickets, MessageBox, Delete,Check} from "@element-plus/icons";
-import {markRaw} from "vue";
+import {Setting, InfoFilled, Tickets, MessageBox, Delete, Check, Close, Edit} from "@element-plus/icons";
+import {markRaw, ref} from "vue";
 import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {Account} from "../../api/common";
 
 export default {
     name: "index",
@@ -83,22 +105,47 @@ export default {
         return {
             userdata: this.$store.state.userdata,
             activeIndex: "1",
-            Delete: markRaw(Delete),Check:markRaw(Check),
-            newUserdata:{
-                username:'',
-                realName:'',
+            Delete: markRaw(Delete), Check: markRaw(Check), Close: markRaw(Close),
+            editRealName: false,
+            heightSwitch: this.$store.state.userdata.usertype === 1005,
+            newUserdata: {
+                username: '',
+                realName: '',
             }
         }
     },
-    components: {Setting, InfoFilled, Tickets, MessageBox},
+    components: {Setting, InfoFilled, Tickets, MessageBox, Edit},
     mounted() {
         checkLogin(this)
         getUserConfig(this)
     },
+    watch:{
+        '$store.state.userdata.usertype'(){
+            this.heightSwitch = this.$store.state.userdata.usertype === 1005
+        }
+    },
     methods: {
         activeIndexes(index) {
             this.activeIndex = index
-        }
+        },
+        changeEdit() {
+            this.editRealName = !this.editRealName
+        },
+        changeUserType(val) {
+            ElMessageBox.confirm(
+                '确认开启高级功能? 开启后无法关闭',
+                '提示',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            ).then(() => {
+                Account({action: 'modify', usertype: 1005})
+            }).catch(() => {
+                this.heightSwitch = false
+            })
+        },
     },
 }
 </script>
@@ -168,6 +215,10 @@ export default {
                     font-size: 16px;
                     text-align: left;
                     border-bottom: #e0dddd solid 1px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+
                 }
             }
 

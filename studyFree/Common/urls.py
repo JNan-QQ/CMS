@@ -5,8 +5,10 @@
 # @Tool      :PyCharm
 
 from django.urls import path
-from Common.views import Others
+
+from Common.views import Others, Accounts
 
 urlpatterns = [
     path('other', Others().handler),
+    path('account', Accounts().handler),
 ]

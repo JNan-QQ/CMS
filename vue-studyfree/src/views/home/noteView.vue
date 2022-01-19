@@ -91,9 +91,23 @@ export default {
             })
         },
         deleteNoteBook(id) {
-            noteContent({action: 'deleteNoteBook', 'note_id': id}).then(res => {
-                this.before()
-            })
+            ElMessageBox.confirm(
+                '确认删除改笔记？',
+                '提示',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            ).then(() => {
+                noteContent({action: 'deleteNoteBook', 'note_id': id}).then(res => {
+                    this.before()
+                    ElMessage({
+                        type: 'success',
+                        message: '删除笔记成功',
+                    })
+                })
+            }).catch(() => {})
         },
         saveNoteBook(id, text) {
             this.saveLoading = true
