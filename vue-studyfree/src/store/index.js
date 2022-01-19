@@ -26,6 +26,8 @@ export default createStore({
                         } else {
                             state.userdata[key] = '已签到'
                         }
+                    }else if(key ==='deadline'){
+                        state.userdata[key] = payload[key].replace('T',' ')
                     } else {
                         state.userdata[key] = payload[key]
                     }

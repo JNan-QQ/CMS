@@ -44,11 +44,24 @@
                             <el-button class="button" type="text">重置密码</el-button>
                         </div>
                     </template>
-                    <div class="item"><span>用户名：</span><span>{{ userdata.username }}</span></div>
-                    <div class="item"><span>姓　名：</span><span>{{ userdata.realName }}</span></div>
-                    <div class="item"><span>Ｆ　币：</span><span>{{ userdata.coins }}</span></div>
-                    <div class="item"><span>等　级：</span><span>{{ userdata.lv }}</span></div>
-                    <div class="item"><span>时　间：</span><span>{{ userdata.deadline }}</span></div>
+                    <div class="item">
+                        <span>用户名：</span><span class="item-content username">{{ userdata.username }}</span>
+                    </div>
+                    <div class="item">
+                        <span>姓　名：</span><span class="item-content realName">{{ userdata.realName }}</span>
+                        <el-input v-model="userdata.realName">
+                            <template #append><el-button type="success" :icon="Check"></el-button></template>
+                        </el-input>
+                    </div>
+                    <div class="item">
+                        <span>Ｆ　币：</span><span class="item-content coins">{{ userdata.coins }}</span>
+                    </div>
+                    <div class="item">
+                        <span>等　级：</span><span class="item-content lv">{{ userdata.lv }}</span>
+                    </div>
+                    <div class="item">
+                        <span>时　间：</span><span class="item-content deadline">{{ userdata.deadline }}</span>
+                    </div>
                 </el-card>
             </div>
             <div v-else-if="activeIndex==='2'">2</div>
@@ -59,10 +72,10 @@
 </template>
 
 <script>
-import {Setting, InfoFilled, Tickets, MessageBox, Delete} from "@element-plus/icons";
+import {Setting, InfoFilled, Tickets, MessageBox, Delete,Check} from "@element-plus/icons";
 import {markRaw} from "vue";
-import {checkLogin} from "../../api/Login";
-import {getUserConfig} from "../../api/pay";
+import {checkLogin} from "@/api/Login";
+import {getUserConfig} from "@/api/pay";
 
 export default {
     name: "index",
@@ -70,7 +83,11 @@ export default {
         return {
             userdata: this.$store.state.userdata,
             activeIndex: "1",
-            Delete: markRaw(Delete)
+            Delete: markRaw(Delete),Check:markRaw(Check),
+            newUserdata:{
+                username:'',
+                realName:'',
+            }
         }
     },
     components: {Setting, InfoFilled, Tickets, MessageBox},
@@ -144,14 +161,16 @@ export default {
 
         .one {
             .box-card {
-                margin:10px;
-                .item{
+                margin: 10px;
+
+                .item {
                     margin: 20px 10px;
                     font-size: 16px;
                     text-align: left;
                     border-bottom: #e0dddd solid 1px;
                 }
             }
+
             .card-header {
                 display: flex;
                 justify-content: space-between;

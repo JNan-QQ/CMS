@@ -121,14 +121,15 @@ export default {
             })
         },
         async onUploadImg(files, callback) {
-            const file_name = `img_notebook_${this.bjList[this.activeName-1].id}_timeR.png`
+            const file_name = `img_notebook_${this.bjList[this.activeName - 1].id}_timeR.png`
             const res = await Promise.all(
                 Array.from(files).map((file) => {
                     return new Promise((rev, rej) => {
                         const form = new FormData();
                         form.append('file', file);
-                        form.append('action','uploadImg')
-                        form.append('file_name',file_name)
+                        form.append('action', 'uploadImg')
+                        form.append('file_name', file_name)
+                        form.append('file_type', 'notebook')
                         request.post('/common/other', form).then((res) => rev(res)).catch((error) => rej(error));
                     });
                 })

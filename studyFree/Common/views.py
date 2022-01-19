@@ -256,9 +256,10 @@ class Others:
     @staticmethod
     def uploadImg(request):
         File = request.FILES.get("file", None)
+        file_type = request.POST['file_type']
         file_name = request.POST['file_name']
         file_name = file_name.replace('timeR', str(int(time.time())))
         if File:
-            f_path = os.path.join(settings.BASE_DIR, 'static/images', file_name)
+            f_path = os.path.join(settings.BASE_DIR, 'static/images', file_type, file_name)
             handle_uploaded_file(request.FILES['file'], f_path)
-            return jsonResponse({'ret': 0, 'url': f'static/images/{file_name}'})
+            return jsonResponse({'ret': 0, 'url': f'static/images/{file_type}/{file_name}'})
