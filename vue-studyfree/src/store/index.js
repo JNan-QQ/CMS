@@ -3,9 +3,11 @@ import {createStore} from 'vuex'
 export default createStore({
     state: {
         userdata: {
+            user_id: 0,
             username: '',
             realName: '',
-            aviator: '',
+            aviator: '' || '/api/static/images/aviator_base.png',
+            email: '',
             coins: 0,
             lv: 0,
             deadline: '',
@@ -26,9 +28,11 @@ export default createStore({
                         } else {
                             state.userdata[key] = '已签到'
                         }
-                    }else if(key ==='deadline'){
-                        state.userdata[key] = payload[key].replace('T',' ')
-                    } else {
+                    } else if (key === 'deadline') {
+                        state.userdata[key] = payload[key].replace('T', ' ').split('.')[0]
+                    } else if (key === 'aviator') {
+                        state.userdata[key] = '/api/' + payload[key]
+                    }else {
                         state.userdata[key] = payload[key]
                     }
                 }

@@ -3,7 +3,14 @@
         <div class="left">
             <div class="aviator">
                 <el-avatar :src="userdata.aviator" :size="150"></el-avatar>
-                <el-button>更换头像</el-button>
+                <el-upload action="/api/common/other"
+                           :data="{action:'uploadImg',file_type:'aviator',file_name:'img_aviator_'+userdata.id+'_timeR.png'}"
+                           :on-success="uploadImgSuccess"
+                           :show-file-list="false"
+                           accept="image/png, image/jpeg, image/jpg"
+                >
+                    <el-button>更换头像</el-button>
+                </el-upload>
             </div>
             <el-menu default-active="1" @select="activeIndexes">
                 <el-menu-item index="1">
@@ -41,19 +48,24 @@
                     <template #header>
                         <div class="card-header">
                             <span>个人信息</span>
-                            <el-button class="button" type="text">重置密码</el-button>
+                            <el-button class="button" type="text" v-if="!editPassword" @click="editPassword=true">重置密码
+                            </el-button>
+                            <div v-else style="display: flex">
+                                <el-input placeholder="请输入新密码" v-model="newUserdata.password"/>
+                                <el-button :icon="Check" @click="changePassword"></el-button>
+                                <el-button :icon="Close" @click="editPassword=false"></el-button>
+                            </div>
                         </div>
                     </template>
                     <div class="item">
                         <span>用户名：</span><span class="item-content username">{{ userdata.username }}</span>
                     </div>
                     <div class="item">
-                        <span>姓　名：</span><span class="item-content realName" v-if="!editRealName">{{
-                            userdata.realName
-                        }}</span>
+                        <span>姓　名：</span>
+                        <span class="item-content realName" v-if="!editRealName">{{ userdata.realName }}</span>
                         <div style="display: flex" v-if="editRealName">
                             <el-input v-model="newUserdata.realName"></el-input>
-                            <el-button type="success" :icon="Check"></el-button>
+                            <el-button type="success" :icon="Check" @click="changeRealName"></el-button>
                             <el-button type="danger" :icon="Close" @click="editRealName=false;"></el-button>
                         </div>
                         <el-icon style="margin-left: 10px;color: #105c94" v-else @click="editRealName=true;">
@@ -69,12 +81,15 @@
                     <div class="item">
                         <span>时　间：</span><span class="item-content deadline">{{ userdata.deadline }}</span>
                     </div>
+                    <div class="item">
+                        <span>邮　箱：</span><span class="item-content email">{{ userdata.email }}</span>
+                    </div>
                 </el-card>
             </div>
             <div v-else-if="activeIndex==='2'">2</div>
             <div v-else-if="activeIndex==='3'">3</div>
             <div v-else-if="activeIndex==='4'">
-                <div>
+                <div style="border-bottom: #1E9FFF solid 1px;padding: 5px">
                     <span>开启高级模式：</span>
                     <el-switch @change="changeUserType"
                                v-model="heightSwitch"
@@ -85,6 +100,9 @@
                                active-text="Y"
                                inactive-text="N">
                     </el-switch>
+                </div>
+                <div>
+
                 </div>
             </div>
         </div>
@@ -97,7 +115,7 @@ import {markRaw, ref} from "vue";
 import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {Account} from "../../api/common";
+import {AccountApi, CommonApi, sendEmailCode} from "@/api/common";
 
 export default {
     name: "index",
@@ -107,10 +125,12 @@ export default {
             activeIndex: "1",
             Delete: markRaw(Delete), Check: markRaw(Check), Close: markRaw(Close),
             editRealName: false,
+            editPassword: false,
             heightSwitch: this.$store.state.userdata.usertype === 1005,
             newUserdata: {
                 username: '',
                 realName: '',
+                password: '',
             }
         }
     },
@@ -119,18 +139,18 @@ export default {
         checkLogin(this)
         getUserConfig(this)
     },
-    watch:{
-        '$store.state.userdata.usertype'(){
+    watch: {
+        // 监听用户类型
+        '$store.state.userdata.usertype'() {
             this.heightSwitch = this.$store.state.userdata.usertype === 1005
-        }
+        },
     },
     methods: {
+        // 激活索引
         activeIndexes(index) {
             this.activeIndex = index
         },
-        changeEdit() {
-            this.editRealName = !this.editRealName
-        },
+        // 改变用户类型
         changeUserType(val) {
             ElMessageBox.confirm(
                 '确认开启高级功能? 开启后无法关闭',
@@ -141,11 +161,58 @@ export default {
                     type: 'warning',
                 }
             ).then(() => {
-                Account({action: 'modify', usertype: 1005})
+                AccountApi({action: 'modify', usertype: 1005})
             }).catch(() => {
                 this.heightSwitch = false
             })
         },
+        changeRealName() {
+            if (this.newUserdata.realName) {
+                AccountApi({action: 'modify', 'realName': this.newUserdata.realName}).then(res => {
+                    console.log(res)
+                    if (res){
+                        this.editRealName = false
+                        this.userdata.realName = this.newUserdata.realName
+                    }
+                })
+            } else {
+                ElMessage({
+                    message: '请输入姓名！',
+                    type: 'warning',
+                })
+            }
+        },
+        // 上传头像图片成功后修改头像
+        uploadImgSuccess(response, file, fileList) {
+            if (response['ret'] === 0) {
+                this.userdata.aviator = response['url']
+                AccountApi({action: 'modify', 'aviator': response['url']})
+            }
+        },
+        changePassword() {
+            if (this.newUserdata.password.length >= 6) {
+                sendEmailCode()
+                ElMessageBox.prompt('请输入邮箱接收到的验证码', 'Tip', {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                }).then(({value}) => {
+                    CommonApi({action: 'checkEmailCode', code: value}).then(res => {
+                        if (res) {
+                            AccountApi({action: 'modify', 'password': this.newUserdata.password})
+                        }
+                    })
+                }).catch(() => {
+
+                })
+            } else {
+                ElMessage({
+                    message: '请输入至少6位的密码！',
+                    type: 'warning',
+                })
+            }
+
+
+        }
     },
 }
 </script>

@@ -19,7 +19,7 @@ from django.urls import path, include
 import Common.urls
 import FrontEnd.urls
 import Pay.urls
-from Common.views import Login, CQ, FileStream, Download
+from Common.views import Login, CQ, Download
 
 from django.views import static  # 新增
 from django.conf import settings  # 新增
@@ -33,7 +33,6 @@ urlpatterns = [
     path('frontEnd/', include(FrontEnd.urls)),
     path('pay/', include(Pay.urls)),
     path('common/', include(Common.urls)),
-    path('fileStream', FileStream().handler),
     # 以下是新增
     url(r'^static/(?P<path>.*)$', static.serve,
         {'document_root': settings.STATIC_ROOT}, name='static'),

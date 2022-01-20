@@ -70,6 +70,7 @@ class Login:
                 request.session['realName'] = user.realName
                 request.session['aviator'] = str(user.aviator)
                 request.session['username'] = user.username
+                request.session['email'] = user.email
 
                 return jsonResponse(
                     {'ret': 0, 'usertype': user.usertype, 'user_id': user.id, 'realName': user.realName,
@@ -95,9 +96,10 @@ class Login:
             request.session['realName'] = user.realName
             request.session['aviator'] = str(user.aviator)
             request.session['username'] = user.username
+            request.session['email'] = user.email
             return jsonResponse({'ret': 0, 'id': request.session['user_id'], 'usertype': request.session['usertype'],
                                  'realName': request.session['realName'], 'aviator': request.session['aviator'],
-                                 'username': request.session['username']})
+                                 'username': request.session['username'], 'email': request.session['email']})
         else:
             return jsonResponse({'ret': 302, 'msg': '未登录'})
 
@@ -151,38 +153,6 @@ class CQ:
     def list():
         ret = CelebrityQuotes.listQuotes()
         return jsonResponse(ret)
-
-
-class FileStream:
-    def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
-
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        # 添加新闻
-        if action == 'list':
-            return self.list(request)
-
-    @staticmethod
-    def list(request):
-
-        filetype = request.params['type']
-        filePath = os.path.join(settings.BASE_DIR, 'static', filetype, request.params['filename'])
-        try:
-            with open(filePath, 'r', encoding='utf8') as f:
-                mdContent = f.read()
-            return jsonResponse({'ret': 0, 'mdContent': mdContent})
-        except KeyError:
-            return jsonResponse({'ret': 1})
 
 
 class Download:
@@ -243,6 +213,8 @@ class Others:
             return self.emailCode(request)
         elif action == 'uploadImg':
             return self.uploadImg(request)
+        elif action == 'checkEmailCode':
+            return self.checkEmailCode(request)
 
     @staticmethod
     def qd(request):
@@ -252,10 +224,15 @@ class Others:
     @staticmethod
     def emailCode(request):
         code = generate_random_str()
-        res = SendEmail.sendEmail('【studyfree】 注册验证', f'你本次注册的六位验证码为：-> {code} <-,五分钟内有效。', [request.params['email']])
-        if not res:
+        email = request.params.get('email', None)
+        if not email:
+            email = request.session['email']
+        res = EmailCode.add({'email': email, 'code': code})
+        if res['ret'] == 1:
+            return jsonResponse(res)
+        res1 = SendEmail.sendEmail('【studyfree】 注册验证', f'你本次注册的六位验证码为：-> {code} <-,五分钟内有效。', [email])
+        if not res1:
             return jsonResponse({'ret': 1, 'msg': '验证码邮件发送失败，请稍后重试'})
-        res = EmailCode.add({'email': request.params['email'], 'code': code})
         return jsonResponse(res)
 
     @staticmethod
@@ -268,6 +245,12 @@ class Others:
             f_path = os.path.join(settings.BASE_DIR, 'static/images', file_type, file_name)
             handle_uploaded_file(request.FILES['file'], f_path)
             return jsonResponse({'ret': 0, 'url': f'static/images/{file_type}/{file_name}'})
+
+    @staticmethod
+    def checkEmailCode(request):
+        email = request.session['email']
+        ret = EmailCode.checkCode(email, request.params['code'])
+        return jsonResponse(ret)
 
 
 class Accounts:

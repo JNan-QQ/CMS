@@ -76,7 +76,7 @@ export function qianDao() {
 }
 
 // 获取验证码
-export function getEmailCode(email, that) {
+export function registerEmailCode(email, that) {
     that.btnCodeStatus = true
     return request({
         url: 'common/other',
@@ -93,7 +93,24 @@ export function getEmailCode(email, that) {
     })
 }
 
-export function Account(data) {
+// send email code
+export function sendEmailCode() {
+    return request({
+        url: 'common/other',
+        method: 'post',
+        data: {action: 'emailCode'}
+    }).then(res => {
+        if (res) {
+            ElMessage({
+                message: res['msg'],
+                type: 'success',
+            })
+        }
+    })
+}
+
+// 账号接口
+export function AccountApi(data) {
     return request({
         url: 'common/account',
         method: 'post',
@@ -102,8 +119,18 @@ export function Account(data) {
         if (res) {
             ElMessage({
                 type: 'success',
-                message: '修改成功!',
+                message: '操作成功!',
             })
+            return res
         }
+    })
+}
+
+// common 接口
+export function CommonApi(data) {
+    return request({
+        url: 'common/other',
+        method: 'post',
+        data: data
     })
 }

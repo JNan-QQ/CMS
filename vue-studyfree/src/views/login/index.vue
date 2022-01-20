@@ -68,7 +68,7 @@
 import {Promotion, UserFilled} from "@element-plus/icons"
 import {markRaw} from "vue"
 import {sign} from "../../api/Login"
-import {getEmailCode} from "../../api/common"
+import {registerEmailCode} from "../../api/common"
 import {ElMessage} from "element-plus"
 
 export default {
@@ -123,7 +123,7 @@ export default {
             }
         },
         getCode() {
-            getEmailCode(this.registerForm.email,this)
+            registerEmailCode(this.registerForm.email,this)
         }
     },
 }

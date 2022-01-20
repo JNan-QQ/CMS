@@ -90,6 +90,8 @@ class User(AbstractUser):
                 account.password = make_password(data['password'])
             if 'usertype' in data:
                 account.usertype = data['usertype']
+            if 'aviator' in data:
+                account.aviator = data['aviator']
             # 注意，一定要执行save才能将修改信息保存到数据库
             account.save()
             return {'ret': 0}

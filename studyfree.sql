@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost_3306
+Source Server         : mysql8.0
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-20 00:15:39
+Date: 2022-01-20 17:12:00
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -238,7 +238,7 @@ CREATE TABLE `django_session` (
 -- Records of django_session
 -- ----------------------------
 INSERT INTO `django_session` VALUES ('3f3fcxjzm9kkt5md95s2kwq4agh5n0il', 'e30:1n8Fpf:kYWQ7OyDNgsTnD6V2AN-_wRTy-KYNUtazn0znuaWrwU', '2022-01-28 06:13:03.186106');
-INSERT INTO `django_session` VALUES ('iy43g0qftm2ha862pqsrolu3d0eal3f2', '.eJxVj8tugzAQRf9l1hEy-MHAsvvmF9D4QXBC7co2laoo_x6TsGiXc8-9R5o7TLSVZdqyS5O3MIKE099Mk7m5sAN7pXCJjYmhJK-bvdIcNDef0br14-j-EyyUl7rupLLokEvOkA-CTD8jQ6HErHs-8E6isUoYjYRWDdpiJ4eZS2FYj0poXqW7rvx-OxhbxuQJfJ7WePEBxpI29-avHypLjtYzfdUu1CX9eCox1eMcgztU4Y1Nblt4PAEiKlRn:1nADbv:bC84a_q9TGIZoz5gmGTwh4m3KPwPd5huLsIhVhpb8GU', '2022-02-03 00:14:59.274282');
+INSERT INTO `django_session` VALUES ('iao89bj622pawzwlo1etqgfh1ht7db37', '.eJxVkN1uhCAQRt-F642LyI941fS-fYJNyACjslXcFWzSNH33Ytcm7R185-Nkhk9iYMuj2RKuJnjSkZqc_mYW3BvGHfgrxGGp3BLzGmy1V6qDpupl8Tg9H91_ghHSWF5Lrb1C4MJpwRUXNdieStkrz3vdIrWM1bxvGVLX0F4JZrlCKxmCRvStKNJdlz9uSLr6REIy0zKESLq8bviAPwsUtiJMrzCXIrlsQnt32aSWtCjgPUBe1gJShhzcOcwwYDofebkO5jibayj7RoimlpxJWXMqqlscjkHiw_9bKinOEKYStVo2TSMUf7rfy2_N5OsbIDJ09A:1nATJq:iIepRx2DV6X-yqYsgAux1Mpu2_jaT1okQyLvlh0vzNc', '2022-02-03 17:01:22.093353');
 
 -- ----------------------------
 -- Table structure for `pay_config`
@@ -326,7 +326,7 @@ CREATE TABLE `study_email_code` (
 -- ----------------------------
 -- Records of study_email_code
 -- ----------------------------
-INSERT INTO `study_email_code` VALUES ('1', 'M2ZWGZ', '2', '896333574@qq.com', '2022-01-15 21:48:20.468639');
+INSERT INTO `study_email_code` VALUES ('1', '9Y4PN0', '2', '896333574@qq.com', '2022-01-20 16:12:20.633047');
 
 -- ----------------------------
 -- Table structure for `study_notebook`
@@ -405,10 +405,10 @@ CREATE TABLE `study_user` (
 -- ----------------------------
 -- Records of study_user
 -- ----------------------------
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$4xg0fMFTefqOr3vvboVdVs$lu647cbrXNQsCCP2H3h9/2o1cZXLVBIHiqyR642ZRSs=', '2022-01-19 19:23:10.373369', '1', 'jiangnan', '', '', '', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'https://tse1-mm.cn.bing.net/th/id/R-C.39a81604e9e2d68ba0e53e4caea9a43d?rik=Vbnc8wIRefAKxw&riu=http%3a%2f%2fimg.wxcha.com%2ffile%2f201903%2f20%2fbcd66a4a15.jpg&ehk=LYDDGTPzOJ9pZNeT%2fPmGp67M84KFhjEYL%2fqhKoxUnHs%3d&risl=&pid=ImgRaw&r=0', null);
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$QSlfBsdK117kakMSLBnnVB$ZpY7ckayrYsm5JcZFNNLIfZqFCovwu3KUXK7AEJayQw=', '2022-01-19 23:57:29.777376', '0', 'jncss', '', '', '', '0', '1', '2022-01-15 00:30:11.559788', '3', '1005', '', null, '无评价');
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$Osk4XCKVnxM4ylyB5HTnwE$IR+XenJSlvDq9pem6PZiNcgJS/iV0yp2mVzZx/iLtyo=', '2022-01-20 00:04:15.481388', '0', 'jn11', '', '', '', '0', '1', '2022-01-15 00:34:42.048282', '4', '1005', '', null, '无评价');
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$rbn7NoRJqb1wgxKqH1XhTd$Cl9TpJ2NtpD3FX9Yikozdu+ilBJKtwegCpO4itKMQBQ=', '2022-01-20 00:14:35.951100', '0', 'cs11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 16:41:37.327930', '5', '1005', '', null, '无评价');
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$DGJ2A11d3DDLgOz1Ejgr8Q$gK9SrBEFQ+ysPAXBP/wmZEPMqin00ymPMocm/WO+SiE=', '2022-01-20 16:04:37.736605', '1', 'jiangnan', '', '', '896333574@qq.com', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'static/images/aviator/img_aviator_jiangnan_1642661405.png', null);
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$QSlfBsdK117kakMSLBnnVB$ZpY7ckayrYsm5JcZFNNLIfZqFCovwu3KUXK7AEJayQw=', '2022-01-19 23:57:29.777376', '0', 'jncss', '', '', '896333574@qq.com', '0', '1', '2022-01-15 00:30:11.559788', '3', '1005', '', null, '无评价');
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$Osk4XCKVnxM4ylyB5HTnwE$IR+XenJSlvDq9pem6PZiNcgJS/iV0yp2mVzZx/iLtyo=', '2022-01-20 00:04:15.481388', '0', 'jn11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 00:34:42.048282', '4', '1005', '', null, '无评价');
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$rbn7NoRJqb1wgxKqH1XhTd$Cl9TpJ2NtpD3FX9Yikozdu+ilBJKtwegCpO4itKMQBQ=', '2022-01-20 13:58:04.723682', '0', 'cs11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 16:41:37.327930', '5', '1005', '', 'static/images/aviator/img_aviator_cs11_1642661249.png', '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$taepkAi1lsdqNaRxmBaBuq$eJsEIIcNo6/i1S18tud2fvmS5siCpNgTQWMslvz6ZR8=', '2022-01-15 17:25:52.821804', '0', 'cs22', '', '', '896333574@qq.com', '0', '1', '2022-01-15 17:25:51.629864', '6', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$ZrFmb72x2TI0zpnXiiC0cs$zeJ7T1zd3NgPqkhWteqPitfPbPv9PM21qu6daTcuJqY=', '2022-01-15 19:25:45.559804', '0', 'cs33', '', '', '896333574@qq.com', '0', '1', '2022-01-15 19:25:44.674948', '7', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$0APOmnpeflAed4SsnROapt$b7jxhWEs7aPN4v6rHn9+g5D2QyXsVfPVnWb4RynpOcU=', '2022-01-15 21:54:34.332687', '0', 'cs44', '', '', '896333574@qq.com', '0', '1', '2022-01-15 21:48:20.901004', '8', '1000', '', null, '无评价');
