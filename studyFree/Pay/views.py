@@ -22,6 +22,10 @@ class payConfig:
         # 添加新闻
         if action == 'userConfig':
             return self.userConfig(request)
+        elif action == 'listServerConfig':
+            return self.listServerConfig(request)
+        elif action == 'modify':
+            return self.modify(request)
 
     @staticmethod
     def userConfig(request):
@@ -30,3 +34,20 @@ class payConfig:
             return jsonResponse(res)
         else:
             return jsonResponse({'ret': 0, 'retlist': []})
+
+    @staticmethod
+    def listServerConfig(request):
+        if request.session.get('is_login', None):
+            if request.session['usertype'] not in [1, 1005]:
+                return jsonResponse({'ret': 0, 'ServerConfig': ''})
+            res = PayConfig.listServerConfig({'user_id': request.session['user_id']})
+            return jsonResponse(res)
+        else:
+            return jsonResponse({'ret': 0, 'ServerConfig': ''})
+
+    @staticmethod
+    def modify(request):
+        request.params['user_id'] = request.session['user_id']
+        res = PayConfig.modify(request.params)
+
+        return jsonResponse(res)

@@ -201,17 +201,7 @@ export default {
             sign({action: 'signout'}).then(res => {
                 if (res) {
                     checkLogin(this)
-                    this.userdata = {
-                        username: '',
-                        realName: '',
-                        aviator: '',
-                        coins: 0,
-                        lv: 0,
-                        deadline: '',
-                        usertype: 0,
-                        isLogin: false,
-                        qd: false
-                    }
+                    this.userdata = this.$store.state.userdata_base
                 }
             })
         },

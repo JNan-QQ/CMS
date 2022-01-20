@@ -2,6 +2,19 @@ import {createStore} from 'vuex'
 
 export default createStore({
     state: {
+        userdata_base: {
+            user_id: 0,
+            username: '',
+            realName: '',
+            aviator: '' || '/api/static/images/aviator_base.png',
+            email: '',
+            coins: 0,
+            lv: 0,
+            deadline: '',
+            usertype: 0,
+            isLogin: false,
+            qd: '签到',
+        },
         userdata: {
             user_id: 0,
             username: '',
@@ -32,7 +45,7 @@ export default createStore({
                         state.userdata[key] = payload[key].replace('T', ' ').split('.')[0]
                     } else if (key === 'aviator') {
                         state.userdata[key] = '/api/' + payload[key]
-                    }else {
+                    } else {
                         state.userdata[key] = payload[key]
                     }
                 }
@@ -42,17 +55,7 @@ export default createStore({
             }
         },
         deleteUserInfo(state) {
-            state.userdata = {
-                username: '',
-                realName: '',
-                aviator: '',
-                coins: 0,
-                lv: 0,
-                deadline: '',
-                usertype: 0,
-                isLogin: false,
-                qd: '签到',
-            }
+            state.userdata = state.userdata_base
         },
         upDataUrl(state, url) {
             state.nowUrl = url

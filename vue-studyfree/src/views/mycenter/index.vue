@@ -89,20 +89,38 @@
             <div v-else-if="activeIndex==='2'">2</div>
             <div v-else-if="activeIndex==='3'">3</div>
             <div v-else-if="activeIndex==='4'">
-                <div style="border-bottom: #1E9FFF solid 1px;padding: 5px">
-                    <span>开启高级模式：</span>
-                    <el-switch @change="changeUserType"
-                               v-model="heightSwitch"
-                               :disabled="heightSwitch"
-                               inline-prompt
-                               active-color="#13ce66"
-                               inactive-color="#ff4949"
-                               active-text="Y"
-                               inactive-text="N">
-                    </el-switch>
+                <div style="border-bottom: #1E9FFF solid 1px;padding: 5px;
+                            display:flex;justify-content: space-between;align-items: center;">
+                    <div><span>开启高级模式：</span>
+                        <el-switch @change="changeUserType"
+                                   v-model="heightSwitch"
+                                   :disabled="heightSwitch"
+                                   inline-prompt
+                                   active-color="#13ce66"
+                                   inactive-color="#ff4949"
+                                   active-text="Y"
+                                   inactive-text="N">
+                        </el-switch>
+                    </div>
+                    <div>
+                        <el-button size="small" v-if="!editUserServerConfig" @click="editUserServerConfig=true">
+                            编辑配置文件
+                        </el-button>
+                        <el-button size="small" v-else @click="saveUserServerConfig" :loading="saveLoading">
+                            保存配置文件
+                        </el-button>
+                    </div>
                 </div>
-                <div>
-
+                <div style="margin-top: 10px;padding: 10px">
+                    <el-empty description="无配置" v-if="userServerConfig === {} && !editUserServerConfig"></el-empty>
+                    <div v-if="userServerConfig !== {} && !editUserServerConfig">123</div>
+                    <div v-if="editUserServerConfig">
+                        <vue3-json-editor
+                            v-model="userServerConfig"
+                            :expandedOnStart="true"
+                            @json-change="onJsonChange"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -111,11 +129,13 @@
 
 <script>
 import {Setting, InfoFilled, Tickets, MessageBox, Delete, Check, Close, Edit} from "@element-plus/icons";
-import {markRaw, ref} from "vue";
+import {markRaw, reactive} from "vue"
 import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {AccountApi, CommonApi, sendEmailCode} from "@/api/common";
+import {UserConfigApi} from "../../api/pay";
+import {Vue3JsonEditor} from 'vue3-json-editor'
 
 export default {
     name: "index",
@@ -126,18 +146,26 @@ export default {
             Delete: markRaw(Delete), Check: markRaw(Check), Close: markRaw(Close),
             editRealName: false,
             editPassword: false,
+            editUserServerConfig: false,
+            saveLoading: false,
             heightSwitch: this.$store.state.userdata.usertype === 1005,
             newUserdata: {
                 username: '',
                 realName: '',
                 password: '',
-            }
+            },
+            userServerConfig: {}
         }
     },
-    components: {Setting, InfoFilled, Tickets, MessageBox, Edit},
+    components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Vue3JsonEditor},
     mounted() {
         checkLogin(this)
         getUserConfig(this)
+        UserConfigApi({action: 'listServerConfig'}).then(res => {
+            if (res) {
+                this.userServerConfig = res['userServerConfig']
+            }
+        })
     },
     watch: {
         // 监听用户类型
@@ -170,7 +198,7 @@ export default {
             if (this.newUserdata.realName) {
                 AccountApi({action: 'modify', 'realName': this.newUserdata.realName}).then(res => {
                     console.log(res)
-                    if (res){
+                    if (res) {
                         this.editRealName = false
                         this.userdata.realName = this.newUserdata.realName
                     }
@@ -212,6 +240,19 @@ export default {
             }
 
 
+        },
+        saveUserServerConfig() {
+            this.saveLoading = true
+            UserConfigApi({action: 'modify', 'userServerConfig': this.userServerConfig}).then(res => {
+                if(res){
+                    this.editUserServerConfig = false
+                }
+                this.saveLoading = false
+            })
+
+        },
+        onJsonChange(value) {
+            this.userServerConfig = value
         }
     },
 }
@@ -286,6 +327,9 @@ export default {
                     flex-direction: row;
                     align-items: center;
 
+                    .item-content {
+                        font-weight: bold;
+                    }
                 }
             }
 

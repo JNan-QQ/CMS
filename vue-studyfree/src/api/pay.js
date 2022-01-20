@@ -5,12 +5,20 @@ export function getUserConfig(that) {
     return request({
         url: 'pay/user',
         method: 'get',
-        params:{action:'userConfig'}
+        params: {action: 'userConfig'}
     }).then(res => {
-        if (res){
+        if (res) {
             that.$store.commit('changeUserInfo', res['retlist'][0])
-        } else{
+        } else {
             that.$store.commit('deleteUserInfo')
         }
+    })
+}
+
+export function UserConfigApi(data) {
+    return request({
+        url: 'pay/user',
+        method: 'post',
+        data: data
     })
 }

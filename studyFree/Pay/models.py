@@ -1,4 +1,6 @@
 import datetime
+import json
+import traceback
 
 from django.db import models
 
@@ -21,6 +23,8 @@ class PayConfig(models.Model):
     deadline = models.DateTimeField(default=datetime.datetime.now)
     # 是否签到
     qd = models.BooleanField(default=False)
+    # config
+    userServerConfig = models.TextField(default={})
 
     class Meta:
         db_table = "pay_config"
@@ -32,6 +36,16 @@ class PayConfig(models.Model):
             qs = list(qs)
             return {'ret': 0, 'retlist': qs}
         except:
+            return {'ret': 1, 'msg': '获取用户配置出错'}
+
+    @staticmethod
+    def listServerConfig(data):
+        try:
+            qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('userServerConfig')
+            qs = list(qs)[0]
+            return {'ret': 0, 'userServerConfig': json.loads(qs['userServerConfig'])}
+        except:
+            traceback.print_exc()
             return {'ret': 1, 'msg': '获取用户配置出错'}
 
     @staticmethod
@@ -98,6 +112,9 @@ class PayConfig(models.Model):
                     pay_config.qd = True
                 else:
                     return {'ret': 1, 'msg': '你今天已经签到过了'}
+
+            if 'userServerConfig' in data:
+                pay_config.userServerConfig = data['userServerConfig']
 
             # 注意，一定要执行save才能将修改信息保存到数据库
             pay_config.save()

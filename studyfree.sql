@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : mysql8.0
+Source Server         : localhost_3306
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-20 17:12:00
+Date: 2022-01-20 23:10:57
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -183,7 +183,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_migrations
@@ -221,6 +221,10 @@ INSERT INTO `django_migrations` VALUES ('30', 'Common', '0005_auto_20220115_1614
 INSERT INTO `django_migrations` VALUES ('31', 'Common', '0006_auto_20220115_1637', '2022-01-15 16:37:36.164763');
 INSERT INTO `django_migrations` VALUES ('32', 'FrontEnd', '0005_notebook', '2022-01-17 15:21:54.920745');
 INSERT INTO `django_migrations` VALUES ('33', 'FrontEnd', '0006_alter_notebook_content', '2022-01-17 15:39:49.495747');
+INSERT INTO `django_migrations` VALUES ('34', 'Pay', '0004_payconfig_user_config', '2022-01-20 19:37:11.843308');
+INSERT INTO `django_migrations` VALUES ('35', 'Pay', '0004_payconfig_userserverconfig', '2022-01-20 20:45:44.363440');
+INSERT INTO `django_migrations` VALUES ('36', 'Pay', '0005_alter_payconfig_userserverconfig', '2022-01-20 21:30:37.985504');
+INSERT INTO `django_migrations` VALUES ('37', 'Pay', '0006_alter_payconfig_userserverconfig', '2022-01-20 22:04:26.271553');
 
 -- ----------------------------
 -- Table structure for `django_session`
@@ -238,7 +242,7 @@ CREATE TABLE `django_session` (
 -- Records of django_session
 -- ----------------------------
 INSERT INTO `django_session` VALUES ('3f3fcxjzm9kkt5md95s2kwq4agh5n0il', 'e30:1n8Fpf:kYWQ7OyDNgsTnD6V2AN-_wRTy-KYNUtazn0znuaWrwU', '2022-01-28 06:13:03.186106');
-INSERT INTO `django_session` VALUES ('iao89bj622pawzwlo1etqgfh1ht7db37', '.eJxVkN1uhCAQRt-F642LyI941fS-fYJNyACjslXcFWzSNH33Ytcm7R185-Nkhk9iYMuj2RKuJnjSkZqc_mYW3BvGHfgrxGGp3BLzGmy1V6qDpupl8Tg9H91_ghHSWF5Lrb1C4MJpwRUXNdieStkrz3vdIrWM1bxvGVLX0F4JZrlCKxmCRvStKNJdlz9uSLr6REIy0zKESLq8bviAPwsUtiJMrzCXIrlsQnt32aSWtCjgPUBe1gJShhzcOcwwYDofebkO5jibayj7RoimlpxJWXMqqlscjkHiw_9bKinOEKYStVo2TSMUf7rfy2_N5OsbIDJ09A:1nATJq:iIepRx2DV6X-yqYsgAux1Mpu2_jaT1okQyLvlh0vzNc', '2022-02-03 17:01:22.093353');
+INSERT INTO `django_session` VALUES ('owuaowx6ldg8u3y2xx3yf62ov7nit7kp', '.eJxVkEFuwyAQRe_COnIgGDBeVd03J4iExgPYpDZODI5UVb17ceNK7Q7--zzN8EkMrHkwa3KLCZa0hJHD36wDfHdxA_YKsZ8rnGNeQldtlWqnqXqbrRtf9-4_wQBpKK8pQIceuUXfsbrjDLSyyJvGet5oVJ4qhRxUfUKgwnkPQnJoQFtGraC8SDdd_rg50rIDCcmMcx8iafOyuif8WaCwxcF4hqkUyWUV2uJllVrSooBHgDwvBaQMOeAxTNC7dNzzcu3NfjbXUPaNEA2T9UlKVlNR3WK_DxKf_t9SSd0EYSxRoyXnXKj65X4vvzWRr28X13Xr:1nAZ3U:rvaKxwM12MtrJ1Q2nt5ekqkenx2ISU4VHCUkxEIIB5U', '2022-02-03 23:08:52.830487');
 
 -- ----------------------------
 -- Table structure for `pay_config`
@@ -252,6 +256,7 @@ CREATE TABLE `pay_config` (
   `deadline` datetime(6) NOT NULL,
   `user_id_id` bigint NOT NULL,
   `qd` tinyint(1) NOT NULL,
+  `userServerConfig` longtext COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT (_utf8mb3'{}'),
   PRIMARY KEY (`id`),
   KEY `pay_config_user_id_id_3a9ecdb7_fk_study_user_id` (`user_id_id`),
   CONSTRAINT `pay_config_user_id_id_3a9ecdb7_fk_study_user_id` FOREIGN KEY (`user_id_id`) REFERENCES `study_user` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
@@ -260,13 +265,13 @@ CREATE TABLE `pay_config` (
 -- ----------------------------
 -- Records of pay_config
 -- ----------------------------
-INSERT INTO `pay_config` VALUES ('1', '99999949', '14845', '4', '2022-01-21 13:01:16.000000', '1', '1');
-INSERT INTO `pay_config` VALUES ('3', '50', '500', '1', '2022-01-15 00:30:11.836636', '3', '1');
-INSERT INTO `pay_config` VALUES ('4', '50', '500', '1', '2022-01-15 00:34:42.204227', '4', '1');
-INSERT INTO `pay_config` VALUES ('5', '50', '500', '1', '2022-01-15 16:41:37.649082', '5', '1');
-INSERT INTO `pay_config` VALUES ('6', '50', '500', '1', '2022-01-15 17:25:52.065186', '6', '1');
-INSERT INTO `pay_config` VALUES ('7', '0', '0', '0', '2022-01-15 19:25:44.850759', '7', '0');
-INSERT INTO `pay_config` VALUES ('8', '0', '0', '0', '2022-01-15 21:48:21.203757', '8', '0');
+INSERT INTO `pay_config` VALUES ('1', '99999999', '15345', '4', '2022-01-21 13:01:16.000000', '1', '1', '{\'name\': \'123\'}');
+INSERT INTO `pay_config` VALUES ('3', '50', '500', '1', '2022-01-15 00:30:11.836636', '3', '0', '{}');
+INSERT INTO `pay_config` VALUES ('4', '50', '500', '1', '2022-01-15 00:34:42.204227', '4', '0', '{}');
+INSERT INTO `pay_config` VALUES ('5', '50', '500', '1', '2022-01-15 16:41:37.649082', '5', '0', '{}');
+INSERT INTO `pay_config` VALUES ('6', '50', '500', '1', '2022-01-15 17:25:52.065186', '6', '0', '{}');
+INSERT INTO `pay_config` VALUES ('7', '0', '0', '0', '2022-01-15 19:25:44.850759', '7', '0', '{}');
+INSERT INTO `pay_config` VALUES ('8', '0', '0', '0', '2022-01-15 21:48:21.203757', '8', '0', '{}');
 
 -- ----------------------------
 -- Table structure for `study_articlecontent`
@@ -405,7 +410,7 @@ CREATE TABLE `study_user` (
 -- ----------------------------
 -- Records of study_user
 -- ----------------------------
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$DGJ2A11d3DDLgOz1Ejgr8Q$gK9SrBEFQ+ysPAXBP/wmZEPMqin00ymPMocm/WO+SiE=', '2022-01-20 16:04:37.736605', '1', 'jiangnan', '', '', '896333574@qq.com', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'static/images/aviator/img_aviator_jiangnan_1642661405.png', null);
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$DGJ2A11d3DDLgOz1Ejgr8Q$gK9SrBEFQ+ysPAXBP/wmZEPMqin00ymPMocm/WO+SiE=', '2022-01-20 19:11:43.806415', '1', 'jiangnan', '', '', '896333574@qq.com', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'static/images/aviator/img_aviator_jiangnan_1642661405.png', null);
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$QSlfBsdK117kakMSLBnnVB$ZpY7ckayrYsm5JcZFNNLIfZqFCovwu3KUXK7AEJayQw=', '2022-01-19 23:57:29.777376', '0', 'jncss', '', '', '896333574@qq.com', '0', '1', '2022-01-15 00:30:11.559788', '3', '1005', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$Osk4XCKVnxM4ylyB5HTnwE$IR+XenJSlvDq9pem6PZiNcgJS/iV0yp2mVzZx/iLtyo=', '2022-01-20 00:04:15.481388', '0', 'jn11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 00:34:42.048282', '4', '1005', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$rbn7NoRJqb1wgxKqH1XhTd$Cl9TpJ2NtpD3FX9Yikozdu+ilBJKtwegCpO4itKMQBQ=', '2022-01-20 13:58:04.723682', '0', 'cs11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 16:41:37.327930', '5', '1005', '', 'static/images/aviator/img_aviator_cs11_1642661249.png', '无评价');
@@ -450,3 +455,12 @@ CREATE TABLE `study_user_user_permissions` (
 -- ----------------------------
 -- Records of study_user_user_permissions
 -- ----------------------------
+
+-- ----------------------------
+-- Event structure for `resetQd`
+-- ----------------------------
+DROP EVENT IF EXISTS `resetQd`;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` EVENT `resetQd` ON SCHEDULE EVERY 1 DAY STARTS '2022-01-20 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO update pay_config set qd=FALSE
+;;
+DELIMITER ;
