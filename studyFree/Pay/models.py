@@ -114,7 +114,7 @@ class PayConfig(models.Model):
                     return {'ret': 1, 'msg': '你今天已经签到过了'}
 
             if 'userServerConfig' in data:
-                pay_config.userServerConfig = data['userServerConfig']
+                pay_config.userServerConfig = json.dumps(data['userServerConfig'])
 
             # 注意，一定要执行save才能将修改信息保存到数据库
             pay_config.save()

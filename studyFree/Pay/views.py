@@ -19,7 +19,6 @@ class payConfig:
         # 根据不同的action分派给不同的函数进行处理
         action = request.params['action']
 
-        # 添加新闻
         if action == 'userConfig':
             return self.userConfig(request)
         elif action == 'listServerConfig':

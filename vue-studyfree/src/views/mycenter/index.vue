@@ -113,13 +113,15 @@
                 </div>
                 <div style="margin-top: 10px;padding: 10px">
                     <el-empty description="无配置" v-if="userServerConfig === {} && !editUserServerConfig"></el-empty>
-                    <div v-if="userServerConfig !== {} && !editUserServerConfig">123</div>
+                    <div v-if="userServerConfig !== {} && !editUserServerConfig">
+                        <el-tabs v-model="activeConfigIndex">
+                            <el-tab-pane>
+                                User
+                            </el-tab-pane>
+                        </el-tabs>
+                    </div>
                     <div v-if="editUserServerConfig">
-                        <vue3-json-editor
-                            v-model="userServerConfig"
-                            :expandedOnStart="true"
-                            @json-change="onJsonChange"
-                        />
+                        <el-input v-model="userServerConfig" :rows="20" type="textarea" placeholder="Please input"/>
                     </div>
                 </div>
             </div>
@@ -134,8 +136,7 @@ import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {AccountApi, CommonApi, sendEmailCode} from "@/api/common";
-import {UserConfigApi} from "../../api/pay";
-import {Vue3JsonEditor} from 'vue3-json-editor'
+import {UserConfigApi} from "@/api/pay";
 
 export default {
     name: "index",
@@ -154,16 +155,19 @@ export default {
                 realName: '',
                 password: '',
             },
-            userServerConfig: {}
+            userServerConfig: {},
+            userServerConfigView: {},
+            activeConfigIndex: "AccountConfig"
         }
     },
-    components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Vue3JsonEditor},
+    components: {Setting, InfoFilled, Tickets, MessageBox, Edit},
     mounted() {
         checkLogin(this)
         getUserConfig(this)
         UserConfigApi({action: 'listServerConfig'}).then(res => {
             if (res) {
-                this.userServerConfig = res['userServerConfig']
+                this.userServerConfigView = res['userServerConfig']
+                this.userServerConfig = JSON.stringify(res['userServerConfig'], null, "     ")
             }
         })
     },
@@ -243,17 +247,15 @@ export default {
         },
         saveUserServerConfig() {
             this.saveLoading = true
-            UserConfigApi({action: 'modify', 'userServerConfig': this.userServerConfig}).then(res => {
-                if(res){
+            const userServerConfig = eval("(" + this.userServerConfig + ")")
+            UserConfigApi({action: 'modify', 'userServerConfig': userServerConfig}).then(res => {
+                if (res) {
                     this.editUserServerConfig = false
                 }
                 this.saveLoading = false
             })
 
         },
-        onJsonChange(value) {
-            this.userServerConfig = value
-        }
     },
 }
 </script>
