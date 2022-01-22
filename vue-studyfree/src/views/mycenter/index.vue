@@ -86,11 +86,10 @@
                     </div>
                 </el-card>
             </div>
-            <div v-else-if="activeIndex==='2'">2</div>
-            <div v-else-if="activeIndex==='3'">3</div>
-            <div v-else-if="activeIndex==='4'">
-                <div style="border-bottom: #1E9FFF solid 1px;padding: 5px;
-                            display:flex;justify-content: space-between;align-items: center;">
+            <div v-else-if="activeIndex==='2'" class="content two">2</div>
+            <div v-else-if="activeIndex==='3'" class="content three">3</div>
+            <div v-else-if="activeIndex==='4'" class="content four">
+                <div class="four-top">
                     <div><span>开启高级模式：</span>
                         <el-switch @change="changeUserType"
                                    v-model="heightSwitch"
@@ -103,22 +102,45 @@
                         </el-switch>
                     </div>
                     <div>
-                        <el-button size="small" v-if="!editUserServerConfig" @click="editUserServerConfig=true">
-                            编辑配置文件
+                        <el-button size="small" v-if="!editUserServerConfigSimple && !editUserServerConfig"
+                                   @click="editUserServerConfigSimple=true">
+                            编辑
                         </el-button>
-                        <el-button size="small" v-else @click="saveUserServerConfig" :loading="saveLoading">
-                            保存配置文件
+                        <el-button size="small" v-if="!editUserServerConfig && !editUserServerConfigSimple"
+                                   @click="editUserServerConfig=true">
+                            编辑配置源码
+                        </el-button>
+                        <el-button size="small" v-if="editUserServerConfigSimple" @click="saveUserServerConfigSimple"
+                                   :loading="saveLoading">
+                            保存
+                        </el-button>
+                        <el-button size="small" v-if="editUserServerConfig" @click="saveUserServerConfig"
+                                   :loading="saveLoading">
+                            保存配置源码
                         </el-button>
                     </div>
                 </div>
-                <div style="margin-top: 10px;padding: 10px">
+                <div class="four-content">
                     <el-empty description="无配置" v-if="userServerConfig === {} && !editUserServerConfig"></el-empty>
-                    <div v-if="userServerConfig !== {} && !editUserServerConfig">
-                        <el-tabs v-model="activeConfigIndex">
-                            <el-tab-pane>
-                                User
-                            </el-tab-pane>
-                        </el-tabs>
+                    <div v-if="userServerConfig !== {} && !editUserServerConfig" class="server-config">
+                        <el-form :model="userServerConfigView" label-width="auto">
+                            <el-form-item :label="value1['desc_name']" v-for="(value1,key1) in userServerConfigView">
+                                <div v-for="(value2,key2) in value1" class="server-config-items"
+                                     v-show="key2!=='desc_name'">
+                                    <div class="item-name">{{ key2 }}：</div>
+                                    <el-input v-model="userServerConfigView[key1][key2]"
+                                              :disabled="!editUserServerConfigSimple"
+                                              v-if="typeof(value2)==='string' || typeof(value2)==='number'">
+                                    </el-input>
+                                    <div v-else class="server-config-list">
+                                        <el-input v-model="userServerConfigView[key1][key2][index3]"
+                                                  :disabled="!editUserServerConfigSimple"
+                                                  v-for="(value3,index3) in value2">
+                                        </el-input>
+                                    </div>
+                                </div>
+                            </el-form-item>
+                        </el-form>
                     </div>
                     <div v-if="editUserServerConfig">
                         <el-input v-model="userServerConfig" :rows="20" type="textarea" placeholder="Please input"/>
@@ -148,6 +170,7 @@ export default {
             editRealName: false,
             editPassword: false,
             editUserServerConfig: false,
+            editUserServerConfigSimple: false,
             saveLoading: false,
             heightSwitch: this.$store.state.userdata.usertype === 1005,
             newUserdata: {
@@ -157,19 +180,13 @@ export default {
             },
             userServerConfig: {},
             userServerConfigView: {},
-            activeConfigIndex: "AccountConfig"
         }
     },
     components: {Setting, InfoFilled, Tickets, MessageBox, Edit},
     mounted() {
         checkLogin(this)
         getUserConfig(this)
-        UserConfigApi({action: 'listServerConfig'}).then(res => {
-            if (res) {
-                this.userServerConfigView = res['userServerConfig']
-                this.userServerConfig = JSON.stringify(res['userServerConfig'], null, "     ")
-            }
-        })
+        this.getUserConfigApi()
     },
     watch: {
         // 监听用户类型
@@ -178,6 +195,14 @@ export default {
         },
     },
     methods: {
+        getUserConfigApi() {
+            UserConfigApi({action: 'listServerConfig'}).then((res) => {
+                if (res) {
+                    this.userServerConfigView = res['userServerConfig']
+                    this.userServerConfig = JSON.stringify(res['userServerConfig'], null, "     ")
+                }
+            })
+        },
         // 激活索引
         activeIndexes(index) {
             this.activeIndex = index
@@ -251,10 +276,20 @@ export default {
             UserConfigApi({action: 'modify', 'userServerConfig': userServerConfig}).then(res => {
                 if (res) {
                     this.editUserServerConfig = false
+                    this.getUserConfigApi()
                 }
                 this.saveLoading = false
             })
-
+        },
+        saveUserServerConfigSimple() {
+            this.saveLoading = true
+            UserConfigApi({action: 'modify', 'userServerConfig': this.userServerConfigView}).then(res => {
+                if (res) {
+                    this.editUserServerConfigSimple = false
+                    this.getUserConfigApi()
+                }
+                this.saveLoading = false
+            })
         },
     },
 }
@@ -339,6 +374,55 @@ export default {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+            }
+        }
+
+        .four {
+            text-align: left;
+
+            .four-top {
+                border-bottom: #1E9FFF solid 1px;
+                padding: 5px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .four-content {
+                margin-top: 10px;
+                padding: 10px;
+
+                .el-input {
+                    margin-left: 5px;
+                }
+
+                .server-config {
+                    height: calc(65vh);
+                    overflow-y: scroll;
+                    box-shadow: 5px 5px 5px 5px #ab9c9c;
+
+                    .el-form-item {
+                        border-bottom: #105c94 solid 2px;
+                        margin-bottom: 10px;
+                    }
+
+                    .server-config-items {
+                        border-left: #105c94 solid 1px;
+                        display: flex;
+                        padding: 5px;
+                        width: 100%;
+
+                        .item-name {
+                            min-width: 115px;
+                            text-align: right;
+                        }
+
+                        .server-config-list {
+                            display: flex;
+                        }
+                    }
+
+                }
             }
         }
     }
