@@ -22,3 +22,11 @@ export function UserConfigApi(data) {
         data: data
     })
 }
+
+export function orderApi(data) {
+    return request({
+        url: 'pay/order',
+        method: 'post',
+        data: data
+    })
+}

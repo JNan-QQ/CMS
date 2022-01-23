@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-23 01:57:51
+Date: 2022-01-23 22:34:56
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -61,7 +61,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of auth_permission
@@ -118,6 +118,14 @@ INSERT INTO `auth_permission` VALUES ('49', 'Can add note book', '13', 'add_note
 INSERT INTO `auth_permission` VALUES ('50', 'Can change note book', '13', 'change_notebook');
 INSERT INTO `auth_permission` VALUES ('51', 'Can delete note book', '13', 'delete_notebook');
 INSERT INTO `auth_permission` VALUES ('52', 'Can view note book', '13', 'view_notebook');
+INSERT INTO `auth_permission` VALUES ('53', 'Can add products', '14', 'add_products');
+INSERT INTO `auth_permission` VALUES ('54', 'Can change products', '14', 'change_products');
+INSERT INTO `auth_permission` VALUES ('55', 'Can delete products', '14', 'delete_products');
+INSERT INTO `auth_permission` VALUES ('56', 'Can view products', '14', 'view_products');
+INSERT INTO `auth_permission` VALUES ('57', 'Can add order', '15', 'add_order');
+INSERT INTO `auth_permission` VALUES ('58', 'Can change order', '15', 'change_order');
+INSERT INTO `auth_permission` VALUES ('59', 'Can delete order', '15', 'delete_order');
+INSERT INTO `auth_permission` VALUES ('60', 'Can view order', '15', 'view_order');
 
 -- ----------------------------
 -- Table structure for `django_admin_log`
@@ -154,7 +162,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_content_type
@@ -170,7 +178,9 @@ INSERT INTO `django_content_type` VALUES ('4', 'contenttypes', 'contenttype');
 INSERT INTO `django_content_type` VALUES ('9', 'FrontEnd', 'articlecontent');
 INSERT INTO `django_content_type` VALUES ('13', 'FrontEnd', 'notebook');
 INSERT INTO `django_content_type` VALUES ('8', 'FrontEnd', 'tags');
+INSERT INTO `django_content_type` VALUES ('15', 'Pay', 'order');
 INSERT INTO `django_content_type` VALUES ('10', 'Pay', 'payconfig');
+INSERT INTO `django_content_type` VALUES ('14', 'Pay', 'products');
 INSERT INTO `django_content_type` VALUES ('5', 'sessions', 'session');
 
 -- ----------------------------
@@ -183,7 +193,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_migrations
@@ -225,6 +235,7 @@ INSERT INTO `django_migrations` VALUES ('34', 'Pay', '0004_payconfig_user_config
 INSERT INTO `django_migrations` VALUES ('35', 'Pay', '0004_payconfig_userserverconfig', '2022-01-20 20:45:44.363440');
 INSERT INTO `django_migrations` VALUES ('36', 'Pay', '0005_alter_payconfig_userserverconfig', '2022-01-20 21:30:37.985504');
 INSERT INTO `django_migrations` VALUES ('37', 'Pay', '0006_alter_payconfig_userserverconfig', '2022-01-20 22:04:26.271553');
+INSERT INTO `django_migrations` VALUES ('38', 'Pay', '0007_order_products', '2022-01-23 16:34:22.699661');
 
 -- ----------------------------
 -- Table structure for `django_session`
@@ -242,7 +253,7 @@ CREATE TABLE `django_session` (
 -- Records of django_session
 -- ----------------------------
 INSERT INTO `django_session` VALUES ('3f3fcxjzm9kkt5md95s2kwq4agh5n0il', 'e30:1n8Fpf:kYWQ7OyDNgsTnD6V2AN-_wRTy-KYNUtazn0znuaWrwU', '2022-01-28 06:13:03.186106');
-INSERT INTO `django_session` VALUES ('qcp8lgi8adxwagxk5otmmsyhyc484kr3', '.eJxVUEtPhDAQ_i89b9hCH0w5Ge_6F5rpA6hC2aXFxBj_u8XtQW_zPSczX0TjkWd9JL_r4MhABLn85Qzadx9Pwb1hnLbGbjHvwTSnpalqal4255fn6v1XMGOaS7oT0oEHJhgFpjjafgQKXPLR9EyxToB1klsDCE4q46ATamSCW9qD5IaV0rMuf948GVpKxYWEpJdtCpEMeT_8Q_-9oWi7x-UV1-IlJYkfAfO2F5Ay5mCvYcXJp2vlC5x0nbVNbatbyTsp246r5hanujs--k5DYfyKYSkQlGSMiZ4_3e_lOSv5_gFMO2zB:1nBKPm:i2j3xMjRCOJwpxLdAQN9yewpTH47gW52Wp7x9sfdSg8', '2022-02-06 01:43:02.773728');
+INSERT INTO `django_session` VALUES ('qcp8lgi8adxwagxk5otmmsyhyc484kr3', '.eJxVUEtPhDAQ_i89b9hCH0w5Ge_6F5rpA6hC2aXFxBj_u8XtQW_zPSczX0TjkWd9JL_r4MhABLn85Qzadx9Pwb1hnLbGbjHvwTSnpalqal4255fn6v1XMGOaS7oT0oEHJhgFpjjafgQKXPLR9EyxToB1klsDCE4q46ATamSCW9qD5IaV0rMuf948GVpKxYWEpJdtCpEMeT_8Q_-9oWi7x-UV1-IlJYkfAfO2F5Ay5mCvYcXJp2vlC5x0nbVNbatbyTsp246r5hanujs--k5DYfyKYSkQlGSMiZ4_3e_lOSv5_gFMO2zB:1nBave:eL8cAAZw_gVGPj5LV8_4tLj3sJh-pGypaAZjFfnn5xs', '2022-02-06 19:21:02.082953');
 
 -- ----------------------------
 -- Table structure for `pay_config`
@@ -272,6 +283,46 @@ INSERT INTO `pay_config` VALUES ('5', '150', '1500', '2', '2022-01-15 16:41:37.6
 INSERT INTO `pay_config` VALUES ('6', '50', '500', '1', '2022-01-15 17:25:52.065186', '6', '0', '{}');
 INSERT INTO `pay_config` VALUES ('7', '0', '0', '0', '2022-01-15 19:25:44.850759', '7', '0', '{}');
 INSERT INTO `pay_config` VALUES ('8', '0', '0', '0', '2022-01-15 21:48:21.203757', '8', '0', '{}');
+
+-- ----------------------------
+-- Table structure for `pay_order`
+-- ----------------------------
+DROP TABLE IF EXISTS `pay_order`;
+CREATE TABLE `pay_order` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `orderNo` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `money` int DEFAULT NULL,
+  `status` smallint NOT NULL,
+  `create_time` datetime(6) NOT NULL,
+  `user_id` bigint NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pay_order_user_id_4522f8ab_fk_study_user_id` (`user_id`),
+  CONSTRAINT `pay_order_user_id_4522f8ab_fk_study_user_id` FOREIGN KEY (`user_id`) REFERENCES `study_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- ----------------------------
+-- Records of pay_order
+-- ----------------------------
+INSERT INTO `pay_order` VALUES ('1', '202201230001', '100', '0', '2022-01-23 18:56:31.000000', '5');
+
+-- ----------------------------
+-- Table structure for `pay_products`
+-- ----------------------------
+DROP TABLE IF EXISTS `pay_products`;
+CREATE TABLE `pay_products` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `price` int DEFAULT NULL,
+  `create_time` datetime(6) NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `desc` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `timeDays` int DEFAULT NULL,
+  `status` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- ----------------------------
+-- Records of pay_products
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `study_articlecontent`

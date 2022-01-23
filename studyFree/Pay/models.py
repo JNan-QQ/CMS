@@ -121,3 +121,149 @@ class PayConfig(models.Model):
             return {'ret': 0}
         except:
             return {'ret': 1, 'msg': '修改用户信息失败！'}
+
+
+class Products(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # 价格
+    price = models.IntegerField(null=True, blank=True)
+    # 创建时间
+    create_time = models.DateTimeField(auto_now=True)
+    # 产品名称
+    title = models.CharField(max_length=100, null=True, blank=True)
+    # 产品描述
+    desc = models.CharField(max_length=100, null=True, blank=True)
+    # 产品时长
+    timeDays = models.IntegerField(null=True, blank=True)
+    # 状态 1.正常 2.禁用
+    status = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = "pay_products"
+
+    @staticmethod
+    def add_products(data):
+        try:
+            Products.objects.create(
+                price=data['price'],
+                title=data['title'],
+                status=1,
+                desc=data['desc'],
+                timeDays=data['timeDays']
+            )
+            return {"ret": 0}
+        except:
+            traceback.print_exc()
+            return {'ret': 1}
+
+    @staticmethod
+    def modify_products(data):
+        try:
+            product_id = data['product_id']
+            try:
+                # 根据 id 从数据库中找到相应的客户记录
+                product = Products.objects.get(id=product_id)
+            except:
+                traceback.print_exc()
+                return {'ret': 1}
+
+            if 'price' in data:
+                product.price = data['price']
+            if 'title' in data:
+                product.title = data['title']
+            if 'desc' in data:
+                product.desc = data['desc']
+            if 'timeDays' in data:
+                product.timeDays = data['timeDays']
+            if 'status' in data:
+                product.status = data['status']
+            product.save()
+            return {'ret': 0}
+        except:
+            traceback.print_exc()
+            return {'ret': 1, 'msg': '修改失败！'}
+
+    @staticmethod
+    def list_products(data):
+        if 'product_id' in data:
+            qs = Products.objects.filter(id=data['product_id']).values()
+            return list(qs)[0]
+        user_type = data['usertype']
+        if user_type == 1:
+            qs = Products.objects.values().order_by('-id')
+        else:
+            qs = Products.objects.filter(status=1).values().order_by('-id')
+
+        qs = list(qs)
+
+        return {'ret': 0, 'retlist': qs}
+
+
+class Order(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # 用户
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    orderNo = models.CharField(max_length=100, null=True, blank=True)
+    money = models.IntegerField(null=True, blank=True)
+    # 1： 未付款 | 2： 已付款
+    GENDER_CHOICES = (
+        (0, u'未付款'),
+        (1, u'已付款'),
+        (2, u'已关闭'),
+    )
+    status = models.SmallIntegerField(choices=GENDER_CHOICES)
+    # 创建时间
+    create_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "pay_order"
+
+    @staticmethod
+    def add_order(data):
+        try:
+            Order.objects.create(
+                user__id=data['user_id'],
+                orderNo=data['orderNo'],
+                status=1,
+                money=data['money']
+            )
+            return {"ret": 0}
+        except:
+            traceback.print_exc()
+            return {'ret': 1}
+
+    @staticmethod
+    def modify_order(data):
+        try:
+            orderNo = data['orderNo']
+            try:
+                # 根据 id 从数据库中找到相应的客户记录
+                orderLs = Order.objects.get(orderNo=orderNo)
+            except:
+                traceback.print_exc()
+                return {'ret': 1}
+
+            orderLs.status = 2
+            orderLs.save()
+            return {'ret': 0, 'user_id': orderLs.user.id, 'product': orderLs.product}
+        except:
+            traceback.print_exc()
+            return {'ret': 1, 'msg': '修改失败！'}
+
+    @staticmethod
+    def list_order(data):
+        user_id = data['user_id']
+        user_type = data['usertype']
+        if user_type == 1:
+            qs = Order.objects.values().order_by('-id')
+        else:
+            qs = Order.objects.filter(user__id=user_id).values().order_by('-id')
+
+        qs = list(qs)
+
+        status_list = ['未付款', '已付款', '已关闭']
+        for i in range(len(qs)):
+            qs[i]['create_time'] = qs[i]['create_time'].strftime("%Y-%m-%d %H:%M:%S")
+            qs[i]['status'] = status_list[qs[i]['status']]
+
+        return {'ret': 0, 'retlist': qs}

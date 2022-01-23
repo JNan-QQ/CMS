@@ -86,7 +86,16 @@
                     </div>
                 </el-card>
             </div>
-            <div v-else-if="activeIndex==='2'" class="content two">2</div>
+            <div v-else-if="activeIndex==='2'" class="content two">
+                <el-empty :image-size="200" v-if="orderList === []"></el-empty>
+                <el-table :data="orderList" stripe style="width: 100%" v-else>
+                    <el-table-column type="index" width="50" index="1"/>
+                    <el-table-column prop="orderNo" label="订单编号" width="150"/>
+                    <el-table-column prop="create_time" label="创建时间" width="170"/>
+                    <el-table-column prop="money" label="订单金额（元）" width="130"/>
+                    <el-table-column prop="status" label="订单状态" width="120"/>
+                </el-table>
+            </div>
             <div v-else-if="activeIndex==='3'" class="content three">3</div>
             <div v-else-if="activeIndex==='4'" class="content four">
                 <div class="four-top">
@@ -159,6 +168,7 @@ import {getUserConfig} from "@/api/pay";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {AccountApi, CommonApi, sendEmailCode} from "@/api/common";
 import {UserConfigApi} from "@/api/pay";
+import {orderApi} from "../../api/pay";
 
 export default {
     name: "index",
@@ -180,6 +190,7 @@ export default {
             },
             userServerConfig: {},
             userServerConfigView: {},
+            orderList: []
         }
     },
     components: {Setting, InfoFilled, Tickets, MessageBox, Edit},
@@ -187,6 +198,7 @@ export default {
         checkLogin(this)
         getUserConfig(this)
         this.getUserConfigApi()
+        this.getOrderApi()
     },
     watch: {
         // 监听用户类型
@@ -200,6 +212,13 @@ export default {
                 if (res) {
                     this.userServerConfigView = res['userServerConfig']
                     this.userServerConfig = JSON.stringify(res['userServerConfig'], null, "     ")
+                }
+            })
+        },
+        getOrderApi() {
+            orderApi({action: 'list'}).then(res => {
+                if(res){
+                    this.orderList = res['retlist']
                 }
             })
         },

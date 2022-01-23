@@ -5,8 +5,10 @@
 # @Tool      :PyCharm
 
 from django.urls import path
-from Pay.views import payConfig
+
+from Pay.views import payConfig, payOrder
 
 urlpatterns = [
     path('user', payConfig().handler),
+    path('order', payOrder().handler),
 ]
