@@ -77,7 +77,7 @@ class PayConfig(models.Model):
             if 'coins' in data:
                 pay_config.coins += data['coins']
                 if pay_config.coins < 0:
-                    return {'ret': 1, 'msg': '你的余额不足，可以签到获取'}
+                    return {'ret': 1, 'msg': '你的余额不足，可以签到免费获取'}
 
             # 等级相关
             if 'exp' in data:
@@ -204,12 +204,13 @@ class Order(models.Model):
     # 用户
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     orderNo = models.CharField(max_length=100, null=True, blank=True)
-    money = models.IntegerField(null=True, blank=True)
+    money = models.DecimalField(max_digits=10, decimal_places=2)
     # 1： 未付款 | 2： 已付款
     GENDER_CHOICES = (
         (0, u'未付款'),
         (1, u'已付款'),
         (2, u'已关闭'),
+        (2, u'已退款'),
     )
     status = models.SmallIntegerField(choices=GENDER_CHOICES)
     # 创建时间
@@ -222,9 +223,9 @@ class Order(models.Model):
     def add_order(data):
         try:
             Order.objects.create(
-                user__id=data['user_id'],
+                user_id=data['user_id'],
                 orderNo=data['orderNo'],
-                status=1,
+                status=0,
                 money=data['money']
             )
             return {"ret": 0}
@@ -243,9 +244,9 @@ class Order(models.Model):
                 traceback.print_exc()
                 return {'ret': 1}
 
-            orderLs.status = 2
+            orderLs.status = 1
             orderLs.save()
-            return {'ret': 0, 'user_id': orderLs.user.id, 'product': orderLs.product}
+            return {'ret': 0, 'user_id': orderLs.user.id, 'money': orderLs.money}
         except:
             traceback.print_exc()
             return {'ret': 1, 'msg': '修改失败！'}

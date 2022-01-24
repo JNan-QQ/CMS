@@ -4,7 +4,8 @@ import time
 import traceback
 
 from Common.lib.shara import jsonResponse
-from Pay.models import PayConfig, Order
+from Pay.ali.aliApi import aliPay
+from Pay.models import PayConfig, Order, Products
 
 
 class payConfig:
@@ -106,6 +107,8 @@ class payOrder:
             return self.addOrder(request)
         elif action == 'modify':
             return self.modifyOrder(request)
+        elif action == 'createOrder':
+            return aliPay().createOrder(request)
 
     @staticmethod
     def listOrder(request):
@@ -125,3 +128,37 @@ class payOrder:
     @staticmethod
     def addOrder(request):
         pass
+
+
+class payProduct:
+    def handler(self, request):
+        # 将请求参数统一放入request 的 params 属性中，方便后续处理
+        # GET请求 参数 在 request 对象的 GET属性中
+        if request.method == 'GET':
+            request.params = request.GET
+
+        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
+        elif request.method in ['POST', 'PUT', 'DELETE']:
+            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+            request.params = json.loads(request.body)
+
+        # 根据不同的action分派给不同的函数进行处理
+        action = request.params['action']
+
+        if action == 'list':
+            return self.listProduct(request)
+        elif action == 'addTime':
+            return self.addTime(request)
+
+    @staticmethod
+    def listProduct(request):
+        res = Products.list_products({'usertype': request.session['usertype']})
+        return jsonResponse(res)
+
+    @staticmethod
+    def addTime(request):
+        product_id = request.params['product_id']
+        product = Products.objects.get(id=product_id)
+        res = PayConfig.modify({'user_id': request.session['user_id'], 'coins': -product.price, 'exp': product.price,
+                                'addDays': product.timeDays})
+        return jsonResponse(res)

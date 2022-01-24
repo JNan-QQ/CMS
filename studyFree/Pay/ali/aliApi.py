@@ -1,11 +1,12 @@
 import time
 from urllib.parse import parse_qs
+
 from django.shortcuts import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from Common.lib.shara import jsonResponse
 from .alipay import AliPay
-from ..models import Order
+from ..models import Order, PayConfig
 
 
 class aliPay:
@@ -13,9 +14,9 @@ class aliPay:
         # 支付宝沙箱里面的APPID，需要改成你自己的
         appid="2021000118685158",
         # 如果支付成功，支付宝会向这个地址发送POST请求（校验是否支付已经完成），此地址要能够在公网进行访问，需要改成你自己的服务器地址
-        app_notify_url="http://m4e1587419.qicp.vip/api/up_order",
+        app_notify_url="http://m4e1587419.qicp.vip/pay/success",
         # 如果支付成功，重定向回到你的网站的地址。需要你自己改，这里是我的服务器地址
-        return_url="http://m4e1587419.qicp.vip/api/result",
+        return_url="http://m4e1587419.qicp.vip/pay/result",
         alipay_public_key_path=AliPay.ALIPAY_PUBLIC,  # 支付宝公钥
         app_private_key_path=AliPay.APP_PRIVATE,  # 应用私钥
         debug=True,  # 默认False,True表示使用沙箱环境测试
@@ -41,7 +42,9 @@ class aliPay:
         # 拼接url，转到支付宝支付页面
         pay_url = "https://openapi.alipaydev.com/gateway.do?{}".format(query_params)
 
-        Order.add_order({'user_id': request.session['user_id'], 'orderNo': orderNo, 'money': money})
+        res = Order.add_order({'user_id': request.session['user_id'], 'orderNo': orderNo, 'money': money})
+        if res['ret'] == 1:
+            return jsonResponse(res)
 
         # return redirect("https://openapi.alipaydev.com/gateway.do?{}".format(query_params))
 
@@ -68,16 +71,16 @@ class aliPay:
                 # 1.修改订单状态
                 out_trade_no = post_dict.get('out_trade_no')
                 # 2. 根据订单号将数据库中的数据进行更新
-                res = Order.modify_order({'orderNo': out_trade_no})
-                if res['ret'] == 1:
+                res_order = Order.modify_order({'orderNo': out_trade_no})
+                if res_order['ret'] == 1:
                     return jsonResponse({'支付成功，订单更新失败'})
-                #
 
+                res_config = PayConfig.modify(
+                    {'user_id': res_order['user_id'], 'coins': int(res_order['money']) * 500,
+                     'exp': int(res_order['money']) * 50})
 
-
-
-                if res['ret'] == 1:
-                    return HttpResponse('支付成功，套餐更新失败')
+                if res_config['ret'] == 1:
+                    return HttpResponse('支付成功，F币更新失败')
 
                 return HttpResponse('支付成功')
             else:

@@ -30,3 +30,11 @@ export function orderApi(data) {
         data: data
     })
 }
+
+export function productApi(data) {
+    return request({
+        url: 'pay/product',
+        method: 'post',
+        data: data
+    })
+}

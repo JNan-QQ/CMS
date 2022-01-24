@@ -1,6 +1,8 @@
 <template>
     <div class="top">
-        <el-icon @click="this.$router.go(-1);"><back /></el-icon>
+        <el-icon @click="this.$router.go(-1);">
+            <back/>
+        </el-icon>
         <span>F：{{ this.$store.state.userdata.coins }} 币</span>
     </div>
     <div class="products">
@@ -8,14 +10,17 @@
             <template #header>
                 <div class="card-header">
                     <span>充值F币</span>
-                    <el-button class="button" @click="">确定</el-button>
+                    <el-button class="button" @click="payF">确定</el-button>
                 </div>
             </template>
             <div>
-                <p>充值金额：<el-input-number v-model="money"
-                                         :min="1" :max="9999" size="small"
-                                         :precision="2" :step="1"/>　元</p>
-                <p>Ｆ　　币：{{money*500}}　币</p>
+                <p>充值金额：
+                    <el-input-number v-model="money"
+                                     :min="1" :max="9999" size="small"
+                                     :precision="2" :step="1"/>
+                    　元
+                </p>
+                <p>Ｆ　　币：{{ money * 500 }}　币</p>
                 <p>说　　明：</p>
             </div>
         </el-card>
@@ -23,7 +28,7 @@
             <template #header>
                 <div class="card-header">
                     <span>{{ product['title'] }}</span>
-                    <el-button class="button" @click="">订购</el-button>
+                    <el-button class="button" @click="addTime(product['id'])">订购</el-button>
                 </div>
             </template>
             <div>
@@ -39,6 +44,8 @@
 import {Back} from "@element-plus/icons";
 import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
+import {orderApi, productApi} from "../../api/pay";
+import {ElMessage} from "element-plus";
 
 export default {
     name: "index",
@@ -48,11 +55,38 @@ export default {
             money: 0
         }
     },
-    components:{Back},
+    components: {Back},
     mounted() {
         checkLogin(this)
         getUserConfig(this)
+        productApi({action: 'list'}).then(res => {
+                if (res) {
+                    this.productsList = res['retlist']
+                }
+            }
+        )
     },
+    methods: {
+        payF() {
+            orderApi({action: 'createOrder', money: this.money}).then(res => {
+                    if (res) {
+                        window.open(res['url'])
+                    }
+                }
+            )
+        },
+        addTime(id) {
+            productApi({action: 'addTime', 'product_id': id}).then(res => {
+                    if (res) {
+                        ElMessage({
+                            message: '恭喜你购买成功',
+                            type: 'success',
+                        })
+                    }
+                }
+            )
+        }
+    }
 }
 </script>
 
@@ -89,7 +123,7 @@ export default {
         width: 30%;
         margin: 1%;
 
-        p{
+        p {
             margin-bottom: 5px;
         }
 

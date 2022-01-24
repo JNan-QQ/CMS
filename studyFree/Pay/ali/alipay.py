@@ -15,9 +15,9 @@ class AliPay(object):
     """
     支付宝支付接口(PC端支付接口)
     """
-    ALIPAY_PUBLIC = os.path.join(BASE_DIR, 'shara', 'ali', 'alipay_public.txt')
-    APP_PUBLIC = os.path.join(BASE_DIR, 'shara', 'ali', 'app_public.txt')
-    APP_PRIVATE = os.path.join(BASE_DIR, 'shara', 'ali', 'app_private.txt')
+    ALIPAY_PUBLIC = os.path.join(BASE_DIR, 'Pay', 'ali', 'alipay_public.txt')
+    APP_PUBLIC = os.path.join(BASE_DIR, 'Pay', 'ali', 'app_public.txt')
+    APP_PRIVATE = os.path.join(BASE_DIR, 'Pay', 'ali', 'app_private.txt')
 
     def __init__(self, appid, app_notify_url, app_private_key_path,
                  alipay_public_key_path, return_url, debug=False):
