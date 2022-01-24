@@ -68,18 +68,24 @@
                             <el-button type="success" :icon="Check" @click="changeRealName"></el-button>
                             <el-button type="danger" :icon="Close" @click="editRealName=false;"></el-button>
                         </div>
-                        <el-icon style="margin-left: 10px;color: #105c94" v-else @click="editRealName=true;">
+                        <el-icon style="margin-left: 10px;" v-else @click="editRealName=true;">
                             <edit/>
                         </el-icon>
                     </div>
                     <div class="item">
                         <span>Ｆ　币：</span><span class="item-content coins">{{ userdata.coins }}</span>
+                        <el-icon style="margin-left: 10px" :size="14" @click="this.$router.push('/pay')">
+                            <plus/>
+                        </el-icon>
                     </div>
                     <div class="item">
                         <span>等　级：</span><span class="item-content lv">{{ userdata.lv }}</span>
                     </div>
                     <div class="item">
                         <span>时　间：</span><span class="item-content deadline">{{ userdata.deadline }}</span>
+                        <el-icon style="margin-left: 10px" :size="14" @click="this.$router.push('/pay')">
+                            <plus/>
+                        </el-icon>
                     </div>
                     <div class="item">
                         <span>邮　箱：</span><span class="item-content email">{{ userdata.email }}</span>
@@ -161,14 +167,14 @@
 </template>
 
 <script>
-import {Setting, InfoFilled, Tickets, MessageBox, Delete, Check, Close, Edit} from "@element-plus/icons";
+import {Setting, InfoFilled, Tickets, MessageBox, Delete, Check, Close, Edit, Plus} from "@element-plus/icons";
 import {markRaw, reactive} from "vue"
 import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {AccountApi, CommonApi, sendEmailCode} from "@/api/common";
 import {UserConfigApi} from "@/api/pay";
-import {orderApi} from "../../api/pay";
+import {orderApi} from "@/api/pay";
 
 export default {
     name: "index",
@@ -193,7 +199,7 @@ export default {
             orderList: []
         }
     },
-    components: {Setting, InfoFilled, Tickets, MessageBox, Edit},
+    components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Plus},
     mounted() {
         checkLogin(this)
         getUserConfig(this)
@@ -217,7 +223,7 @@ export default {
         },
         getOrderApi() {
             orderApi({action: 'list'}).then(res => {
-                if(res){
+                if (res) {
                     this.orderList = res['retlist']
                 }
             })
@@ -382,6 +388,10 @@ export default {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
+
+                    .el-icon:hover{
+                        color: #1E9FFF;
+                    }
 
                     .item-content {
                         font-weight: bold;

@@ -9,6 +9,7 @@ import skill from "@/views/home/skillView.vue"
 import tool from "@/views/home/toolView.vue"
 import markdownView from "@/components/markdownView.vue"
 import myCenter from "@/views/mycenter"
+import pay from "@/views/pay"
 
 
 
@@ -35,7 +36,8 @@ const routes = [
                 component: tool
             },
         ]
-    },{
+    },
+    {
         path: '/login',
         name: 'Login',
         component: Login
@@ -44,10 +46,16 @@ const routes = [
         path: '/md',
         name: 'MarkDownView',
         component: markdownView
-    },{
+    },
+    {
         path: '/myCenter',
         name: 'myCenter',
         component: myCenter
+    },
+    {
+        path: '/pay',
+        name: 'pay',
+        component: pay
     },
 ]
 

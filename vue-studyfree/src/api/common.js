@@ -60,13 +60,14 @@ export function downloadFree(price) {
 }
 
 // 签到
-export function qianDao() {
+export function qianDao(that) {
     return request({
         url: 'common/other',
         method: 'get',
         params: {action: 'qd'}
     }).then(res => {
         if (res) {
+            that.$store.commit('changeUserInfo', {qd: '已签到'})
             ElMessage({
                 message: '签到成功，F币加50，经验加500',
                 type: 'success',

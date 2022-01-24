@@ -1,4 +1,6 @@
+import datetime
 import json
+import time
 import traceback
 
 from Common.lib.shara import jsonResponse
@@ -26,6 +28,8 @@ class payConfig:
             return self.listServerConfig(request)
         elif action == 'modify':
             return self.modify(request)
+        elif action == 'checkActive':
+            return self.checkActive(request)
 
     @staticmethod
     def userConfig(request):
@@ -51,6 +55,34 @@ class payConfig:
         res = PayConfig.modify(request.params)
 
         return jsonResponse(res)
+
+    @staticmethod
+    def cipherTable():
+        k = '105201314'
+        str2 = ''
+        str1 = str(time.time())[0:8]
+        for i, j in zip(str1, k):
+            if i.isalpha():
+                str2 += str(ord(i) - 64 + ord(j))
+            else:
+                str2 += str(int(i) + int(j))
+        return str2
+
+    def checkActive(self, request):
+        try:
+            ret = PayConfig.list({'user_id': request.session['user_id']})
+            if ret['ret'] == 0:
+                deadline: datetime.datetime = ret['retlist'][0]['deadline']
+                if deadline < datetime.datetime.now():
+                    return jsonResponse({'ret': 1, 'msg': f'套餐服务已过期：{deadline.strftime("%Y-%m-%d %H:%M:%S")}'})
+                else:
+                    code = self.cipherTable()
+                    return jsonResponse({'ret': 0, 'code': code})
+            else:
+                return jsonResponse(ret)
+        except:
+            traceback.print_exc()
+            return jsonResponse({'ret': 1, 'msg': '未找到用户记录'})
 
 
 class payOrder:

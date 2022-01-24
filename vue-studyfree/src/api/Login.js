@@ -20,6 +20,7 @@ export function checkLogin(that) {
         if (res){
             that.$store.commit('changeUserInfo', res)
         } else{
+            that.userdata = {}
             that.$store.commit('deleteUserInfo')
         }
     })

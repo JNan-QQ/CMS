@@ -107,7 +107,8 @@
                                                 </div>
                                                 <span>{{ userdata.coins }} 币</span>
                                             </li>
-                                            <li class="items" v-if="userdata.usertype===1 || userdata.usertype===1005">
+                                            <li class="items" v-if="userdata.usertype===1 || userdata.usertype===1005"
+                                                @click="this.$router.push('/pay')">
                                                 <div>
                                                     <el-icon>
                                                         <trophy/>
@@ -201,7 +202,6 @@ export default {
             sign({action: 'signout'}).then(res => {
                 if (res) {
                     checkLogin(this)
-                    this.userdata = this.$store.state.userdata_base
                 }
             })
         },
@@ -213,7 +213,7 @@ export default {
             }
         },
         qd() {
-            qianDao()
+            qianDao(this)
         }
     }
 }
