@@ -10,7 +10,7 @@ import tool from "@/views/home/toolView.vue"
 import markdownView from "@/components/markdownView.vue"
 import myCenter from "@/views/mycenter"
 import pay from "@/views/pay"
-
+import admin from '@/views/admin'
 
 
 const routes = [
@@ -56,6 +56,11 @@ const routes = [
         path: '/pay',
         name: 'pay',
         component: pay
+    },
+    {
+        path: '/admin',
+        name: 'admin',
+        component: admin
     },
 ]
 

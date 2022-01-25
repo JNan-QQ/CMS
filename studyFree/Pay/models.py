@@ -210,7 +210,7 @@ class Order(models.Model):
         (0, u'未付款'),
         (1, u'已付款'),
         (2, u'已关闭'),
-        (2, u'已退款'),
+        (3, u'已退款'),
     )
     status = models.SmallIntegerField(choices=GENDER_CHOICES)
     # 创建时间
@@ -262,9 +262,8 @@ class Order(models.Model):
 
         qs = list(qs)
 
-        status_list = ['未付款', '已付款', '已关闭']
         for i in range(len(qs)):
             qs[i]['create_time'] = qs[i]['create_time'].strftime("%Y-%m-%d %H:%M:%S")
-            qs[i]['status'] = status_list[qs[i]['status']]
+            qs[i]['status'] = Order.GENDER_CHOICES[qs[i]['status']][1]
 
         return {'ret': 0, 'retlist': qs}

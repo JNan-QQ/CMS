@@ -3,7 +3,10 @@
         <el-icon @click="this.$router.go(-1);">
             <back/>
         </el-icon>
-        <span>F：{{ this.$store.state.userdata.coins }} 币</span>
+        <div>
+            <span style="margin-right: 30px">服务期限：{{ this.$store.state.userdata.deadline }}</span>
+            <span>F：{{ this.$store.state.userdata.coins }} 币</span>
+        </div>
     </div>
     <div class="products">
         <el-card class="box-card">
@@ -101,6 +104,7 @@ export default {
     align-items: center;
     position: relative;
     border-bottom: #e0dddd solid 2px;
+    color: #eeeeee;
 }
 
 .products {
