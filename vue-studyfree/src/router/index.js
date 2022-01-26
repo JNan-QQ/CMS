@@ -11,6 +11,7 @@ import markdownView from "@/components/markdownView.vue"
 import myCenter from "@/views/mycenter"
 import pay from "@/views/pay"
 import admin from '@/views/admin'
+import account from "@/views/admin/account.vue"
 
 
 const routes = [
@@ -60,7 +61,13 @@ const routes = [
     {
         path: '/admin',
         name: 'admin',
-        component: admin
+        component: admin,
+        children: [
+            {
+                path: '/admin/account',
+                component: account
+            }
+        ]
     },
 ]
 
