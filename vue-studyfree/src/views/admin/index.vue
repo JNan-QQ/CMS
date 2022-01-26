@@ -3,11 +3,9 @@
         <div class="admin-top1">
             <div class="sf">SF-ADMIN</div>
             <div class="top">
-                <div style="display:flex">
-                    <el-breadcrumb :separator-icon="ArrowRight" style="margin-left: 10px;font-size: 20px">
-                        <el-breadcrumb-item v-for="page in index_page">{{ page }}</el-breadcrumb-item>
-                    </el-breadcrumb>
-                </div>
+                <el-breadcrumb :separator-icon="ArrowRight" style="margin-left: 10px;font-size: 20px">
+                    <el-breadcrumb-item v-for="page in index_page">{{ page }}</el-breadcrumb-item>
+                </el-breadcrumb>
                 <el-dropdown>
                     <div class="avatar">
                         <el-avatar :src="userdata['aviator']" :size="45" fit="fill"></el-avatar>
@@ -28,39 +26,39 @@
     </div>
     <div class="admin-view">
         <div class="left">
-            <el-menu active-text-color="#ffd04b" background-color="#545c64" :collapse="isCollapse" :router="true"
+            <el-menu active-text-color="#ffd04b" background-color="#545c64" :collapse="isCollapse"
                      text-color="#fff" @select="handleSelect" :default-active="activeIndex">
-                <el-menu-item index="/">
+                <el-menu-item index="1">
                     <el-icon>
                         <setting/>
                     </el-icon>
                     <template #title>网站配置</template>
                 </el-menu-item>
-                <el-menu-item index="/admin/account">
+                <el-menu-item index="2">
                     <el-icon>
                         <user/>
                     </el-icon>
                     <template #title>账号管理</template>
                 </el-menu-item>
-                <el-menu-item index="/">
+                <el-menu-item index="3">
                     <el-icon>
                         <notification/>
                     </el-icon>
                     <template #title>订单管理</template>
                 </el-menu-item>
-                <el-menu-item index="/">
+                <el-menu-item index="4">
                     <el-icon>
                         <message/>
                     </el-icon>
                     <template #title>通知管理</template>
                 </el-menu-item>
-                <el-menu-item index="/">
+                <el-menu-item index="5">
                     <el-icon>
                         <document/>
                     </el-icon>
                     <template #title>文章管理</template>
                 </el-menu-item>
-                <el-menu-item index="/">
+                <el-menu-item index="6">
                     <el-icon>
                         <notebook/>
                     </el-icon>
@@ -69,14 +67,16 @@
             </el-menu>
         </div>
         <div class="right">
-            <!--            <el-icon @click="this.isCollapse=!this.isCollapse">-->
-            <!--                <d-arrow-left style="width: 20px;height: 20px"/>-->
-            <!--            </el-icon>-->
-            <el-tag v-for="tag in index_table" :key="tag.path" closable :type="tps[Math.round(Math.random() * tps.length)]"
+            <el-tag v-for="tag in index_table" :key="tag" closable :type="tps[Math.round(Math.random() * tps.length)]"
                     @close="handleClose(tag)" @click="tagChange(tag)">
-                <router-link :to="tag.path">{{ tag.name }}</router-link>
+                {{ tag }}
             </el-tag>
-            <router-view/>
+            <Config_admin ref="config_admin" v-if="activeIndex==='1'"></Config_admin>
+            <Account_admin ref="account_admin" v-else-if="activeIndex==='2'"></Account_admin>
+            <Order_admin ref="order_admin" v-else-if="activeIndex==='3'"></Order_admin>
+            <Message_admin ref="message_admin" v-else-if="activeIndex==='4'"></Message_admin>
+            <Article_admin ref="article_admin" v-else-if="activeIndex==='5'"></Article_admin>
+            <Notebook_admin ref="notebook_admin" v-else-if="activeIndex==='6'"></Notebook_admin>
         </div>
     </div>
 </template>
@@ -89,6 +89,14 @@ import {
 import {markRaw} from "vue"
 import {checkLogin, sign} from "@/api/Login";
 import {ElMessage} from "element-plus";
+import Account_admin from "./account_admin";
+import Config_admin from "./config_admin";
+import Order_admin from "./order_admin";
+import Message_admin from "./message_admin";
+import Article_admin from "./article_admin";
+import Notebook_admin from "./notebook_admin";
+
+
 
 export default {
     name: 'admin',
@@ -97,24 +105,24 @@ export default {
             userdata: this.$store.state.userdata,
             isCollapse: false,
             ArrowRight,
-            activeIndex: '/admin',
+            activeIndex: '1',
             tps: ['success', '', 'danger', 'warning', 'info'],
             // 面包学导航
             index_page: [],
             // 标签页
             index_table: [],
             activeName: '',
-            pathList : {
-                '/1': '网站配置',
-                "/admin/account": "账号管理",
-                '/3': '订单管理',
-                '/4': '通知管理',
-                '/5': '文章管理',
-                '/6': '笔记管理',
-            }
+            pathList: ['网站配置', "账号管理", '订单管理', '通知管理', '文章管理', '笔记管理'],
+
         }
     },
     components: {
+        Notebook_admin,
+        Article_admin,
+        Message_admin,
+        Order_admin,
+        Config_admin,
+        Account_admin,
         User: markRaw(User),
         Setting: markRaw(Setting),
         Notebook: markRaw(Notebook),
@@ -144,21 +152,13 @@ export default {
                 })
             }
         },
-
     },
 
     methods: {
-        before() {
-        },
-
         handleSelect(key) {
             this.activeIndex = key
-            const dict = {
-                path:key,
-                name:this.pathList[key]
-            }
-            if (this.index_table.indexOf(dict) === -1) {
-                this.index_table.push(dict)
+            if (this.index_table.indexOf(this.pathList[key - 1]) === -1) {
+                this.index_table.push(this.pathList[key - 1])
             }
 
         },
@@ -170,9 +170,7 @@ export default {
 
         // 点击标签
         tagChange(tag) {
-            console.log(tag)
-            const pathList = ['网站配置', '账号管理', '订单管理', '通知管理', '文章管理', '笔记管理']
-            this.activeIndex = (pathList.indexOf(tag) + 1).toString()
+            this.activeIndex = (this.pathList.indexOf(tag) + 1).toString()
         },
 
         // 退出登录函数

@@ -47,6 +47,8 @@ class User(AbstractUser):
                 data['desc'] = '无评价'
             if 'password' not in data:
                 data['password'] = '123456'
+            if 'usertype' not in data:
+                data['usertype'] = 1000
 
             user = User.objects.create(
                 username=username,
@@ -85,7 +87,7 @@ class User(AbstractUser):
             if 'desc' in data:
                 account.desc = data['desc']
             if 'email' in data:
-                account.desc = data['email']
+                account.email = data['email']
             if 'password' in data:
                 account.password = make_password(data['password'])
             if 'usertype' in data:
@@ -121,7 +123,7 @@ class User(AbstractUser):
         try:
             # .order_by('-id') 表示按照 id字段的值 倒序排列
             # 这样可以保证最新的记录显示在最前面
-            qs = User.objects.values('id', 'username', 'realName', 'phone').order_by('-id')
+            qs = User.objects.values('id', 'username', 'usertype', 'realName', 'email', 'aviator').order_by('-id')
 
             search_items = data['search_items']
             if 'usertype' in search_items:
@@ -132,8 +134,8 @@ class User(AbstractUser):
                 qs = qs.filter(username=search_items['username'])
             if 'realName' in search_items:
                 qs = qs.filter(realName=search_items['realName'])
-            if 'phone' in search_items:
-                qs = qs.filter(realName=search_items['phone'])
+            if 'email' in search_items:
+                qs = qs.filter(realName=search_items['email'])
             # 查看是否有 关键字 搜索 参数
             keywords = data.get('keywords', None)
             if keywords:

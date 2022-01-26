@@ -10,11 +10,11 @@
                 </el-select>
             </template>
             <template #append>
-                <el-button :icon="Search" @click="before"></el-button>
+                <el-button :icon="Search" @click="getAccountData"></el-button>
             </template>
         </el-input>
-        <el-button type="primary" plain size="small" @click="addBtnFunction">添加</el-button>
-        <el-button type="success" plain size="small" @click="addMost">批量添加</el-button>
+        <el-button type="primary" plain size="small" @click="addBtnFunction" style="position: relative">添加</el-button>
+        <!--        <el-button type="success" plain size="small" @click="addMost">批量添加</el-button>-->
     </div>
 
     <el-table :data="accountData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table">
@@ -64,10 +64,11 @@
 <script>
 import {Delete, Edit, Loading, Search} from '@element-plus/icons'
 import {markRaw} from "vue";
-import {ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {AccountApi} from "../../api/admin";
 
 export default {
-    name: "account",
+    name: "account_admin",
     data() {
         return {
             // 用户数据列表
@@ -77,8 +78,6 @@ export default {
             // 选择的页数
             currentPage: 1,
 
-            // 用户类型
-            accountType: '',
             // 添加修改用户信息字典
             newAccount: {},
 
@@ -94,61 +93,43 @@ export default {
         }
     },
     components: {},
-    watch: {
-        '$route': 'before',
-    },
+    watch: {},
     mounted() {
-        this.before()
+        this.getAccountData()
     },
     methods: {
-        before() {
-            // 从路由中获取账号类型
-            this.accountType = this.$route.query.type
-
-            // 账号类型转换
-            const usertype = {
-                student: 1000,
-                teacher: 100,
-                mgr: 1
-            }
+        getAccountData() {
             // 搜索过滤
-            const search_items = {usertype: usertype[this.accountType]}
+            const search_items = {}
             if (this.select_type && this.select_value) {
                 search_items[this.select_type] = this.select_value
             }
             // 发送列出账号请求
+            AccountApi({search_items: search_items, action: 'list'}).then(res => {
+                if (res) {
+                    this.accountData = res['retlist']
+                }
+            })
 
         },
         // 编辑修改账号
         editBtnFunction(data) {
-
             this.newAccount = {
                 user_id: data['id'],
                 username: data['username'],
                 realName: data['realName'],
-                No: data['No'],
-                classNo: data['classNo'],
-                gradeNo: data['gradeNo'],
-                major: data['major'],
+                email: data['email'],
+                action: 'modify'
             }
             this.editBtn = true
         },
         // 添加账号
         addBtnFunction() {
-            // 账号类型转换
-            const usertype = {
-                student: 1000,
-                teacher: 100,
-                mgr: 1
-            }
             this.newAccount = {
                 username: '',
                 realName: '',
-                No: '',
-                classNo: '',
-                gradeNo: '',
-                major: '',
-                usertype: usertype[this.accountType]
+                email: '',
+                action: 'add'
             }
             this.editBtn = true
         },
@@ -159,13 +140,16 @@ export default {
         },
         //提交修改、添加账号
         modify_add_Account() {
-            if ('user_id' in this.newAccount) {
-                // 修改请求
-
-            } else {
-                // 添加账号请求
-
-            }
+            // 修改\添加请求
+            AccountApi(this.newAccount).then(res => {
+                if (res) {
+                    ElMessage({
+                        message: '操作成功',
+                        type: 'success',
+                    })
+                    this.editBtn = false
+                }
+            })
             this.newAccount = {}
         },
 
@@ -180,14 +164,21 @@ export default {
                     type: 'info',
                 }
             ).then(() => {
-
-            })
+                AccountApi({action: 'modify', password: '123456',user_id:user_id}).then(res => {
+                    if (res) {
+                        ElMessage({
+                            message: '密码重置为123456',
+                            type: 'success',
+                        })
+                    }
+                })
+            }).catch()
         },
 
         // 删除账号
         deleteAccount(data) {
             ElMessageBox.confirm(
-                '确认删除姓名为：' + data['realName'] + ' 的账号密码吗?',
+                '确认删除姓名为：' + data['realName'] + ' 的账号吗?',
                 '提示',
                 {
                     confirmButtonText: '确认',
@@ -195,8 +186,15 @@ export default {
                     type: 'info',
                 }
             ).then(() => {
-
-            })
+                AccountApi({action: 'delete',user_id:data['id']}).then(res => {
+                    if (res) {
+                        ElMessage({
+                            message: '姓名为：' + data['realName'] + ' 的账号删除成功',
+                            type: 'success',
+                        })
+                    }
+                })
+            }).catch()
         },
 
         // 专业过滤
@@ -214,23 +212,18 @@ export default {
             this.currentPage = val;
         },
 
-        // 批量添加界面
-        addMost() {
-            this.$router.push('/admin/addMost?type=' + this.accountType)
-        }
-
     },
 }
 </script>
 
 <style scoped lang="less">
-.search-top{
+.search-top {
     display: flex;
     align-items: center;
     margin-bottom: 3px
 }
 
-.table{
+.table {
     min-height: 600px;
 }
 
