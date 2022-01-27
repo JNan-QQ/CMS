@@ -13,7 +13,7 @@
                 <el-button :icon="Search" @click="getAccountData"></el-button>
             </template>
         </el-input>
-        <el-button type="primary" plain size="small" @click="addBtnFunction" style="position: relative">添加</el-button>
+        <el-button type="primary" plain @click="addBtnFunction" style="position: relative">添加</el-button>
         <!--        <el-button type="success" plain size="small" @click="addMost">批量添加</el-button>-->
     </div>
 
@@ -225,6 +225,7 @@ export default {
 
 .table {
     min-height: 600px;
+    padding: 10px;
 }
 
 /*分页模块*/

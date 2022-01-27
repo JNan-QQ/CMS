@@ -6,8 +6,10 @@
 
 from django.urls import path
 
-from Admin.views import Account
+from Admin.views import Account, Orders, Article
 
 urlpatterns = [
     path('account', Account().handler),
+    path('order', Orders().handler),
+    path('article', Article().handler),
 ]

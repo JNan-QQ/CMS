@@ -253,12 +253,21 @@ class Order(models.Model):
 
     @staticmethod
     def list_order(data):
-        user_id = data['user_id']
         user_type = data['usertype']
         if user_type == 1:
-            qs = Order.objects.values().order_by('-id')
+            qs = Order.objects.values('id', 'user__username', 'orderNo', 'status', 'create_time', 'money',
+                                      'status').order_by('-id')
         else:
+            user_id = data['user_id']
             qs = Order.objects.filter(user__id=user_id).values().order_by('-id')
+
+        search_items = data.get('search_items', {})
+        if 'id' in search_items:
+            qs = qs.filter(id=search_items['id'])
+        if 'orderNo' in search_items:
+            qs = qs.filter(orderNo=search_items['orderNo'])
+        if 'user_id' in search_items:
+            qs = qs.filter(user__id=search_items['user_id'])
 
         qs = list(qs)
 

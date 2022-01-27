@@ -46,6 +46,23 @@ class Tags(models.Model):
 
         return {'ret': 0, 'retlist': qs}
 
+    @staticmethod
+    def admin_list():
+        tags = Tags.objects.filter(tage_type=1).values('id', 'tag_name', 'status')
+        tags = list(tags)
+        for index, tag_one in enumerate(tags):
+            tag2 = Tags.objects.filter(tag_id=tag_one['id'], tage_type=2).values('id', 'tag_name', 'status')
+            tag2 = list(tag2)
+            for index2, tag_two in enumerate(tag2):
+                tag_3 = Tags.objects.filter(tag_id=tag_two['id'], tage_type=3).values('id', 'tag_name', 'status')
+                tag_3 = list(tag_3)
+                for index3, tag_three in enumerate(tag_3):
+                    contentList = ArticleContent.objects.filter(tag_id__id=tag_three['id']).values()
+                    tag_3[index3]['contentList'] = list(contentList)[0]
+                tag2[index2]['tag_child'] = tag_3
+            tags[index]['tag_child'] = tag2
+        return {'ret': 0, 'retlist': tags}
+
 
 class ArticleContent(models.Model):
     # 文章id
