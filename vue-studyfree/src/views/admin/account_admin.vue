@@ -148,6 +148,7 @@ export default {
                         type: 'success',
                     })
                     this.editBtn = false
+                    this.getAccountData()
                 }
             })
             this.newAccount = {}
@@ -164,7 +165,7 @@ export default {
                     type: 'info',
                 }
             ).then(() => {
-                AccountApi({action: 'modify', password: '123456',user_id:user_id}).then(res => {
+                AccountApi({action: 'modify', password: '123456', user_id: user_id}).then(res => {
                     if (res) {
                         ElMessage({
                             message: '密码重置为123456',
@@ -172,7 +173,8 @@ export default {
                         })
                     }
                 })
-            }).catch()
+            }).catch(() => {
+            })
         },
 
         // 删除账号
@@ -186,7 +188,7 @@ export default {
                     type: 'info',
                 }
             ).then(() => {
-                AccountApi({action: 'delete',user_id:data['id']}).then(res => {
+                AccountApi({action: 'delete', user_id: data['id']}).then(res => {
                     if (res) {
                         ElMessage({
                             message: '姓名为：' + data['realName'] + ' 的账号删除成功',

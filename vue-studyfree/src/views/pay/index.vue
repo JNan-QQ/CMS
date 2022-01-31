@@ -23,8 +23,8 @@
                                      :precision="2" :step="1"/>
                     　元
                 </p>
-                <p>Ｆ　　币：{{ money * 500 }}　币</p>
-                <p>说　　明：</p>
+                <p>Ｆ　　币：{{ Math.round(money * F * (1 + Z)) }}　币</p>
+                <p>说　　明：{{ Z }}折扣</p>
             </div>
         </el-card>
         <el-card class="box-card" v-for="product in productsList">
@@ -49,13 +49,16 @@ import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
 import {orderApi, productApi} from "../../api/pay";
 import {ElMessage} from "element-plus";
+import {CommonApi} from "../../api/common";
 
 export default {
     name: "index",
     data() {
         return {
             productsList: [{title: '12345', timeDays: '20', price: '500', desc: ''}],
-            money: 0
+            money: 0,
+            F: 500,
+            Z: 1
         }
     },
     components: {Back},
@@ -68,6 +71,13 @@ export default {
                 }
             }
         )
+        CommonApi({action: 'admin_list_webConfig', title: 'pay'}).then(res => {
+            if (res) {
+                let ss = eval('(' + res['retlist'][0]['config'] + ')')
+                this.F = parseInt(ss.F)
+                this.Z = parseFloat(ss.Z)
+            }
+        })
     },
     methods: {
         payF() {

@@ -15,22 +15,26 @@ class AliPay(object):
     """
     支付宝支付接口(PC端支付接口)
     """
-    ALIPAY_PUBLIC = os.path.join(BASE_DIR, 'Pay', 'ali', 'alipay_public.txt')
-    APP_PUBLIC = os.path.join(BASE_DIR, 'Pay', 'ali', 'app_public.txt')
-    APP_PRIVATE = os.path.join(BASE_DIR, 'Pay', 'ali', 'app_private.txt')
+    # ALIPAY_PUBLIC = os.path.join(BASE_DIR, 'Pay', 'ali', 'alipay_public.txt')
+    # APP_PUBLIC = os.path.join(BASE_DIR, 'Pay', 'ali', 'app_public.txt')
+    # APP_PRIVATE = os.path.join(BASE_DIR, 'Pay', 'ali', 'app_private.txt')
 
     def __init__(self, appid, app_notify_url, app_private_key_path,
                  alipay_public_key_path, return_url, debug=False):
         self.appid = appid
         self.app_notify_url = app_notify_url
-        self.app_private_key_path = app_private_key_path
-        self.app_private_key = None
         self.return_url = return_url
-        with open(self.app_private_key_path) as fp:
-            self.app_private_key = RSA.importKey(fp.read())
-        self.alipay_public_key_path = alipay_public_key_path
-        with open(self.alipay_public_key_path) as fp:
-            self.alipay_public_key = RSA.importKey(fp.read())
+
+        # self.app_private_key_path = app_private_key_path
+        # self.app_private_key = None
+        # with open(self.app_private_key_path) as fp:
+        #     self.app_private_key = RSA.importKey(fp.read())
+        # self.alipay_public_key_path = alipay_public_key_path
+        # with open(self.alipay_public_key_path) as fp:
+        #     self.alipay_public_key = RSA.importKey(fp.read())
+
+        self.app_private_key = RSA.importKey(app_private_key_path)
+        self.alipay_public_key = RSA.importKey(alipay_public_key_path)
 
         if debug is True:
             self.__gateway = "https://openapi.alipaydev.com/gateway.do"

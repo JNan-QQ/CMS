@@ -16,7 +16,6 @@ import ElementPlus from 'element-plus'
 // 加载element 逐渐库 样式
 import 'element-plus/dist/index.css'
 
-// json
 
 
 createApp(App).use(store).use(ElementPlus).use(router).use(VueParticles).mount('#app')

@@ -2,12 +2,12 @@ import datetime
 import traceback
 
 from django.db import models
+from django.db import transaction
 
-# Create your models here.
-# 文章标签
 from Common.models import User
 
 
+# 文章标签
 class Tags(models.Model):
     # 标签id
     id = models.BigAutoField(primary_key=True)
@@ -15,9 +15,10 @@ class Tags(models.Model):
     tag_name = models.CharField(max_length=100, null=True, blank=True)
     # 子标签id （链接自身标签）
     tag_id = models.IntegerField(null=True, blank=True)
+    # tag_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True)
     # 标签 type
     # 1:一级标签 | 2：二级标签 | 3：三级标签
-    tage_type = models.PositiveIntegerField()
+    tag_type = models.PositiveIntegerField()
 
     # 标签 status
     # 1:正常 | 2：禁用
@@ -26,16 +27,40 @@ class Tags(models.Model):
     class Meta:
         db_table = "study_tags"
 
-    @staticmethod  # 随机列出已经名言
+    @staticmethod
+    def admin_add(data):
+        try:
+            if data['tag_type'] == 1:
+                data['tag_id'] = None
+            with transaction.atomic():
+                tag = Tags.objects.create(
+                    tag_name=data['tag_name'],
+                    tag_id=data['tag_id'],
+                    tag_type=data['tag_type'],
+                    status=data['status']
+                )
+
+                if data['tag_type'] == 3:
+                    ArticleContent.objects.create(
+                        tag_id_id=tag.id,
+                        status=1
+                    )
+
+                return {'ret': 0, 'tag_id': tag.id}
+        except:
+            traceback.print_exc()
+            return {'ret': 1, 'msg': '添加标签出错'}
+
+    @staticmethod
     def list_tags(data):
         if 'tag' in data:
-            qs = Tags.objects.filter(tage_type=1, status=1).values('id', 'tag_name')
+            qs = Tags.objects.filter(tag_type=1, status=1).values('id', 'tag_name')
             qs = list(qs)
         else:
-            qs = Tags.objects.filter(tag_id=data['tage_id'], status=1, tage_type=2).values('id', 'tag_name')
+            qs = Tags.objects.filter(tag_id=data['tage_id'], status=1, tag_type=2).values('id', 'tag_name')
             qs = list(qs)
             for i in qs:
-                qs_content = Tags.objects.filter(tag_id=i['id'], status=1, tage_type=3).values('id', 'tag_name')
+                qs_content = Tags.objects.filter(tag_id=i['id'], status=1, tag_type=3).values('id', 'tag_name')
                 index = qs.index(i)
                 qs_content = list(qs_content)
                 for ii in qs_content:
@@ -48,20 +73,63 @@ class Tags(models.Model):
 
     @staticmethod
     def admin_list():
-        tags = Tags.objects.filter(tage_type=1).values('id', 'tag_name', 'status')
+        tags = Tags.objects.filter(tag_type=1).values('id', 'tag_name', 'status')
         tags = list(tags)
         for index, tag_one in enumerate(tags):
-            tag2 = Tags.objects.filter(tag_id=tag_one['id'], tage_type=2).values('id', 'tag_name', 'status')
+            tag2 = Tags.objects.filter(tag_id=tag_one['id'], tag_type=2).values('id', 'tag_name', 'status')
             tag2 = list(tag2)
             for index2, tag_two in enumerate(tag2):
-                tag_3 = Tags.objects.filter(tag_id=tag_two['id'], tage_type=3).values('id', 'tag_name', 'status')
+                tag_3 = Tags.objects.filter(tag_id=tag_two['id'], tag_type=3).values('id', 'tag_name', 'status')
                 tag_3 = list(tag_3)
                 for index3, tag_three in enumerate(tag_3):
                     contentList = ArticleContent.objects.filter(tag_id__id=tag_three['id']).values()
-                    tag_3[index3]['contentList'] = list(contentList)[0]
+                    if contentList:
+                        tag_3[index3]['contentList'] = list(contentList)[0]
+                    else:
+                        tag_3[index3]['contentList'] = {}
                 tag2[index2]['tag_child'] = tag_3
             tags[index]['tag_child'] = tag2
         return {'ret': 0, 'retlist': tags}
+
+    @staticmethod
+    def admin_modify(data):
+
+        try:
+            # 根据 id 从数据库中找到相应的记录
+            tag = Tags.objects.get(id=data['id'])
+        except:
+            return {
+                'ret': 1,
+                'msg': '标签id不存在'
+            }
+        if 'tag_name' in data:
+            tag.tag_name = data['tag_name']
+        if 'tag_id' in data:
+            tag.tag_id = data['tage_id']
+        if 'tag_type' in data:
+            tag.tag_type = data['tag_type']
+        if 'status' in data:
+            tag.status = data['status']
+
+        tag.save()
+
+        return {'ret': 0}
+
+    @staticmethod
+    def admin_delete(data):
+        try:
+            # 根据 id 从数据库中找到相应的客户记录
+            tag = Tags.objects.get(id=data['id'])
+        except:
+            return {
+                'ret': 1,
+                'msg': f'标签不存在'
+            }
+
+        # delete 方法就将该记录从数据库中删除了
+        tag.delete()
+
+        return {'ret': 0}
 
 
 class ArticleContent(models.Model):
@@ -93,6 +161,27 @@ class ArticleContent(models.Model):
         except:
             traceback.print_exc()
             return {}
+
+    @staticmethod
+    def admin_modify(data):
+
+        try:
+            # 根据 id 从数据库中找到相应的记录
+            article = ArticleContent.objects.get(id=data['id'])
+        except:
+            return {
+                'ret': 1,
+                'msg': '标签id不存在'
+            }
+
+        if 'images' in data:
+            article.images = data['images']
+        if 'filePath' in data:
+            article.filePath = data['filePath']
+
+        article.save()
+
+        return {'ret': 0}
 
 
 class NoteBook(models.Model):
@@ -164,7 +253,7 @@ class NoteBook(models.Model):
                 'ret': 1,
                 'msg': f'id 为`{note_id}`的笔记不存在'
             }
-        if note.user_id.id == data['user_id']:
+        if note.user_id.id == data['user_id'] or data['usertype'] == 1:
             if 'title' in data:
                 note.title = data['title']
             if 'content' in data:
@@ -174,4 +263,12 @@ class NoteBook(models.Model):
 
             note.save()
             return {'ret': 0}
-        return {'ret': 1, 'msg': '修改失败'}
+        return {'ret': 1, 'msg': '不能修改别人的笔记'}
+
+    @staticmethod
+    def admin_list():
+        qs = NoteBook.objects.values('id', 'status', 'title', 'content', 'time', 'user_id__username')
+        qs = list(qs)
+        for i in range(len(qs)):
+            qs[i]['time'] = qs[i]['time'].strftime('%Y-%m-%d %H:%M:%S')
+        return {'ret': 0, 'retlist': qs}

@@ -1,7 +1,7 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : mysql8.0
+Source Server         : localhost_3306
 Source Server Version : 80027
 Source Host           : localhost:3306
 Source Database       : studyfree
@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80027
 File Encoding         : 65001
 
-Date: 2022-01-27 17:02:24
+Date: 2022-01-31 22:07:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -61,7 +61,7 @@ CREATE TABLE `auth_permission` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`),
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of auth_permission
@@ -126,6 +126,10 @@ INSERT INTO `auth_permission` VALUES ('57', 'Can add order', '15', 'add_order');
 INSERT INTO `auth_permission` VALUES ('58', 'Can change order', '15', 'change_order');
 INSERT INTO `auth_permission` VALUES ('59', 'Can delete order', '15', 'delete_order');
 INSERT INTO `auth_permission` VALUES ('60', 'Can view order', '15', 'view_order');
+INSERT INTO `auth_permission` VALUES ('61', 'Can add web config', '16', 'add_webconfig');
+INSERT INTO `auth_permission` VALUES ('62', 'Can change web config', '16', 'change_webconfig');
+INSERT INTO `auth_permission` VALUES ('63', 'Can delete web config', '16', 'delete_webconfig');
+INSERT INTO `auth_permission` VALUES ('64', 'Can view web config', '16', 'view_webconfig');
 
 -- ----------------------------
 -- Table structure for `django_admin_log`
@@ -162,7 +166,7 @@ CREATE TABLE `django_content_type` (
   `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `django_content_type_app_label_model_76bd3d3b_uniq` (`app_label`,`model`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_content_type
@@ -174,6 +178,7 @@ INSERT INTO `django_content_type` VALUES ('7', 'Common', 'celebrityquotes');
 INSERT INTO `django_content_type` VALUES ('12', 'Common', 'emailcode');
 INSERT INTO `django_content_type` VALUES ('11', 'Common', 'phonecode');
 INSERT INTO `django_content_type` VALUES ('6', 'Common', 'user');
+INSERT INTO `django_content_type` VALUES ('16', 'Common', 'webconfig');
 INSERT INTO `django_content_type` VALUES ('4', 'contenttypes', 'contenttype');
 INSERT INTO `django_content_type` VALUES ('9', 'FrontEnd', 'articlecontent');
 INSERT INTO `django_content_type` VALUES ('13', 'FrontEnd', 'notebook');
@@ -193,7 +198,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of django_migrations
@@ -237,6 +242,10 @@ INSERT INTO `django_migrations` VALUES ('36', 'Pay', '0005_alter_payconfig_users
 INSERT INTO `django_migrations` VALUES ('37', 'Pay', '0006_alter_payconfig_userserverconfig', '2022-01-20 22:04:26.271553');
 INSERT INTO `django_migrations` VALUES ('38', 'Pay', '0007_order_products', '2022-01-23 16:34:22.699661');
 INSERT INTO `django_migrations` VALUES ('39', 'Pay', '0008_auto_20220124_2205', '2022-01-24 22:05:45.381025');
+INSERT INTO `django_migrations` VALUES ('40', 'FrontEnd', '0007_rename_tage_type_tags_tag_type', '2022-01-29 16:21:09.523082');
+INSERT INTO `django_migrations` VALUES ('41', 'Pay', '0009_alter_order_status', '2022-01-29 16:21:09.749215');
+INSERT INTO `django_migrations` VALUES ('42', 'Common', '0007_webconfig', '2022-01-31 16:40:26.095600');
+INSERT INTO `django_migrations` VALUES ('43', 'Common', '0008_alter_webconfig_table', '2022-01-31 21:06:53.852475');
 
 -- ----------------------------
 -- Table structure for `django_session`
@@ -254,7 +263,7 @@ CREATE TABLE `django_session` (
 -- Records of django_session
 -- ----------------------------
 INSERT INTO `django_session` VALUES ('3f3fcxjzm9kkt5md95s2kwq4agh5n0il', 'e30:1n8Fpf:kYWQ7OyDNgsTnD6V2AN-_wRTy-KYNUtazn0znuaWrwU', '2022-01-28 06:13:03.186106');
-INSERT INTO `django_session` VALUES ('otpetkjf0kca84d2mimi94qgbvp5jt3o', '.eJxVkEFuwyAQRe_COnIgGDBeVd03J4iExgPYpDZODI5UVb17ceNK7Q7--zzN8EkMrHkwa3KLCZa0hJHD36wDfHdxA_YKsZ8rnGNeQldtlWqnqXqbrRtf9-4_wQBpKK8pQIceuUXfsbrjDLSyyJvGet5oVJ4qhRxUfUKgwnkPQnJoQFtGraC8SDdd_rg50rIDCcmMcx8iafOyuif8WaCwxcF4hqkUyWUV2uJllVrSooBHgDwvBaQMOeAxTNC7dNzzcu3NfjbXUPaNEA2T9UlKVlNR3WK_DxKf_t9SSd0EYSxRoyXnXKj65X4vvzWRr28X13Xr:1nD0Dx:QLIgkOh25eVJhr8BEhpv3ASb_ilSVNE83v5eIhql6os', '2022-02-10 16:33:45.362088');
+INSERT INTO `django_session` VALUES ('zexaw07qf1uyungj0v6cpyi1ycb3zal0', '.eJxVkEFuwyAQRe_COnIgGDBeVd03J4iExgPYpDZODI5UVb17ceNK7Q7--zzN8EkMrHkwa3KLCZa0hJHD36wDfHdxA_YKsZ8rnGNeQldtlWqnqXqbrRtf9-4_wQBpKK8pQIceuUXfsbrjDLSyyJvGet5oVJ4qhRxUfUKgwnkPQnJoQFtGraC8SDdd_rg50rIDCcmMcx8iafOyuif8WaCwxcF4hqkUyWUV2uJllVrSooBHgDwvBaQMOeAxTNC7dNzzcu3NfjbXUPaNEA2T9UlKVlNR3WK_DxKf_t9SSd0EYSxRoyXnXKj65X4vvzWRr28X13Xr:1nEWPd:HbiDK-OP0hIuIGemq6M72lCtNkJkBjVGDAeOTrXVbXg', '2022-02-14 21:08:05.068634');
 
 -- ----------------------------
 -- Table structure for `pay_config`
@@ -277,10 +286,10 @@ CREATE TABLE `pay_config` (
 -- ----------------------------
 -- Records of pay_config
 -- ----------------------------
-INSERT INTO `pay_config` VALUES ('1', '98996649', '1020895', '6', '2024-01-28 22:33:33.309469', '1', '1', '{\"AccountConfig\": {\"desc_name\": \"\\u8d26\\u53f7\\u4fe1\\u606f\", \"teacher\": [\"wym\\u8001\\u5e081\", \"123456\"], \"student\": [\"waiyan\", \"123456lj\"]}, \"CasesConfig\": {\"desc_name\": \"\\u6d4b\\u8bd5\\u7528\\u4f8b\\u4fe1\\u606f\", \"case_No\": 1, \"case_result\": 7, \"cases_path\": \"D:\\\\python_rc\\\\TsWeb\\\\config\\\\cases.xlsx\"}, \"BrowserDriver\": {\"desc_name\": \"\\u6d4f\\u89c8\\u5668\\u53ca\\u9a71\\u52a8\", \"browser_kernel\": \"Chrome\", \"driver_path\": \"C:\\\\PythonTool\\\\chromedriver.exe\", \"browser_path\": \"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\"}, \"UrlBase\": {\"desc_name\": \"\\u7f51\\u9875url\", \"username\": \"jiangnan\", \"start_url\": \"\"}, \"LibConfig\": {\"desc_name\": \"\\u6570\\u636e\\u5e93\\u4fe1\\u606f\", \"mysqlAlpha\": [\"192.168.1.186\", \"ts_waiyutong\", \"Ts*#!@#123WYT\"], \"mysqlBeta\": [\"121.41.116.146\", \"waiyutong_read\", \"Ts123456\"]}, \"QType\": {\"desc_name\": \"\\u9898\\u76ee\\u7c7b\\u578b\", \"opt\": [\"1100\", \"1200\", \"2200\", \"2800\"], \"blank\": [\"1300\", \"1600\", \"2100\", \"2500\"]}}');
+INSERT INTO `pay_config` VALUES ('1', '98996699', '1021395', '6', '2024-01-28 22:33:33.309469', '1', '0', '{\"AccountConfig\": {\"desc_name\": \"\\u8d26\\u53f7\\u4fe1\\u606f\", \"teacher\": [\"wym\\u8001\\u5e081\", \"123456\"], \"student\": [\"waiyan\", \"123456lj\"]}, \"CasesConfig\": {\"desc_name\": \"\\u6d4b\\u8bd5\\u7528\\u4f8b\\u4fe1\\u606f\", \"case_No\": 1, \"case_result\": 7, \"cases_path\": \"D:\\\\python_rc\\\\TsWeb\\\\config\\\\cases.xlsx\"}, \"BrowserDriver\": {\"desc_name\": \"\\u6d4f\\u89c8\\u5668\\u53ca\\u9a71\\u52a8\", \"browser_kernel\": \"Chrome\", \"driver_path\": \"C:\\\\PythonTool\\\\chromedriver.exe\", \"browser_path\": \"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\"}, \"UrlBase\": {\"desc_name\": \"\\u7f51\\u9875url\", \"username\": \"jiangnan\", \"start_url\": \"\"}, \"LibConfig\": {\"desc_name\": \"\\u6570\\u636e\\u5e93\\u4fe1\\u606f\", \"mysqlAlpha\": [\"192.168.1.186\", \"ts_waiyutong\", \"Ts*#!@#123WYT\"], \"mysqlBeta\": [\"121.41.116.146\", \"waiyutong_read\", \"Ts123456\"]}, \"QType\": {\"desc_name\": \"\\u9898\\u76ee\\u7c7b\\u578b\", \"opt\": [\"1100\", \"1200\", \"2200\", \"2800\"], \"blank\": [\"1300\", \"1600\", \"2100\", \"2500\"]}}');
 INSERT INTO `pay_config` VALUES ('3', '50', '500', '1', '2022-01-15 00:30:11.836636', '3', '0', '{}');
 INSERT INTO `pay_config` VALUES ('4', '50', '500', '1', '2022-01-15 00:34:42.204227', '4', '0', '{}');
-INSERT INTO `pay_config` VALUES ('5', '150', '3700', '2', '2022-01-26 16:41:37.000000', '5', '0', '{\"AccountConfig\": {\"desc_name\": \"\\u8d26\\u53f7\\u4fe1\\u606f\", \"teacher\": [\"wym\\u8001\\u5e081\", \"123456\"], \"student\": [\"waiyan\", \"123456lj\"]}, \"CasesConfig\": {\"desc_name\": \"\\u6d4b\\u8bd5\\u7528\\u4f8b\\u4fe1\\u606f\", \"case_No\": 1, \"case_result\": 7, \"cases_path\": \"D:\\\\python_rc\\\\TsWeb\\\\config\\\\cases.xlsx\"}, \"BrowserDriver\": {\"desc_name\": \"\\u6d4f\\u89c8\\u5668\\u53ca\\u9a71\\u52a8\", \"browser_kernel\": \"Chrome\", \"driver_path\": \"C:\\\\PythonTool\\\\chromedriver.exe\", \"browser_path\": \"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\"}, \"UrlBase\": {\"username\": \"jiangnan\", \"start_url\": \"\"}, \"LibConfig\": {\"desc_name\": \"\\u6570\\u636e\\u5e93\\u4fe1\\u606f\", \"mysqlAlpha\": [\"192.168.1.186\", \"ts_waiyutong\", \"Ts*#!@#123WYT\"], \"mysqlBeta\": [\"121.41.116.146\", \"waiyutong_read\", \"Ts123456\"]}, \"QType\": {\"opt\": [\"1100\", \"1200\", \"2200\", \"1300\"], \"blank\": [\"13000\", \"1600\", \"2100\", \"2500\"]}}');
+INSERT INTO `pay_config` VALUES ('5', '200', '4200', '2', '2022-01-26 16:41:37.000000', '5', '1', '{\"AccountConfig\": {\"desc_name\": \"\\u8d26\\u53f7\\u4fe1\\u606f\", \"teacher\": [\"wym\\u8001\\u5e081\", \"123456\"], \"student\": [\"waiyan\", \"123456lj\"]}, \"CasesConfig\": {\"desc_name\": \"\\u6d4b\\u8bd5\\u7528\\u4f8b\\u4fe1\\u606f\", \"case_No\": 1, \"case_result\": 7, \"cases_path\": \"D:\\\\python_rc\\\\TsWeb\\\\config\\\\cases.xlsx\"}, \"BrowserDriver\": {\"desc_name\": \"\\u6d4f\\u89c8\\u5668\\u53ca\\u9a71\\u52a8\", \"browser_kernel\": \"Chrome\", \"driver_path\": \"C:\\\\PythonTool\\\\chromedriver.exe\", \"browser_path\": \"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\"}, \"UrlBase\": {\"username\": \"jiangnan\", \"start_url\": \"\"}, \"LibConfig\": {\"desc_name\": \"\\u6570\\u636e\\u5e93\\u4fe1\\u606f\", \"mysqlAlpha\": [\"192.168.1.186\", \"ts_waiyutong\", \"Ts*#!@#123WYT\"], \"mysqlBeta\": [\"121.41.116.146\", \"waiyutong_read\", \"Ts123456\"]}, \"QType\": {\"opt\": [\"1100\", \"1200\", \"2200\", \"1300\"], \"blank\": [\"13000\", \"1600\", \"2100\", \"2500\"]}}');
 INSERT INTO `pay_config` VALUES ('6', '100', '1000', '2', '2022-01-15 17:25:52.065186', '6', '0', '{}');
 INSERT INTO `pay_config` VALUES ('7', '50', '500', '1', '2022-01-15 19:25:44.850759', '7', '0', '{}');
 
@@ -298,18 +307,19 @@ CREATE TABLE `pay_order` (
   PRIMARY KEY (`id`),
   KEY `pay_order_user_id_4522f8ab_fk_study_user_id` (`user_id`),
   CONSTRAINT `pay_order_user_id_4522f8ab_fk_study_user_id` FOREIGN KEY (`user_id`) REFERENCES `study_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of pay_order
 -- ----------------------------
 INSERT INTO `pay_order` VALUES ('1', '202201230001', '100.00', '2', '2022-01-22 18:56:31.000000', '5');
-INSERT INTO `pay_order` VALUES ('3', '202201242145003165', '3.00', '0', '2022-01-24 21:45:00.255010', '1');
+INSERT INTO `pay_order` VALUES ('3', '202201242145003165', '3.00', '2', '2022-01-24 21:45:00.255010', '1');
 INSERT INTO `pay_order` VALUES ('5', '202201242156186647', '1.00', '1', '2022-01-24 21:56:35.480430', '1');
 INSERT INTO `pay_order` VALUES ('6', '202201242158402133', '1.00', '1', '2022-01-24 21:58:55.989018', '1');
-INSERT INTO `pay_order` VALUES ('7', '202201250930003125', '1.00', '0', '2022-01-25 09:30:00.214067', '5');
+INSERT INTO `pay_order` VALUES ('7', '202201250930003125', '1.00', '2', '2022-01-25 09:30:00.214067', '5');
 INSERT INTO `pay_order` VALUES ('8', '202201250931334882', '1.00', '1', '2022-01-25 09:31:48.052703', '5');
 INSERT INTO `pay_order` VALUES ('9', '202201250939462687', '3.00', '1', '2022-01-25 09:40:35.073902', '5');
+INSERT INTO `pay_order` VALUES ('10', '202201311659164776', '1.00', '0', '2022-01-31 16:59:16.240302', '1');
 
 -- ----------------------------
 -- Table structure for `pay_products`
@@ -347,7 +357,7 @@ CREATE TABLE `study_articlecontent` (
   KEY `study_articleContent_tag_id_id_9b6029d1_fk_study_tags_id` (`tag_id_id`),
   CONSTRAINT `study_articleContent_tag_id_id_9b6029d1_fk_study_tags_id` FOREIGN KEY (`tag_id_id`) REFERENCES `study_tags` (`id`),
   CONSTRAINT `study_articlecontent_chk_1` CHECK ((`status` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of study_articlecontent
@@ -355,6 +365,7 @@ CREATE TABLE `study_articlecontent` (
 INSERT INTO `study_articlecontent` VALUES ('1', '1', 'images/python-default.png', 'md/编写测试用例.md', '5');
 INSERT INTO `study_articlecontent` VALUES ('2', '1', 'images/python-default.png', null, '6');
 INSERT INTO `study_articlecontent` VALUES ('3', '1', 'images/python-default.png', null, '7');
+INSERT INTO `study_articlecontent` VALUES ('5', '1', 'images/python-default.png', 'md/编写测试用例.md', '17');
 
 -- ----------------------------
 -- Table structure for `study_cq`
@@ -365,7 +376,7 @@ CREATE TABLE `study_cq` (
   `content` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `author` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of study_cq
@@ -413,7 +424,7 @@ CREATE TABLE `study_notebook` (
 -- ----------------------------
 -- Records of study_notebook
 -- ----------------------------
-INSERT INTO `study_notebook` VALUES ('22', '1', '默认标题', '请在此输入内容，支持markdown语法', '2022-01-19 20:24:01.219296', '1');
+INSERT INTO `study_notebook` VALUES ('22', '1', '默认标题', '请在此输入内容，支持markdown语法\n![](/api/static/images/notebook/img_notebook_22_1643467738.png)\n', '2022-01-29 22:49:31.977787', '1');
 
 -- ----------------------------
 -- Table structure for `study_tags`
@@ -423,23 +434,25 @@ CREATE TABLE `study_tags` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `tag_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `tag_id` int DEFAULT NULL,
-  `tage_type` int unsigned NOT NULL,
+  `tag_type` int unsigned NOT NULL,
   `status` int unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `study_tags_chk_1` CHECK ((`tage_type` >= 0)),
-  CONSTRAINT `study_tags_chk_2` CHECK ((`status` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+  CONSTRAINT `study_tags_chk_2` CHECK ((`status` >= 0)),
+  CONSTRAINT `study_tags_tag_type_42f80797_check` CHECK ((`tag_type` >= 0))
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 -- ----------------------------
 -- Records of study_tags
 -- ----------------------------
 INSERT INTO `study_tags` VALUES ('1', 'Python', null, '1', '1');
-INSERT INTO `study_tags` VALUES ('2', 'Docker', null, '1', '1');
 INSERT INTO `study_tags` VALUES ('3', 'Python基础', '1', '2', '1');
 INSERT INTO `study_tags` VALUES ('4', 'Python进阶', '1', '2', '1');
 INSERT INTO `study_tags` VALUES ('5', 'list', '3', '3', '1');
 INSERT INTO `study_tags` VALUES ('6', 'str', '3', '3', '1');
 INSERT INTO `study_tags` VALUES ('7', '目录操作', '4', '3', '1');
+INSERT INTO `study_tags` VALUES ('9', 'Docker', null, '1', '1');
+INSERT INTO `study_tags` VALUES ('15', 'aa', '9', '2', '1');
+INSERT INTO `study_tags` VALUES ('17', 'dtb', '15', '3', '1');
 
 -- ----------------------------
 -- Table structure for `study_user`
@@ -470,10 +483,10 @@ CREATE TABLE `study_user` (
 -- ----------------------------
 -- Records of study_user
 -- ----------------------------
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$DGJ2A11d3DDLgOz1Ejgr8Q$gK9SrBEFQ+ysPAXBP/wmZEPMqin00ymPMocm/WO+SiE=', '2022-01-27 09:32:57.063371', '1', 'jiangnan', '', '', '896333574@qq.com', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'static/images/aviator/img_aviator_jiangnan_1642661405.png', null);
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$DGJ2A11d3DDLgOz1Ejgr8Q$gK9SrBEFQ+ysPAXBP/wmZEPMqin00ymPMocm/WO+SiE=', '2022-01-31 12:53:58.839325', '1', 'jiangnan', '', '', '896333574@qq.com', '1', '1', '2022-01-07 09:19:38.585700', '1', '1', '姜楠', 'static/images/aviator/img_aviator_jiangnan_1642661405.png', null);
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$QSlfBsdK117kakMSLBnnVB$ZpY7ckayrYsm5JcZFNNLIfZqFCovwu3KUXK7AEJayQw=', '2022-01-19 23:57:29.777376', '0', 'jncss', '', '', '896333574@qq.com', '0', '1', '2022-01-15 00:30:11.559788', '3', '1005', '', null, '无评价');
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$Osk4XCKVnxM4ylyB5HTnwE$IR+XenJSlvDq9pem6PZiNcgJS/iV0yp2mVzZx/iLtyo=', '2022-01-20 00:04:15.481388', '0', 'jn11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 00:34:42.048282', '4', '1005', '', null, '无评价');
-INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$rbn7NoRJqb1wgxKqH1XhTd$Cl9TpJ2NtpD3FX9Yikozdu+ilBJKtwegCpO4itKMQBQ=', '2022-01-25 16:53:12.003554', '0', 'cs11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 16:41:37.327930', '5', '1005', '', 'static/images/aviator/img_aviator_cs11_1642661249.png', '无评价');
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$nUKLzmaStSCQWHcvCvEF6R$HhUsNdZQ+SCWc0oNDcEpKQbjTZkdBaECtIbFiEwPqiw=', '2022-01-20 00:04:15.481388', '0', 'jn11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 00:34:42.048282', '4', '1005', '', null, '无评价');
+INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$rbn7NoRJqb1wgxKqH1XhTd$Cl9TpJ2NtpD3FX9Yikozdu+ilBJKtwegCpO4itKMQBQ=', '2022-01-31 12:53:23.748675', '0', 'cs11', '', '', '896333574@qq.com', '0', '1', '2022-01-15 16:41:37.327930', '5', '1005', '123', 'static/images/aviator/img_aviator_cs11_1642661249.png', '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$taepkAi1lsdqNaRxmBaBuq$eJsEIIcNo6/i1S18tud2fvmS5siCpNgTQWMslvz6ZR8=', '2022-01-25 09:28:37.253320', '0', 'cs22', '', '', '896333574@qq.com', '0', '1', '2022-01-15 17:25:51.629864', '6', '1000', '', null, '无评价');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$ZrFmb72x2TI0zpnXiiC0cs$zeJ7T1zd3NgPqkhWteqPitfPbPv9PM21qu6daTcuJqY=', '2022-01-25 09:28:51.049693', '0', 'cs33', '', '', '896333574@qq.com', '0', '1', '2022-01-15 19:25:44.674948', '7', '1000', '456', null, '896333574@qq.com');
 INSERT INTO `study_user` VALUES ('pbkdf2_sha256$260000$ADsG03zsF6h3xTR4BJsmFq$GqrGWnrH4OfDdYPurP8KYxUR6zbbgzDOjR+OLDZ/V4M=', null, '0', 'cs55', '', '', '3076514233@qq.com', '0', '1', '2022-01-26 23:13:01.262663', '9', '1000', '小彤', null, '无评价');
@@ -515,6 +528,22 @@ CREATE TABLE `study_user_user_permissions` (
 -- ----------------------------
 -- Records of study_user_user_permissions
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for `study_webconfig`
+-- ----------------------------
+DROP TABLE IF EXISTS `study_webconfig`;
+CREATE TABLE `study_webconfig` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+  `config` longtext COLLATE utf8mb4_unicode_520_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+-- ----------------------------
+-- Records of study_webconfig
+-- ----------------------------
+INSERT INTO `study_webconfig` VALUES ('1', 'aliPay', '{\"appid\": \"2021000118685158\", \"app_notify_url\": \"http://m4e1587419.qicp.vip/pay/success\", \"return_url\": \"http://m4e1587419.qicp.vip/pay/result\", \"ALIPAY_PUBLIC\": \"-----BEGIN PUBLIC KEY-----\\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiB94AMC1zsRcML475bDibE7nt44HBt1nTFKvFr56lCbYddIOEKCVb+Hlamot952Av4fV9H+SdC/J6tjvAg5iRTsef/dHa7tAOqiER+JI8I7OC4yWgy3lxKGH5PDWihoK4rvil046X25bb0Wf3kfl6TLRvdIMOSFRzJ5XH4dA/2/hpCuxznRqK6qx2NBxornx4pmaQMK1c/umatYirxWBSJ1qEqD7olxapuUaX9DWDA5Jb7Jme6IHqqzspikCwQ9D0rRf7v91O3Swf7RMHbl56dkdRPdQdKxGe4hLJbzY8k4VoLmQOHM1m4dUHEchgC+kNad8AOTqzzOrkRgCifUlKQIDAQAB\\n-----END PUBLIC KEY-----\", \"APP_PRIVATE\": \"-----BEGIN PUBLIC KEY-----\\nMIIEpQIBAAKCAQEAp9ZJuTylblSLLyKSM/zU5iG+aAEmqUCYY/6kDmzLiXwqYKVwnE/dzdafcKExthhWCvIMrLRYkRX3NXkGURcVQoPvHBS+Zd8kJ36xnqOLhoFtzlmOjFI5koLipR0Zu5mmY/oSSopVKJBoLAUCFfoU/rtbTM/MhELyTwgGE9vW7jl1w189MScPB1kNGyMhIxMNbXWxE7TelOlaaIanUduJWcssYiqoboqBBGsCzkCX9IU8sChXV6ugtEPLqZXIoOpKj9QG24xMp3uSYGWVhRAaObn96tpWzkp2+fOIrBBeDtjgMcDhyHkLey6JowdOUrqgmdpUDrPwqo6sZjNiwPdc6wIDAQABAoIBAQCm8CvQRZQ+k3UFYxuM/jQ82t9qz4pG2us4urUva+NfUtNL4gKKV55E+O8Jtiud9cLPjEYzGgbl+LU0yLYRviX1TQluIuvmo/ZwGkJNilpjZSV1E/sHc1m0ct9AYBuST5gC5V+AKOvfNxOGhUy301FCtdRwKFhCTdx54384DXhQ5dWNyMLCLOHm03fDo5wE9glH+xSZqcnUCQGpFD85g/M+UwCmQUgZAw1EGV4pbIS2ghsLNjauOr/sR2TI2uqsc56O43DH7vNHbfcQ8/h7yuF6PM7AZ4K1NkDf+KfVGqODZU2JqMKXAfziw3oJV99tnRso0ce4kXQ0eYWtuMB2GzfRAoGBANigClc83zrC5b2p0TEUJOvnyWnQua8iRigOasmLqLGsFuwtgYkwHC8MeSncoHSziePaevJ/H7uV0oTdZbWeI9I6ucW61D9ms2Fbi7GZ+91UZY145oEZcG6glcc24xC/hxRX9yc1hoJaEu7Mk/033QZnhmwFMuicmphHX14fJ429AoGBAMZYDKilhoPk2z7zqsXaqJw7bGdaHGtkxWdslTdg8Ts3hGvXDzh6o3xgxol4LWpFDBYrNxUzNmwb+JS4eWvCvqKcZbqle9W2d9itJvPXFYlmzy1C4znjGEtiyx0qzSU6fH9MKc2tS/uGwjfURGw4c4RilPBomd8+OloLLrp3jlvHAoGBAMFeUvy+jLHCahvcq6y4w6CFXkiDlkzcNm3pOK/CaAp5iFi44kmY1X+2Da4tkFm8LlljnJ48lhH30lzh2Lm/eVBfNZdoh7A0t+kvM8qMnsRaYvBfPLt+/trxo+GZgCViIm0pfKjWYcSYLRBXM780j6r43IguN9xmdqV6CIpXGxKtAoGAHWbiAYIADb84LP3L++ZtBjPc3vlBqz3V8X3sJLhvKhsRuza3H+U2JPLnm2tAODeiEgs38CGWWLJQyCMMhMfqoIpUnjV3xPd2jp0kYBMrMyIVZh07N9KNQGeVum4k2Pbxi6FLtRySXefdFI+X0P8RSLegYn7vCGPeHIj51VRxuvMCgYEAtHwrnSLQWy819h4yo4u9dEeOxhXs96/uyi8TuFkeqjbKVjSQ3pVBsKqKuvm/CTOVZjErGgikipbEomKvzvYv8wsZ3i8b+7wzQg44HK45BwrIc5wfMFqVXpK24dMVfQrdKcL4NGvUM9ar3Hkk+SFlRwLXP6V9/oyvJmfRh4i+o/Q=\\n-----END PUBLIC KEY-----\", \"debug\": false}');
 
 -- ----------------------------
 -- Procedure structure for `update_table_oneday`

@@ -1,3 +1,4 @@
+import json
 import time
 from urllib.parse import parse_qs
 
@@ -5,21 +6,41 @@ from django.shortcuts import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from Common.lib.shara import jsonResponse
+from Common.models import webConfig
 from .alipay import AliPay
 from ..models import Order, PayConfig
 
 
 class aliPay:
+    ailiConfig = webConfig.list({'title': 'aliPay'})['retlist'][0]['config']
+    ailiConfig = json.loads(ailiConfig)
+    # ailiConfig = {
+    #     "appid": "2021000118685158",
+    #     "app_notify_url": "http://m4e1587419.qicp.vip/pay/success",
+    #     "return_url": "http://m4e1587419.qicp.vip/pay/result",
+    #     "ALIPAY_PUBLIC": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiB94AMC1zsRcML475bDibE7nt44HBt1nTFKvFr56lCbYddIOEKCVb+Hlamot952Av4fV9H+SdC/J6tjvAg5iRTsef/dHa7tAOqiER+JI8I7OC4yWgy3lxKGH5PDWihoK4rvil046X25bb0Wf3kfl6TLRvdIMOSFRzJ5XH4dA/2/hpCuxznRqK6qx2NBxornx4pmaQMK1c/umatYirxWBSJ1qEqD7olxapuUaX9DWDA5Jb7Jme6IHqqzspikCwQ9D0rRf7v91O3Swf7RMHbl56dkdRPdQdKxGe4hLJbzY8k4VoLmQOHM1m4dUHEchgC+kNad8AOTqzzOrkRgCifUlKQIDAQAB\n-----END PUBLIC KEY-----",
+    #     "APP_PRIVATE": "-----BEGIN PUBLIC KEY-----\nMIIEpQIBAAKCAQEAp9ZJuTylblSLLyKSM/zU5iG+aAEmqUCYY/6kDmzLiXwqYKVwnE/dzdafcKExthhWCvIMrLRYkRX3NXkGURcVQoPvHBS+Zd8kJ36xnqOLhoFtzlmOjFI5koLipR0Zu5mmY/oSSopVKJBoLAUCFfoU/rtbTM/MhELyTwgGE9vW7jl1w189MScPB1kNGyMhIxMNbXWxE7TelOlaaIanUduJWcssYiqoboqBBGsCzkCX9IU8sChXV6ugtEPLqZXIoOpKj9QG24xMp3uSYGWVhRAaObn96tpWzkp2+fOIrBBeDtjgMcDhyHkLey6JowdOUrqgmdpUDrPwqo6sZjNiwPdc6wIDAQABAoIBAQCm8CvQRZQ+k3UFYxuM/jQ82t9qz4pG2us4urUva+NfUtNL4gKKV55E+O8Jtiud9cLPjEYzGgbl+LU0yLYRviX1TQluIuvmo/ZwGkJNilpjZSV1E/sHc1m0ct9AYBuST5gC5V+AKOvfNxOGhUy301FCtdRwKFhCTdx54384DXhQ5dWNyMLCLOHm03fDo5wE9glH+xSZqcnUCQGpFD85g/M+UwCmQUgZAw1EGV4pbIS2ghsLNjauOr/sR2TI2uqsc56O43DH7vNHbfcQ8/h7yuF6PM7AZ4K1NkDf+KfVGqODZU2JqMKXAfziw3oJV99tnRso0ce4kXQ0eYWtuMB2GzfRAoGBANigClc83zrC5b2p0TEUJOvnyWnQua8iRigOasmLqLGsFuwtgYkwHC8MeSncoHSziePaevJ/H7uV0oTdZbWeI9I6ucW61D9ms2Fbi7GZ+91UZY145oEZcG6glcc24xC/hxRX9yc1hoJaEu7Mk/033QZnhmwFMuicmphHX14fJ429AoGBAMZYDKilhoPk2z7zqsXaqJw7bGdaHGtkxWdslTdg8Ts3hGvXDzh6o3xgxol4LWpFDBYrNxUzNmwb+JS4eWvCvqKcZbqle9W2d9itJvPXFYlmzy1C4znjGEtiyx0qzSU6fH9MKc2tS/uGwjfURGw4c4RilPBomd8+OloLLrp3jlvHAoGBAMFeUvy+jLHCahvcq6y4w6CFXkiDlkzcNm3pOK/CaAp5iFi44kmY1X+2Da4tkFm8LlljnJ48lhH30lzh2Lm/eVBfNZdoh7A0t+kvM8qMnsRaYvBfPLt+/trxo+GZgCViIm0pfKjWYcSYLRBXM780j6r43IguN9xmdqV6CIpXGxKtAoGAHWbiAYIADb84LP3L++ZtBjPc3vlBqz3V8X3sJLhvKhsRuza3H+U2JPLnm2tAODeiEgs38CGWWLJQyCMMhMfqoIpUnjV3xPd2jp0kYBMrMyIVZh07N9KNQGeVum4k2Pbxi6FLtRySXefdFI+X0P8RSLegYn7vCGPeHIj51VRxuvMCgYEAtHwrnSLQWy819h4yo4u9dEeOxhXs96/uyi8TuFkeqjbKVjSQ3pVBsKqKuvm/CTOVZjErGgikipbEomKvzvYv8wsZ3i8b+7wzQg44HK45BwrIc5wfMFqVXpK24dMVfQrdKcL4NGvUM9ar3Hkk+SFlRwLXP6V9/oyvJmfRh4i+o/Q=\n-----END PUBLIC KEY-----",
+    #     "debug": True
+    # }
+
     obj = AliPay(
         # 支付宝沙箱里面的APPID，需要改成你自己的
-        appid="2021000118685158",
+        # appid="2021000118685158",
+        appid=ailiConfig['appid'],
+        # # 如果支付成功，支付宝会向这个地址发送POST请求（校验是否支付已经完成），此地址要能够在公网进行访问，需要改成你自己的服务器地址
+        # app_notify_url="http://m4e1587419.qicp.vip/pay/success",
+        # # 如果支付成功，重定向回到你的网站的地址。需要你自己改，这里是我的服务器地址
+        # return_url="http://m4e1587419.qicp.vip/pay/result",
+        # alipay_public_key_path=AliPay.ALIPAY_PUBLIC,  # 支付宝公钥
+        # app_private_key_path=AliPay.APP_PRIVATE,  # 应用私钥
+        # debug=True,
         # 如果支付成功，支付宝会向这个地址发送POST请求（校验是否支付已经完成），此地址要能够在公网进行访问，需要改成你自己的服务器地址
-        app_notify_url="http://m4e1587419.qicp.vip/pay/success",
+        app_notify_url=ailiConfig['app_notify_url'],
         # 如果支付成功，重定向回到你的网站的地址。需要你自己改，这里是我的服务器地址
-        return_url="http://m4e1587419.qicp.vip/pay/result",
-        alipay_public_key_path=AliPay.ALIPAY_PUBLIC,  # 支付宝公钥
-        app_private_key_path=AliPay.APP_PRIVATE,  # 应用私钥
-        debug=True,  # 默认False,True表示使用沙箱环境测试
+        return_url=ailiConfig['return_url'],
+        alipay_public_key_path=ailiConfig['ALIPAY_PUBLIC'],  # 支付宝公钥
+        app_private_key_path=ailiConfig['APP_PRIVATE'],  # 应用私钥
+        debug=ailiConfig['debug'],  # 默认False,True表示使用沙箱环境测试
     )
 
     def createOrder(self, request):
@@ -75,8 +96,13 @@ class aliPay:
                 if res_order['ret'] == 1:
                     return jsonResponse({'支付成功，订单更新失败'})
 
+                FZ = webConfig.list({'title': 'pay'})['retlist'][0]['config']
+                FZ = json.loads(FZ)
+                F = int(FZ['F'])
+                Z = float(FZ['float'])
+
                 res_config = PayConfig.modify(
-                    {'user_id': res_order['user_id'], 'coins': int(res_order['money']) * 500,
+                    {'user_id': res_order['user_id'], 'coins': int(int(res_order['money']) * F * Z),
                      'exp': int(res_order['money']) * 50})
 
                 if res_config['ret'] == 1:

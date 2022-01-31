@@ -28,3 +28,21 @@ export function ArticleApi(data) {
         data: data
     })
 }
+
+// notebook 接口
+export function NoteBookApi(data) {
+    return request({
+        url: 'my_admin/notebook',
+        method: 'post',
+        data: data
+    })
+}
+
+// 获取名人名言
+export function CqApi(data) {
+    return request({
+        url: 'cq',
+        method: 'post',
+        data: data
+    })
+}

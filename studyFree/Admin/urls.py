@@ -6,10 +6,11 @@
 
 from django.urls import path
 
-from Admin.views import Account, Orders, Article
+from Admin.views import Account, Orders, Article, NoteBooks
 
 urlpatterns = [
     path('account', Account().handler),
     path('order', Orders().handler),
     path('article', Article().handler),
+    path('notebook', NoteBooks().handler),
 ]

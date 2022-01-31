@@ -28,6 +28,9 @@
                         </el-icon>
                         <router-link to="/home"><span>进入首页</span></router-link>
                     </div>
+                    <router-link to="/admin" v-if="userdata.usertype===1" style="margin-right: 10px">
+                        <span>进入后台</span>
+                    </router-link>
                     <el-dropdown trigger="click">
                         <div class="drop">
                             <el-avatar :size="38" :src="userdata.aviator"></el-avatar>
