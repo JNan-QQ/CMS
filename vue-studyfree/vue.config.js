@@ -9,6 +9,14 @@ module.exports = {
                 pathRewrite: {
                     '^/api': ''
                 }
+            },
+            '/api_file': {
+                target: 'http://127.0.0.1:8210',
+                changeOrigin: true,
+                ws: true,
+                pathRewrite: {
+                    '^/api_file': ''
+                }
             }
         }
     },

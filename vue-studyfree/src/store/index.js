@@ -6,7 +6,7 @@ export default createStore({
             user_id: 0,
             username: '',
             realName: '',
-            aviator: '' || '/api/static/images/aviator_base.png',
+            aviator: '' || 'api_file/static/images/aviator_base.png',
             email: '',
             coins: 0,
             lv: 0,
@@ -19,7 +19,7 @@ export default createStore({
             user_id: 0,
             username: '',
             realName: '',
-            aviator: '' || '/api/static/images/aviator_base.png',
+            aviator: '' || 'api_file/static/images/aviator_base.png',
             email: '',
             coins: 0,
             lv: 0,
@@ -44,8 +44,8 @@ export default createStore({
                     } else if (key === 'deadline') {
                         state.userdata[key] = payload[key].replace('T', ' ').split('.')[0]
                     } else if (key === 'aviator') {
-                        state.userdata[key] = '/api/' + payload[key]
-                    } else {
+                        state.userdata[key] = "api_file/" +　payload[key]
+                    }else {
                         state.userdata[key] = payload[key]
                     }
                 }

@@ -2,7 +2,7 @@
     <div class="top">
         <div class="title">
             <div class="md_name">
-                <el-icon @click="toArticle">
+                <el-icon @click="this.$router.go(-1);">
                     <d-arrow-left/>
                 </el-icon>
                 <span>{{ title }}</span></div>
@@ -42,9 +42,6 @@ export default {
         })
     },
     methods: {
-        toArticle() {
-            window.close();
-        },
         downloadMarkdown() {
             ElMessageBox.confirm(
                 '确认花费 50 F币下载文章吗？',

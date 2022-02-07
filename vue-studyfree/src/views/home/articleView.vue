@@ -20,7 +20,7 @@
                 </h2>
                 <div class="path-course-r">
                     <div class="content" v-for="tag3 in tag2.content" @click="toMarkdown(tag3.id)">
-                        <el-image fit="fill" :src="`api/static/` + tag3.images"></el-image>
+                        <el-image fit="fill" :src="`api_file/static/` + tag3.images"></el-image>
                         <div>
                             <h3>{{ tag3.tag_name }}</h3>
                             <div class="views">
@@ -100,12 +100,12 @@ export default {
             this.isActive = i;
         },
         toMarkdown(id) {
-            // this.$router.push('/?id=' + id)
-            let routeUrl = this.$router.resolve({
-                path: '/md',
-                query: {id: id}
-            })
-            window.open(routeUrl.href, '_blank')
+            this.$router.push('/md?id=' + id)
+            // let routeUrl = this.$router.resolve({
+            //     path: '/md',
+            //     query: {id: id}
+            // })
+            // window.open(routeUrl.href, '_blank')
         }
     },
 }

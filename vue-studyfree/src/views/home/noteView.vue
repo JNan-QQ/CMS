@@ -148,8 +148,7 @@ export default {
                     });
                 })
             );
-            console.log(res)
-            callback(res.map((item) => '/api/' + item.url));
+            callback(res.map((item) => item.url));
         }
     },
 }

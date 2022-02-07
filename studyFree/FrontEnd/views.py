@@ -95,7 +95,7 @@ class Note:
         try:
             user_id = request.session['user_id']
         except:
-            return {'ret': 1, 'msg': '未登录，请先登录'}
+            return jsonResponse({'ret': 1, 'msg': '未登录，请先登录'})
 
         ret = NoteBook.add({'user_id': user_id})
 
@@ -106,7 +106,7 @@ class Note:
         try:
             user_id = request.session['user_id']
         except:
-            return {'ret': 1, 'msg': '未登录，请先登录'}
+            return jsonResponse({'ret': 1, 'msg': '未登录，请先登录'})
 
         ret = NoteBook.list({'user_id': user_id})
 
@@ -117,7 +117,7 @@ class Note:
         try:
             user_id = request.session['user_id']
         except:
-            return {'ret': 1, 'msg': '未登录，请先登录'}
+            return jsonResponse({'ret': 1, 'msg': '未登录，请先登录'})
 
         ret = NoteBook.delete_note({'user_id': user_id, 'note_id': request.params['note_id']})
 
@@ -128,7 +128,7 @@ class Note:
         try:
             request.params['user_id'] = request.session['user_id']
         except:
-            return {'ret': 1, 'msg': '未登录，请先登录'}
+            return jsonResponse({'ret': 1, 'msg': '未登录，请先登录'})
 
         ret = NoteBook.modify(request.params)
 

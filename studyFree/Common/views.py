@@ -287,8 +287,6 @@ class Others:
 
     @staticmethod
     def admin_list_webConfig(request):
-        if request.session['usertype'] != 1:
-            return jsonResponse({'ret': 1, 'msg': '不是管理员'})
         res = webConfig.list(request.params)
         return jsonResponse(res)
 

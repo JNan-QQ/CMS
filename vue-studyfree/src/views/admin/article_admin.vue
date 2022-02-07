@@ -30,7 +30,7 @@
                     <div style="display: flex">
                         <div v-for="content in tag2['tag_child']" class="content">
                             <div>
-                                <el-image :src="'/api/static/' + content['contentList'].images"></el-image>
+                                <el-image :src="'api_file/static/' + content['contentList'].images"></el-image>
                                 <span>{{ content.tag_name }}</span>
                             </div>
                             <div class="btn-group">
