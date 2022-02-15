@@ -172,10 +172,9 @@ import {
     Trophy
 } from '@element-plus/icons';
 import {markRaw} from "vue";
-import {checkLogin, sign} from "../../api/Login";
+import {checkLogin, sign} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
 import {qianDao} from "@/api/common";
-import {ElLoading} from "element-plus";
 
 export default {
     name: "index",
@@ -186,7 +185,7 @@ export default {
             inHome: false,
         }
     },
-    components: {CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
+    components: {Document, CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
     mounted() {
         checkLogin(this)
         this.jumpUrl()

@@ -7,8 +7,6 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.core.paginator import Paginator, EmptyPage
 from django.db import models
-# 可以通过 命令 python  manage.py createsuperuser 来创建超级管理员
-# 就是在这User表中添加记录
 from django.db.models import Q
 
 
@@ -275,49 +273,49 @@ class EmailCode(models.Model):
             return {'ret': 1, 'msg': '验证码可能已过期'}
 
 
-class webConfig(models.Model):
-    # id
-    id = models.BigAutoField(primary_key=True)
-    title = models.CharField(max_length=100, null=True, blank=True)
-    # config
-    config = models.TextField(default={})
-
-    class Meta:
-        db_table = "study_webConfig"
-
-    @staticmethod
-    def list(data):
-        if 'id' in data:
-            qs = webConfig.objects.filter(id=data['id']).values()
-        elif 'title' in data:
-            qs = webConfig.objects.filter(title=data['title']).values()
-        else:
-            qs = webConfig.objects.values()
-
-        qs = list(qs)
-
-        return {'ret': 0, 'retlist': qs}
-
-    @staticmethod
-    def add(data):
-        webConfig.objects.create(
-            title=data['title'],
-            config=json.dumps(data['config'])
-        )
-        return {'ret': 0}
-
-    @staticmethod
-    def modify(data):
-        try:
-            web = webConfig.objects.get(id=data['webConfig_id'])
-        except:
-            return {'ret': 1, 'msg': '未找到数据'}
-
-        if 'title' in data:
-            web.title = data['title']
-        if 'config' in data:
-            web.config = json.dumps(data['config'])
-
-        web.save()
-
-        return {'ret': 0}
+# class webConfig(models.Model):
+#     # id
+#     id = models.BigAutoField(primary_key=True)
+#     title = models.CharField(max_length=100, null=True, blank=True)
+#     # config
+#     config = models.TextField(default={})
+#
+#     class Meta:
+#         db_table = "study_webConfig"
+#
+#     @staticmethod
+#     def list(data):
+#         if 'id' in data:
+#             qs = webConfig.objects.filter(id=data['id']).values()
+#         elif 'title' in data:
+#             qs = webConfig.objects.filter(title=data['title']).values()
+#         else:
+#             qs = webConfig.objects.values()
+#
+#         qs = list(qs)
+#
+#         return {'ret': 0, 'retlist': qs}
+#
+#     @staticmethod
+#     def add(data):
+#         webConfig.objects.create(
+#             title=data['title'],
+#             config=json.dumps(data['config'])
+#         )
+#         return {'ret': 0}
+#
+#     @staticmethod
+#     def modify(data):
+#         try:
+#             web = webConfig.objects.get(id=data['webConfig_id'])
+#         except:
+#             return {'ret': 1, 'msg': '未找到数据'}
+#
+#         if 'title' in data:
+#             web.title = data['title']
+#         if 'config' in data:
+#             web.config = json.dumps(data['config'])
+#
+#         web.save()
+#
+#         return {'ret': 0}

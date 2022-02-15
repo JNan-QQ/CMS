@@ -12,7 +12,7 @@ from Pay.models import PayConfig
 from .forms import handle_uploaded_file
 from .lib.email_my import SendEmail
 from .lib.shara import jsonResponse, generate_random_str
-from .models import CelebrityQuotes, User, EmailCode, webConfig
+from .models import CelebrityQuotes, User, EmailCode
 
 
 class Login:
@@ -172,13 +172,6 @@ class CQ:
         res = CelebrityQuotes.add(request.params)
         return jsonResponse(res)
 
-    @staticmethod
-    def modify(request):
-        if request.session['usertype'] != 1:
-            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
-        res = CelebrityQuotes.modify(request.params)
-        return jsonResponse(res)
-
 
 class Download:
     def handler(self, request):
@@ -231,21 +224,18 @@ class Others:
         if not action:
             action = request.params['action']
 
-        # 添加新闻
+        # 签到
         if action == 'qd':
             return self.qd(request)
+        # 获取邮箱验证码
         elif action == 'emailCode':
             return self.emailCode(request)
-        elif action == 'uploadImg':
-            return self.uploadImg(request)
+        # 核对邮箱验证码
         elif action == 'checkEmailCode':
             return self.checkEmailCode(request)
-        elif action == 'admin_list_webConfig':
-            return self.admin_list_webConfig(request)
-        elif action == 'admin_add_webConfig':
-            return self.admin_add_webConfig(request)
-        elif action == 'admin_modify_webConfig':
-            return self.admin_modify_webConfig(request)
+        # 上传图片公共接口
+        elif action == 'uploadImg':
+            return self.uploadImg(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -284,25 +274,6 @@ class Others:
         email = request.session['email']
         ret = EmailCode.checkCode(email, request.params['code'])
         return jsonResponse(ret)
-
-    @staticmethod
-    def admin_list_webConfig(request):
-        res = webConfig.list(request.params)
-        return jsonResponse(res)
-
-    @staticmethod
-    def admin_add_webConfig(request):
-        if request.session['usertype'] != 1:
-            return jsonResponse({'ret': 1, 'msg': '不是管理员'})
-        res = webConfig.add(request.params)
-        return jsonResponse(res)
-
-    @staticmethod
-    def admin_modify_webConfig(request):
-        if request.session['usertype'] != 1:
-            return jsonResponse({'ret': 1, 'msg': '不是管理员'})
-        res = webConfig.modify(request.params)
-        return jsonResponse(res)
 
 
 class Accounts:

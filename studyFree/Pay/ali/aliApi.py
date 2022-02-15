@@ -6,7 +6,7 @@ from django.shortcuts import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from Common.lib.shara import jsonResponse
-from Common.models import webConfig
+from Admin.models import webConfig
 from .alipay import AliPay
 from ..models import Order, PayConfig
 
@@ -69,8 +69,6 @@ class aliPay:
         if res['ret'] == 1:
             return jsonResponse(res)
 
-        # return redirect("https://openapi.alipaydev.com/gateway.do?{}".format(query_params))
-
         return jsonResponse({'ret': 0, 'url': pay_url})
 
     @csrf_exempt
@@ -104,7 +102,7 @@ class aliPay:
                 Z = float(FZ['Z'])
 
                 res_config = PayConfig.modify(
-                    {'user_id': res_order['user_id'], 'coins': int(int(res_order['money']) * F * Z),
+                    {'user_id': res_order['user_id'], 'coins': int(int(res_order['money']) * F * (Z + 1)),
                      'exp': int(res_order['money']) * 50})
 
                 if res_config['ret'] == 1:

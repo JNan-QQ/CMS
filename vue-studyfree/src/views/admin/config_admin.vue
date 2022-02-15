@@ -42,24 +42,67 @@
         <el-tab-pane label="F币倍率">
             <el-form :model="pay" label-width="120px">
                 <el-form-item label="F币：">
-                    <el-input v-model="pay.F"><template #append>/元</template></el-input>
+                    <el-input v-model="pay.F">
+                        <template #append>/元</template>
+                    </el-input>
                 </el-form-item>
                 <el-form-item label="折扣：">
-                    <el-input v-model="pay.Z"><template #append>折</template></el-input>
+                    <el-input v-model="pay.Z">
+                        <template #append>折</template>
+                    </el-input>
                 </el-form-item>
                 <div style="text-align: center">
                     <el-button @click="saveConfig(2)" type="success">保存</el-button>
                 </div>
             </el-form>
         </el-tab-pane>
-        <el-tab-pane label="Task">Task</el-tab-pane>
+        <el-tab-pane label="文件管理">
+            <div>
+                <el-breadcrumb separator="/"
+                               style="margin-bottom: 10px;border-bottom: #414444 solid 1px;font-size: 20px;padding: 2px">
+                    <el-breadcrumb-item v-for="item in breadcrumbItem" @click="change_bread_crumb_item(item)">
+                        {{ item }}
+                    </el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-table :data="fileList" style="width: 100%">
+                    <el-table-column label="Name" width="200">
+                        <template #default="scope">
+                            <div style="display: flex; align-items: center">
+                                <el-icon>
+                                    <document/>
+                                </el-icon>
+                                <el-icon>
+                                    <folder-opened/>
+                                </el-icon>
+                                <span style="margin-left: 10px" @click="getFileList(scope.row.path,scope.row.name)">
+                                    {{ scope.row.name }}
+                                </span>
+                                <span v-if="scope.row.type==='dir'">/</span>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="Size" width="200">
+                        <template #default="scope">
+                            <span style="margin: auto" v-if="scope.row.type==='file'">{{ scope.row.size }}</span>
+                            <span style="margin: auto" v-else>--</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="Time" width="400">
+                        <template #default="scope">
+                            <span style="margin: auto" v-if="scope.row.type==='file'">{{ scope.row.time }}</span>
+                            <span style="margin: auto" v-else>--</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+        </el-tab-pane>
     </el-tabs>
 </template>
 
-<script>
-import {CommonApi} from "../../api/common";
+<script >
 import {ElMessage} from "element-plus";
-import {CqApi} from "../../api/admin";
+import {CqApi, FilesApi, WebConfigApi} from "@/api/admin"
+import {FolderOpened, Document} from "@element-plus/icons";
 
 export default {
     name: "config_admin",
@@ -68,16 +111,21 @@ export default {
             ailiPay: {},
             cq: [],
             pay: {},
+            fileList: [],
+            breadcrumbItem: ['static'],
+            FolderOpened,Document
         }
     },
+    computed: {FolderOpened, Document},
     mounted() {
         this.getAliPayData('aliPay')
         this.getAliPayData('pay')
         this.getCqData()
+        this.getFileList('static')
     },
     methods: {
         getAliPayData(title) {
-            CommonApi({action: 'admin_list_webConfig', title: title}).then(res => {
+            WebConfigApi({action: 'admin_list_webConfig', title: title}).then(res => {
                 if (res) {
                     if (title === 'aliPay') {
                         this.ailiPay = eval('(' + res['retlist'][0]['config'] + ')')
@@ -94,17 +142,31 @@ export default {
                 }
             })
         },
+        getFileList(file_path, name) {
+            if (file_path) {
+                if (name) {
+                    if (name !== this.breadcrumbItem[this.breadcrumbItem.length - 1]) {
+                        this.breadcrumbItem.push(name)
+                    }
+                }
+                FilesApi({action: 'list', file_path: file_path}).then(res => {
+                    if (res) {
+                        this.fileList = res['retlist']
+                    }
+                })
+            }
+        },
         saveConfig(id) {
             let config = {}
             let title = ''
-            if (id===1){
+            if (id === 1) {
                 config = this.ailiPay
                 title = 'aliPay'
-            }else if(id===2){
+            } else if (id === 2) {
                 config = this.pay
                 title = 'pay'
             }
-            CommonApi({action: 'admin_modify_webConfig', webConfig_id: id, config: config}).then(res => {
+            WebConfigApi({action: 'admin_modify_webConfig', webConfig_id: id, config: config}).then(res => {
                 if (res) {
                     this.getAliPayData(title)
                     ElMessage({
@@ -125,7 +187,13 @@ export default {
                 }
             })
         },
+        change_bread_crumb_item(item) {
+            const index = this.breadcrumbItem.indexOf(item)
+            this.breadcrumbItem = this.breadcrumbItem.slice(0, index + 1)
+            this.getFileList(this.breadcrumbItem.join('/'))
+        },
     },
+
 }
 </script>
 

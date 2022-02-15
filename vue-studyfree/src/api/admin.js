@@ -1,6 +1,14 @@
 
 import request from "./request";
 
+// webConfig 接口
+export function WebConfigApi(data) {
+    return request({
+        url: 'my_admin/webconfig',
+        method: 'post',
+        data: data
+    })
+}
 
 // account 接口
 export function AccountApi(data) {
@@ -42,6 +50,15 @@ export function NoteBookApi(data) {
 export function CqApi(data) {
     return request({
         url: 'cq',
+        method: 'post',
+        data: data
+    })
+}
+
+// 获取名人名言
+export function FilesApi(data) {
+    return request({
+        url: 'my_admin/files',
         method: 'post',
         data: data
     })
