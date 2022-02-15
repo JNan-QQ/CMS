@@ -58,20 +58,26 @@
         </el-tab-pane>
         <el-tab-pane label="文件管理">
             <div>
-                <el-breadcrumb separator="/"
-                               style="margin-bottom: 10px;border-bottom: #414444 solid 1px;font-size: 20px;padding: 2px">
-                    <el-breadcrumb-item v-for="item in breadcrumbItem" @click="change_bread_crumb_item(item)">
-                        {{ item }}
-                    </el-breadcrumb-item>
-                </el-breadcrumb>
+                <div style="border-bottom: #414444 solid 1px;display: flex;justify-content: space-between;">
+                    <el-breadcrumb separator="/" style="margin-bottom: 10px;font-size: 20px;padding: 2px">
+                        <el-breadcrumb-item v-for="item in breadcrumbItem" @click="change_bread_crumb_item(item)">
+                            {{ item }}
+                        </el-breadcrumb-item>
+                    </el-breadcrumb>
+                    <div style="display: flex;padding: 5px">
+                        <el-button>上传文件</el-button>
+                        <el-button>新建文件夹</el-button>
+                        <el-button>删除</el-button>
+                    </div>
+                </div>
                 <el-table :data="fileList" style="width: 100%">
                     <el-table-column label="Name" width="200">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
-                                <el-icon>
+                                <el-icon v-if="scope.row.type==='file'">
                                     <document/>
                                 </el-icon>
-                                <el-icon>
+                                <el-icon v-else>
                                     <folder-opened/>
                                 </el-icon>
                                 <span style="margin-left: 10px" @click="getFileList(scope.row.path,scope.row.name)">
@@ -99,7 +105,7 @@
     </el-tabs>
 </template>
 
-<script >
+<script>
 import {ElMessage} from "element-plus";
 import {CqApi, FilesApi, WebConfigApi} from "@/api/admin"
 import {FolderOpened, Document} from "@element-plus/icons";
@@ -113,10 +119,10 @@ export default {
             pay: {},
             fileList: [],
             breadcrumbItem: ['static'],
-            FolderOpened,Document
+            FolderOpened, Document
         }
     },
-    computed: {FolderOpened, Document},
+    components: {FolderOpened, Document},
     mounted() {
         this.getAliPayData('aliPay')
         this.getAliPayData('pay')
