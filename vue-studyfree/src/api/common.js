@@ -84,6 +84,7 @@ export function registerEmailCode(email, that) {
         method: 'post',
         data: {action: 'emailCode', email: email}
     }).then(res => {
+        console.log('123')
         if (res) {
             ElMessage({
                 message: res['msg'],
@@ -126,6 +127,7 @@ export function AccountApi(data) {
         }
     })
 }
+
 
 // common 接口
 export function CommonApi(data) {

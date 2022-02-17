@@ -14,7 +14,7 @@
                 </el-form>
             </div>
             <div class="message-container">
-                <span>忘记密码</span>
+                <span><router-link to="/forget">忘记密码</router-link></span>
             </div>
         </div>
         <div class="right-container">

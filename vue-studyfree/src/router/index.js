@@ -11,6 +11,7 @@ import markdownView from "@/components/markdownView.vue"
 import myCenter from "@/views/mycenter"
 import pay from "@/views/pay"
 import admin from '@/views/admin'
+import rpa from '@/views/login/rPA.vue'
 
 
 const routes = [
@@ -41,6 +42,11 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: Login
+    },
+    {
+        path: '/forget',
+        name: 'rPa',
+        component: rpa
     },
     {
         path: '/md',

@@ -236,6 +236,9 @@ class Others:
         # 上传图片公共接口
         elif action == 'uploadImg':
             return self.uploadImg(request)
+        # 通过邮箱获取账号列表
+        elif action == 'emailAccount':
+            return self.emailAccount(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -249,7 +252,10 @@ class Others:
         code = generate_random_str()
         email = request.params.get('email', None)
         if not email:
-            email = request.session['email']
+            try:
+                email = request.session['email']
+            except:
+                return jsonResponse({'ret': 1, 'msg': '请填写正确的邮箱'})
         res = EmailCode.add({'email': email, 'code': code})
         if res['ret'] == 1:
             return jsonResponse(res)
@@ -274,6 +280,22 @@ class Others:
         email = request.session['email']
         ret = EmailCode.checkCode(email, request.params['code'])
         return jsonResponse(ret)
+
+    @staticmethod
+    def emailAccount(request):
+        try:
+            email = request.params['email']
+            code = request.params['code']
+        except:
+            return jsonResponse({'ret': 1, 'msg': '邮箱信息获取失败'})
+        if not EmailCode.objects.filter(email=email, code=code, status=1).exists():
+            return jsonResponse({'ret': 1, 'msg': '邮箱验证失败，请重试'})
+        res = User.list_account({'search_items': {'email': email}})
+        usernameList = []
+        for i in res['retlist']:
+            usernameList.append(i['username'])
+
+        return jsonResponse({'ret': 0, 'usernameList': usernameList})
 
 
 class Accounts:

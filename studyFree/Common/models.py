@@ -134,7 +134,7 @@ class User(AbstractUser):
             if 'realName' in search_items:
                 qs = qs.filter(realName=search_items['realName'])
             if 'email' in search_items:
-                qs = qs.filter(realName=search_items['email'])
+                qs = qs.filter(email=search_items['email'])
             # 查看是否有 关键字 搜索 参数
             keywords = data.get('keywords', None)
             if keywords:
@@ -271,7 +271,6 @@ class EmailCode(models.Model):
                 return {'ret': 1, 'msg': '验证码错误，请重新输入'}
         except:
             return {'ret': 1, 'msg': '验证码可能已过期'}
-
 
 # class webConfig(models.Model):
 #     # id
