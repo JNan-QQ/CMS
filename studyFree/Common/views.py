@@ -233,6 +233,9 @@ class Others:
         # 核对邮箱验证码
         elif action == 'checkEmailCode':
             return self.checkEmailCode(request)
+        # 核对邮箱验证码
+        elif action == 'resetPassword':
+            return self.resetPassword(request)
         # 上传图片公共接口
         elif action == 'uploadImg':
             return self.uploadImg(request)
@@ -279,6 +282,21 @@ class Others:
     def checkEmailCode(request):
         email = request.session['email']
         ret = EmailCode.checkCode(email, request.params['code'])
+        return jsonResponse(ret)
+
+    @staticmethod
+    def resetPassword(request):
+        email = request.params['email']
+        code = request.params['code']
+        username = request.params['username']
+        password = request.params['password']
+        ret = EmailCode.checkCode(email, code)
+        if ret['ret'] == 0:
+            try:
+                user = User.objects.get(username=username, email=email)
+                ret = User.modify_account({'user_id': user.id, 'password': password})
+            except:
+                return jsonResponse({'ret': 1, 'msg': '未找到邮箱对应账号'})
         return jsonResponse(ret)
 
     @staticmethod
