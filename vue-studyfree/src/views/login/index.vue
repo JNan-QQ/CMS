@@ -9,7 +9,7 @@
                     </el-form-item>
                     <el-form-item style="margin-bottom: 0">
                         <el-input v-model="loginForm.password" placeholder="密码" type="password" show-password
-                                  clearable/>
+                                  @keydown.enter="onSubmit" clearable/>
                     </el-form-item>
                 </el-form>
             </div>
