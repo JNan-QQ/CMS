@@ -12,10 +12,13 @@
         </div>
     </div>
     <!--    <div class="markdown-body" v-html="articleContent"></div>-->
-    <div style="display: flex">
+    <div class="md-view">
         <md-editor v-model="articleContent" previewOnly/>
         <div class="mulu">
-            1234
+            <ul>
+                <li>目录</li>
+                <li v-for="item in muLu"><a :href="'#'+item">{{ item }}</a></li>
+            </ul>
         </div>
     </div>
 </template>
@@ -35,6 +38,7 @@ export default {
             articleContent: "",
             baseArticleContent: "",
             title: "",
+            muLu: []
         }
     },
     components: {DArrowLeft, MdEditor},
@@ -45,6 +49,12 @@ export default {
             this.title = res['title']
             this.articleContent = marked(res['mdContent'])
         })
+    },
+    watch: {
+        'baseArticleContent'() {
+            console.log('1213')
+            this.getMuLuList()
+        }
     },
     methods: {
         downloadMarkdown() {
@@ -78,6 +88,17 @@ export default {
 
             })
 
+        },
+        getMuLuList() {
+            this.$nextTick(res => {
+                // DOM 现在更新了
+                // `this` 绑定到当前实例
+                const mu_lu_list = document.getElementsByTagName('h2')
+                for (let i = 0; i < mu_lu_list.length; i++) {
+                    const name = mu_lu_list[i].getAttribute('id');
+                    this.muLu.push(name)
+                }
+            })
         }
     }
 }
@@ -125,12 +146,18 @@ export default {
     }
 }
 
-.mulu{
-    width: 100px;
-    margin-top: 10px;
-    position: absolute;
-    right: 100px;
+.md-view {
+    display: flex;
+
+    .mulu {
+        width: 100px;
+        margin-top: 10px;
+        position: absolute;
+        right: calc(50vw - 480px - 120px);
+        background-color: #105c94;
+    }
 }
+
 
 .markdown-body {
     box-sizing: border-box;
