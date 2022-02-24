@@ -1,13 +1,10 @@
 <template>
-    <div class="noteView">
+    <div class="noteView" id="noteView">
         <div class="noteBox">
             <div class="notebook">
-                <!--                <div style="display: flex;justify-content: right;margin-bottom: 5px">-->
-                <!--                    <el-button @click="addNoteBook">新增</el-button>-->
-                <!--                </div>-->
                 <div class="bJ">
                     <el-collapse v-model="activeName" accordion v-for="(item,index) in bjList">
-                        <el-collapse-item :name="index + 1">
+                        <el-collapse-item :name="index + 1" :id="'bj'+index">
                             <template #title>
                                 {{ item['title'] }}
                                 <el-icon class="header-icon" style="margin-left: 2px" @click="modifyTitle(item.id)">
@@ -35,10 +32,21 @@
                 </div>
             </div>
             <div class="right">
-                <el-affix target=".right" :offset="80">
+                <el-affix :offset="80">
                     <el-tooltip content="添加新笔记" placement="right-start" effect="light">
                         <el-button :icon="DocumentAdd" size="default" type="warning" circle
                                    @click="addNoteBook"></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="全部折叠" placement="right-start" effect="light">
+                        <el-button :icon="Remove" size="default" type="primary" circle
+                                   style="margin-left: 0;margin-top: 8px;"
+                                   @click="activeName=0"></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="回到顶部" placement="right-start" effect="light">
+                        <el-button :icon="CaretTop" size="default" type="success" circle
+                                   style="margin-left: 0;margin-top: 8px;" @click="backTop">
+                        </el-button>
+
                     </el-tooltip>
                 </el-affix>
             </div>
@@ -62,7 +70,7 @@
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import {noteContent} from "@/api/common";
-import {Edit, DocumentAdd} from "@element-plus/icons";
+import {DocumentAdd, Edit, Remove, CaretTop} from "@element-plus/icons";
 import {ElMessage, ElMessageBox} from "element-plus";
 import request from "../../api/request";
 import {markRaw} from "vue";
@@ -75,7 +83,7 @@ export default {
             activeName: 1,
             bjList: [],
             saveLoading: false,
-            DocumentAdd:markRaw(DocumentAdd)
+            DocumentAdd: markRaw(DocumentAdd), Remove: markRaw(Remove), CaretTop: markRaw(CaretTop)
         }
     },
     components: {MdEditor, Edit},
@@ -155,7 +163,14 @@ export default {
                 })
             );
             callback(res.map((item) => item.url));
-        }
+        },
+
+        // 点击图片回到顶部方法，加计时器是为了过渡顺滑
+        backTop() {
+            this.activeName = 1
+            document.getElementById('noteView').scrollTop = 0
+        },
+
     },
 }
 </script>
@@ -225,6 +240,11 @@ export default {
     }
 
 }
+
+#md-editor-v3 {
+    background: #f9f9f9;
+}
+
 
 @media (max-width: 767px) {
     .noteView {

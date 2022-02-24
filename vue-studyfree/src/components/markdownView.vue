@@ -12,7 +12,12 @@
         </div>
     </div>
     <!--    <div class="markdown-body" v-html="articleContent"></div>-->
-    <md-editor v-model="articleContent" previewOnly/>
+    <div style="display: flex">
+        <md-editor v-model="articleContent" previewOnly/>
+        <div class="mulu">
+            1234
+        </div>
+    </div>
 </template>
 
 <script>
@@ -120,6 +125,12 @@ export default {
     }
 }
 
+.mulu{
+    width: 100px;
+    margin-top: 10px;
+    position: absolute;
+    right: 100px;
+}
 
 .markdown-body {
     box-sizing: border-box;
