@@ -18,11 +18,26 @@
     </div>
 
     <el-table :data="accountData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table">
-        <el-table-column prop="id" label="id" min-width="10%" sortable/>
-        <el-table-column prop="username" label="用户名" min-width="10%"/>
-        <el-table-column prop="realName" label="姓名" min-width="10%"/>
-        <el-table-column prop="email" label="邮箱" min-width="10%"/>
-        <el-table-column label="操作" min-width="20%" #default="props">
+        <el-table-column prop="id" label="id" sortable width="60"/>
+        <el-table-column prop="username" label="用户名" width="100"/>
+        <el-table-column prop="realName" label="姓名" width="100"/>
+        <el-table-column prop="email" label="邮箱" width="200"/>
+        <el-table-column label="F币" width="150">
+            <template #default="scope">
+                <el-input-number v-model="scope.row.coins" size="small" :controls="false"/>
+            </template>
+        </el-table-column>
+        <el-table-column prop="lv" label="等级" width="60"/>
+        <el-table-column label="服务期限">
+            <template #default="scope">
+                <el-date-picker v-model="scope.row.deadline"
+                                type="datetime" size="small"
+                                @change="changePayConfig(scope.row.deadline,'deadline',scope.row.id)"
+                >
+                </el-date-picker>
+            </template>
+        </el-table-column>
+        <el-table-column label="操作" #default="props">
             <el-button type="primary" :icon="Edit" circle @click="editBtnFunction(props.row)"></el-button>
             <el-button type="success" :icon="Loading" circle @click="resetPassword(props.row.id)"></el-button>
             <el-button type="danger" :icon="Delete" circle @click="deleteAccount(props.row)"></el-button>
@@ -65,7 +80,7 @@
 import {Delete, Edit, Loading, Search} from '@element-plus/icons'
 import {markRaw} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {AccountApi} from "../../api/admin";
+import {AccountApi, PayConfigApi} from "../../api/admin";
 
 export default {
     name: "account_admin",
@@ -199,6 +214,12 @@ export default {
             }).catch()
         },
 
+        changePayConfig(value, mode, id) {
+            const paydirt = {user_id: id,action:'modify_payconfig'}
+            paydirt[mode] = value
+            AccountApi(paydirt)
+        },
+
         // 专业过滤
         filterMajor(value, row) {
             return row.major === value
@@ -234,5 +255,6 @@ export default {
 .page {
     text-align: center;
     margin: 10px auto auto;
+    position: relative;
 }
 </style>

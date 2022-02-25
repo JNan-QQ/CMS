@@ -10,6 +10,7 @@ export function WebConfigApi(data) {
     })
 }
 
+
 // account 接口
 export function AccountApi(data) {
     return request({

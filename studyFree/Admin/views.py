@@ -6,7 +6,7 @@ from Admin.models import webConfig
 from Common.lib.shara import jsonResponse
 from Common.models import User
 from FrontEnd.models import Tags, ArticleContent, NoteBook
-from Pay.models import Order
+from Pay.models import Order, PayConfig
 from config.settings import BASE_DIR
 
 
@@ -87,12 +87,22 @@ class Account:
             return self.add(request)
         elif action == 'delete':
             return self.delete(request)
+        elif action == 'modify_payconfig':
+            return self.modify_payconfig(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
     @staticmethod
     def list(request):
         res = User.list_account(request.params)
+        user_info = []
+        if res['ret'] == 0:
+            for i in res['retlist']:
+                ret = PayConfig.list({'user_id': i['id']})
+                if ret['ret'] == 0:
+                    i.update(ret['retlist'][0])
+                    user_info.append(i)
+            res['retlist'] = user_info
         return jsonResponse(res)
 
     @staticmethod
@@ -103,12 +113,19 @@ class Account:
     @staticmethod
     def add(request):
         res = User.add_account(request.params)
-        return jsonResponse(res)
+        user_id = res['id']
+        res1 = PayConfig.add({'user_id': user_id})
+        return jsonResponse(res1)
 
     @staticmethod
     def delete(request):
         res = User.delete_account(request.params)
         return jsonResponse(res)
+
+    @staticmethod
+    def modify_payconfig(request):
+        ret = PayConfig.modify(request.params)
+        return jsonResponse(ret)
 
 
 class Orders:

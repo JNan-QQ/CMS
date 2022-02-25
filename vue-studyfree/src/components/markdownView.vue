@@ -14,12 +14,12 @@
     <!--    <div class="markdown-body" v-html="articleContent"></div>-->
     <div class="md-view">
         <md-editor v-model="articleContent" previewOnly/>
-        <div class="mulu">
+        <el-card class="mu-lu">
             <ul>
-                <li>目录</li>
-                <li v-for="item in muLu"><a :href="'#'+item">{{ item }}</a></li>
+                <li style="text-align: center;font-size: 18px;margin-bottom: 10px">目录</li>
+                <li v-for="item in muLu"><a :href="'#'+item" class="ml">{{ item }}</a></li>
             </ul>
-        </div>
+        </el-card>
     </div>
 </template>
 
@@ -149,12 +149,28 @@ export default {
 .md-view {
     display: flex;
 
-    .mulu {
-        width: 100px;
+    .mu-lu {
+        width: 160px;
         margin-top: 10px;
         position: absolute;
-        right: calc(50vw - 480px - 120px);
-        background-color: #105c94;
+        right: calc(50vw - 480px - 180px);
+        border-radius: 4px;
+
+        ul{
+            padding: 5px;
+            list-style-type:none;
+            li{
+                white-space:nowrap;
+                text-overflow:ellipsis;
+                overflow: hidden;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                font-size: 16px;
+                a{
+                    color: wheat;
+                }
+            }
+        }
     }
 }
 

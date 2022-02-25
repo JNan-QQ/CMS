@@ -36,6 +36,7 @@ class PayConfig(models.Model):
             qs = list(qs)
             return {'ret': 0, 'retlist': qs}
         except:
+            traceback.print_exc()
             return {'ret': 1, 'msg': '获取用户配置出错'}
 
     @staticmethod
@@ -107,6 +108,10 @@ class PayConfig(models.Model):
                 else:
                     pay_config.deadline += datetime.timedelta(days=data['addDays'])
 
+            if 'deadline' in data:
+                print(data['deadline'])
+                pay_config.deadline = datetime.datetime.strptime(data['deadline'], "%Y-%m-%dT%H:%M:%S.%fZ")
+
             if 'qd' in data:
                 if not pay_config.qd:
                     pay_config.qd = True
@@ -120,6 +125,7 @@ class PayConfig(models.Model):
             pay_config.save()
             return {'ret': 0}
         except:
+            traceback.print_exc()
             return {'ret': 1, 'msg': '修改用户信息失败！'}
 
 
