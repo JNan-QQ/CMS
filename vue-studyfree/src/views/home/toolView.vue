@@ -10,31 +10,11 @@
             </div>
             <div class="tool-box" style="display: block">
                 <ul>
-                    <li>
-                        <a title="谷歌浏览器" href="https://npm.taobao.org/mirrors/chromedriver/" target="_blank">
-                            <el-image src="https://chrome.xahuapu.net/static/chrome_files/chrome-logo.svg" fit="fill"
+                    <li v-for="item in tools_dict['WebDriver']">
+                        <a :title="item.name" :href="item['jump_url']" target="_blank">
+                            <el-image :src="item['icon_url']" fit="fill"
                                       class="icon"/>
-                            <p>谷歌浏览器</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="Edge浏览器" href="https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/"
-                           target="_blank">
-                            <el-image
-                                src="	https://edgefrecdn.azureedge.net/welcome/sitecdn/img/icon-shadow.9976a83.png"
-                                fit="fill"
-                                class="icon"/>
-                            <p>Edge浏览器</p>
-                        </a>
-                    </li>
-                    <li>
-                        <a title="火狐浏览器" href="https://registry.npmmirror.com/binary.html?path=geckodriver/"
-                           target="_blank">
-                            <el-image
-                                src="https://www.firefox.com.cn/media/img/mozcn/logos/logo-quantum.cd7715828cbb.png"
-                                fit="fill"
-                                class="icon"/>
-                            <p>火狐浏览器</p>
+                            <p>{{ item.name }}</p>
                         </a>
                     </li>
                 </ul>
@@ -46,36 +26,63 @@
             </div>
             <div class="tool-box" style="display: block">
                 <ul>
-                    <li>
-                        <a href="https://www.bilibili.com/" target="_blank">
-                            <el-image src="https://space.bilibili.com/favicon.ico" fit="fill" class="icon"/>
-                            <span>哔哩哔哩</span>
+                    <li v-for="item in tools_dict['UrlCollection']">
+                        <a :href="item['jump_url']" target="_blank">
+                            <el-image :src="item['icon_url']" fit="fill" class="icon"/>
+                            <span>{{ item.name }}</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="https://cn.aliyun.com/" target="_blank">
-                            <el-image src="https://www.aliyun.com/favicon.ico" fit="fill" class="icon"/>
-                            <span>阿里云服务</span>
-                        </a>
-                    </li>
-
                 </ul>
             </div>
         </div>
-
+        <div class="other-box ss web-box">
+            <div class="headline">
+                <strong>自定义</strong>
+                <el-input v-model="localFileName" placeholder="输入json文件路径" size="small" class="file">
+                    <template #append>
+                        <el-button :icon="Refresh" size="small" @click="readLocalFile"></el-button>
+                    </template>
+                </el-input>
+            </div>
+            <div class="tool-box" style="display: block">
+                <ul>
+                    <li v-for="item in otherList">
+                        <a :href="item['jump_url']" target="_blank">
+                            <el-image :src="item['icon_url']" fit="fill" class="icon"/>
+                            <span>{{ item.name }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+import {WebConfigApi} from "@/api/admin";
+import {Refresh} from "@element-plus/icons";
+import {markRaw} from "vue";
+import request from "@/api/request";
+import axios from "axios";
+
 export default {
     name: "toolsView",
     data() {
         return {
-            browser: {}
+            browser: {},
+            tools_dict: {},
+            otherList: [],
+            localFileName: '',
+            Refresh: markRaw(Refresh)
         }
     },
+    components: {},
     mounted() {
         this.getBrowser()
+        this.getTools()
+        this.readLocalFile()
+    },
+    watch: {
     },
     methods: {
         getBrowser() {
@@ -96,7 +103,25 @@ export default {
                 browserInfo.version = UserAgent.match(/opera\/([\d.]+)/)[1];
             }
             this.browser = browserInfo
-        }
+        },
+        getTools() {
+            WebConfigApi({action: 'admin_list_webConfig', title: 'tools'}).then(res => {
+                this.tools_dict = eval('(' + res['retlist'][0]['config'] + ')')
+            })
+        },
+        readLocalFile() {
+            const localUrl = localStorage.getItem('localUrl')
+            if (localUrl && this.localFileName === '') {
+                this.localFileName = localUrl
+            } else {
+                localStorage.setItem('localUrl', this.localFileName)
+            }
+            if (this.localFileName !== '') {
+                axios.get(this.localFileName).then((res) => {
+                    console.log(res)
+                })
+            }
+        },
     }
 }
 </script>
@@ -212,7 +237,7 @@ export default {
                         outline: none;
                         position: relative;
 
-                        .icon{
+                        .icon {
                             width: 16px;
                             height: 16px;
                         }
@@ -223,6 +248,18 @@ export default {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    .other-box {
+        .headline {
+            display: flex;
+            justify-content: space-between;
+
+            .file {
+                position: relative;
+                width: 200px;
             }
         }
     }

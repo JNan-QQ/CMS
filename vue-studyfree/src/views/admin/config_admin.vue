@@ -102,6 +102,10 @@
                 </el-table>
             </div>
         </el-tab-pane>
+        <el-tab-pane label="工具合集" style="text-align: center">
+            <el-input v-model="tools" :rows="20" type="textarea" placeholder="Please input"/>
+            <el-button @click="saveConfig(3)" type="success" style="margin: 5px">保存</el-button>
+        </el-tab-pane>
     </el-tabs>
 </template>
 
@@ -117,6 +121,7 @@ export default {
             ailiPay: {},
             cq: [],
             pay: {},
+            tools: {},
             fileList: [],
             breadcrumbItem: ['static'],
             FolderOpened, Document
@@ -128,6 +133,7 @@ export default {
         this.getAliPayData('pay')
         this.getCqData()
         this.getFileList('static')
+        this.getAliPayData('tools')
     },
     methods: {
         getAliPayData(title) {
@@ -137,6 +143,9 @@ export default {
                         this.ailiPay = eval('(' + res['retlist'][0]['config'] + ')')
                     } else if (title === 'pay') {
                         this.pay = eval('(' + res['retlist'][0]['config'] + ')')
+                    } else if (title === 'tools') {
+                        this.tools = eval('(' + res['retlist'][0]['config'] + ')')
+                        this.tools = JSON.stringify(this.tools, null, "     ")
                     }
                 }
             })
@@ -171,6 +180,9 @@ export default {
             } else if (id === 2) {
                 config = this.pay
                 title = 'pay'
+            } else if (id === 3) {
+                config = JSON.parse(this.tools, null)
+                title = 'tools'
             }
             WebConfigApi({action: 'admin_modify_webConfig', webConfig_id: id, config: config}).then(res => {
                 if (res) {
