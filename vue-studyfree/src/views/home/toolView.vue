@@ -38,11 +38,9 @@
         <div class="other-box ss web-box">
             <div class="headline">
                 <strong>自定义</strong>
-                <el-input v-model="localFileName" placeholder="输入json文件路径" size="small" class="file">
-                    <template #append>
-                        <el-button :icon="Refresh" size="small" @click="readLocalFile"></el-button>
-                    </template>
-                </el-input>
+                <el-button-group>
+                    <el-button type="primary" :icon="Edit" size="small"></el-button>
+                </el-button-group>
             </div>
             <div class="tool-box" style="display: block">
                 <ul>
@@ -60,10 +58,10 @@
 
 <script>
 import {WebConfigApi} from "@/api/admin";
-import {Refresh} from "@element-plus/icons";
+import {Edit} from "@element-plus/icons";
 import {markRaw} from "vue";
-import request from "@/api/request";
-import axios from "axios";
+
+const {UserConfigApi} = require("../../api/pay");
 
 export default {
     name: "toolsView",
@@ -72,18 +70,16 @@ export default {
             browser: {},
             tools_dict: {},
             otherList: [],
-            localFileName: '',
-            Refresh: markRaw(Refresh)
+            Edit: markRaw(Edit)
         }
     },
     components: {},
     mounted() {
         this.getBrowser()
         this.getTools()
-        this.readLocalFile()
+        this.getWebUrl()
     },
-    watch: {
-    },
+    watch: {},
     methods: {
         getBrowser() {
             const UserAgent = navigator.userAgent.toLowerCase()
@@ -109,18 +105,12 @@ export default {
                 this.tools_dict = eval('(' + res['retlist'][0]['config'] + ')')
             })
         },
-        readLocalFile() {
-            const localUrl = localStorage.getItem('localUrl')
-            if (localUrl && this.localFileName === '') {
-                this.localFileName = localUrl
-            } else {
-                localStorage.setItem('localUrl', this.localFileName)
-            }
-            if (this.localFileName !== '') {
-                axios.get(this.localFileName).then((res) => {
-                    console.log(res)
-                })
-            }
+        getWebUrl() {
+            UserConfigApi({action: 'listWebUrl'}).then((res) => {
+                if (res) {
+                    this.otherList = JSON.stringify(res['userServerConfig'], null, "     ")
+                }
+            })
         },
     }
 }
@@ -252,15 +242,10 @@ export default {
         }
     }
 
-    .other-box {
-        .headline {
+    .other-box{
+        .headline{
             display: flex;
             justify-content: space-between;
-
-            .file {
-                position: relative;
-                width: 200px;
-            }
         }
     }
 }

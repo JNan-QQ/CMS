@@ -27,6 +27,8 @@ class payConfig:
             return self.userConfig(request)
         elif action == 'listServerConfig':
             return self.listServerConfig(request)
+        elif action == 'listWebUrl':
+            return self.listWebUrl(request)
         elif action == 'modify':
             return self.modify(request)
         elif action == 'checkActive':
@@ -49,6 +51,16 @@ class payConfig:
             return jsonResponse(res)
         else:
             return jsonResponse({'ret': 0, 'ServerConfig': ''})
+
+    @staticmethod
+    def listWebUrl(request):
+        if request.session.get('is_login', None):
+            if request.session['usertype'] not in [1, 1005]:
+                return jsonResponse({'ret': 0, 'web_url': ''})
+            res = PayConfig.listWebUrl({'user_id': request.session['user_id']})
+            return jsonResponse(res)
+        else:
+            return jsonResponse({'ret': 0, 'web_url': ''})
 
     @staticmethod
     def modify(request):

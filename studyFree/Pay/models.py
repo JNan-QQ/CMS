@@ -25,6 +25,8 @@ class PayConfig(models.Model):
     qd = models.BooleanField(default=False)
     # config
     userServerConfig = models.TextField(default={})
+    # web_url
+    web_url = models.TextField(default={})
 
     class Meta:
         db_table = "pay_config"
@@ -45,6 +47,16 @@ class PayConfig(models.Model):
             qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('userServerConfig')
             qs = list(qs)[0]
             return {'ret': 0, 'userServerConfig': json.loads(qs['userServerConfig'])}
+        except:
+            traceback.print_exc()
+            return {'ret': 1, 'msg': '获取用户配置出错'}
+
+    @staticmethod
+    def listWebUrl(data):
+        try:
+            qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('web_url')
+            qs = list(qs)[0]
+            return {'ret': 0, 'web_url': json.loads(qs['web_url'])}
         except:
             traceback.print_exc()
             return {'ret': 1, 'msg': '获取用户配置出错'}
@@ -120,6 +132,9 @@ class PayConfig(models.Model):
 
             if 'userServerConfig' in data:
                 pay_config.userServerConfig = json.dumps(data['userServerConfig'])
+
+            if 'web_url' in data:
+                pay_config.userServerConfig = json.dumps(data['web_url'])
 
             # 注意，一定要执行save才能将修改信息保存到数据库
             pay_config.save()
