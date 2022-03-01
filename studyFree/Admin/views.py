@@ -27,7 +27,8 @@ class WebConfigs:
         usertype = request.session.get('usertype', None)
         is_login = request.session.get('is_login', None)
         if usertype != 1 or not is_login:
-            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
+            if request.params['action'] != 'admin_list_webConfig':
+                return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
 
         # 根据不同的action分派给不同的函数进行处理
         action = request.params['action']
@@ -332,7 +333,7 @@ class FileManage:
     @staticmethod
     def list(request):
         file_path = request.params['file_path']
-        file_path = fr'{BASE_DIR}\{file_path}'
+        file_path = os.path.join(BASE_DIR, file_path)
         if not os.path.exists(file_path):
             return jsonResponse({'ret': 1, 'msg': '文件路径不存在'})
 

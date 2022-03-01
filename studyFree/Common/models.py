@@ -1,5 +1,4 @@
 import datetime
-import json
 import random
 import traceback
 
@@ -33,6 +32,7 @@ class User(AbstractUser):
 
     class Meta:
         db_table = "study_user"
+        app_label = "Common"
 
     # 直接在Model中用静态方法定义数据操作
     @staticmethod
@@ -181,6 +181,7 @@ class CelebrityQuotes(models.Model):
 
     class Meta:
         db_table = "study_cq"
+        app_label = "Common"
 
     @staticmethod  # 随机列出已经名言
     def listQuotes():
@@ -224,6 +225,7 @@ class EmailCode(models.Model):
 
     class Meta:
         db_table = "study_email_code"
+        app_label = "Common"
 
     @staticmethod
     def add(data):
@@ -272,49 +274,3 @@ class EmailCode(models.Model):
         except:
             return {'ret': 1, 'msg': '验证码可能已过期'}
 
-# class webConfig(models.Model):
-#     # id
-#     id = models.BigAutoField(primary_key=True)
-#     title = models.CharField(max_length=100, null=True, blank=True)
-#     # config
-#     config = models.TextField(default={})
-#
-#     class Meta:
-#         db_table = "study_webConfig"
-#
-#     @staticmethod
-#     def list(data):
-#         if 'id' in data:
-#             qs = webConfig.objects.filter(id=data['id']).values()
-#         elif 'title' in data:
-#             qs = webConfig.objects.filter(title=data['title']).values()
-#         else:
-#             qs = webConfig.objects.values()
-#
-#         qs = list(qs)
-#
-#         return {'ret': 0, 'retlist': qs}
-#
-#     @staticmethod
-#     def add(data):
-#         webConfig.objects.create(
-#             title=data['title'],
-#             config=json.dumps(data['config'])
-#         )
-#         return {'ret': 0}
-#
-#     @staticmethod
-#     def modify(data):
-#         try:
-#             web = webConfig.objects.get(id=data['webConfig_id'])
-#         except:
-#             return {'ret': 1, 'msg': '未找到数据'}
-#
-#         if 'title' in data:
-#             web.title = data['title']
-#         if 'config' in data:
-#             web.config = json.dumps(data['config'])
-#
-#         web.save()
-#
-#         return {'ret': 0}

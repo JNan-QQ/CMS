@@ -9,9 +9,9 @@ from django.contrib.sessions.models import Session
 from django.db.models import Q
 
 from Pay.models import PayConfig
-from .forms import handle_uploaded_file
-from .lib.email_my import SendEmail
-from .lib.shara import jsonResponse, generate_random_str
+from Common.forms import handle_uploaded_file
+from Common.lib.email_my import SendEmail
+from Common.lib.shara import jsonResponse, generate_random_str
 from Common.models import CelebrityQuotes, User, EmailCode
 
 

@@ -30,6 +30,7 @@ class PayConfig(models.Model):
 
     class Meta:
         db_table = "pay_config"
+        app_label = "Pay"
 
     @staticmethod
     def list(data):
@@ -161,6 +162,7 @@ class Products(models.Model):
 
     class Meta:
         db_table = "pay_products"
+        app_label = "Pay"
 
     @staticmethod
     def add_products(data):
@@ -239,6 +241,7 @@ class Order(models.Model):
 
     class Meta:
         db_table = "pay_order"
+        app_label = "Pay"
 
     @staticmethod
     def add_order(data):

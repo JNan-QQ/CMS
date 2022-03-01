@@ -26,6 +26,7 @@ class Tags(models.Model):
 
     class Meta:
         db_table = "study_tags"
+        app_label = "FrontEnd"
 
     @staticmethod
     def admin_add(data):
@@ -147,6 +148,7 @@ class ArticleContent(models.Model):
 
     class Meta:
         db_table = "study_articleContent"
+        app_label = "FrontEnd"
 
     @staticmethod
     def list(data):
@@ -201,6 +203,7 @@ class NoteBook(models.Model):
 
     class Meta:
         db_table = "study_notebook"
+        app_label = "FrontEnd"
 
     @staticmethod
     def add(data):

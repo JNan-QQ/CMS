@@ -1,10 +1,12 @@
+const baseApi = 'http://127.0.0.1:8210'
+
 module.exports = {
     publicPath: './',
     devServer: {
         proxy: {
             // 静态文件转发
             '/api_file': {
-                target: 'http://127.0.0.1:8210',
+                target: baseApi,
                 changeOrigin: true,
                 ws: true,
                 pathRewrite: {
@@ -13,7 +15,7 @@ module.exports = {
             },
             // api转发
             '/api': {
-                target: 'http://127.0.0.1:8210',
+                target: baseApi,
                 changeOrigin: true,
                 ws: true,
                 pathRewrite: {

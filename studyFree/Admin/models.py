@@ -12,6 +12,7 @@ class webConfig(models.Model):
 
     class Meta:
         db_table = "study_webConfig"
+        app_label = "Admin"
 
     @staticmethod
     def list(data):

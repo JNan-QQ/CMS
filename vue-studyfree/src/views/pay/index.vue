@@ -51,6 +51,8 @@ import {orderApi, productApi} from "../../api/pay";
 import {ElMessage} from "element-plus";
 import {CommonApi} from "../../api/common";
 
+const {WebConfigApi} = require("../../api/admin");
+
 export default {
     name: "index",
     data() {
@@ -71,7 +73,7 @@ export default {
                 }
             }
         )
-        CommonApi({action: 'admin_list_webConfig', title: 'pay'}).then(res => {
+        WebConfigApi({action: 'admin_list_webConfig', title: 'pay'}).then(res => {
             if (res) {
                 let ss = eval('(' + res['retlist'][0]['config'] + ')')
                 this.F = parseInt(ss.F)
