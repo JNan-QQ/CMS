@@ -39,27 +39,69 @@
             <div class="headline">
                 <strong>自定义</strong>
                 <el-button-group>
-                    <el-button type="primary" :icon="Edit" size="small"></el-button>
+                    <el-button type="primary" :icon="Edit" size="small" @click="editBtn=true"></el-button>
+                    <el-button type="primary" :icon="Plus" size="small" @click="dialogVisible=true"></el-button>
+                    <el-button type="primary" :icon="Select" size="small" v-if="saveBtn" @click="save"></el-button>
+                    <el-button type="primary" :icon="CloseBold" size="small" v-if="saveBtn" @click="getWebUrl">
+                    </el-button>
                 </el-button-group>
             </div>
             <div class="tool-box" style="display: block">
                 <ul>
-                    <li v-for="item in otherList">
+                    <li v-for="(item,index) in otherList">
                         <a :href="item['jump_url']" target="_blank">
                             <el-image :src="item['icon_url']" fit="fill" class="icon"/>
-                            <span>{{ item.name }}</span>
+                            <span>{{ item.title }}</span>
                         </a>
+                        <el-icon class="rightTopIcon" v-if="editBtn" @click="localDelete(index)">
+                            <close-bold/>
+                        </el-icon>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
+    <el-dialog v-model="dialogVisible" title="添加工具网址" width="30%" @close="closeDialog">
+        <el-form ref="formRef" :model="newWebTool" label-width="120px">
+            <el-form-item label="标签名称">
+                <el-input v-model="newWebTool.title"></el-input>
+            </el-form-item>
+            <el-form-item label="标签链接网址">
+                <el-input v-model="newWebTool.jump_url" @change="changeIcon"></el-input>
+            </el-form-item>
+            <el-form-item label="标签图标">
+                <div style="display: flex;align-items: center;">
+                    <el-input v-model="newWebTool.icon_url" :disabled="icon_mode"></el-input>
+                    <span style="min-width: 30px;margin: 3px">默认</span>
+                    <el-switch
+                        v-model="icon_mode"
+                        inline-prompt
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Y"
+                        inactive-text="N"
+                        @change="changeIcon"
+                    />
+                </div>
+            </el-form-item>
+            <el-form-item label="图标预览">
+                <el-image fit="fill" :src="newWebTool.icon_url"></el-image>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="saveLocal">确认</el-button>
+                <el-button @click="dialogVisible=false">取消</el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script>
 import {WebConfigApi} from "@/api/admin";
-import {Edit} from "@element-plus/icons";
+import {Edit, Plus, Select, CloseBold} from "@element-plus/icons";
 import {markRaw} from "vue";
+import {ElMessage} from "element-plus";
 
 const {UserConfigApi} = require("../../api/pay");
 
@@ -70,10 +112,16 @@ export default {
             browser: {},
             tools_dict: {},
             otherList: [],
-            Edit: markRaw(Edit)
+            Edit: markRaw(Edit), Plus: markRaw(Plus), Select: markRaw(Select), CloseBold: markRaw(CloseBold),
+            dialogVisible: false,
+            newWebTool: {title: '', jump_url: '', icon_url: ''},
+            icon_mode: true,
+            btnLoading: false,
+            saveBtn: false,
+            editBtn: false
         }
     },
-    components: {},
+    components: {CloseBold},
     mounted() {
         this.getBrowser()
         this.getTools()
@@ -108,9 +156,53 @@ export default {
         getWebUrl() {
             UserConfigApi({action: 'listWebUrl'}).then((res) => {
                 if (res) {
-                    this.otherList = JSON.stringify(res['userServerConfig'], null, "     ")
+                    if (res['web_url'].hasOwnProperty('web_url')) {
+                        this.otherList = res['web_url']['web_url']
+                    }
+                    this.saveBtn = false
+                    this.editBtn = false
                 }
             })
+        },
+        changeIcon() {
+            if (this.icon_mode) {
+                let icon = ''
+                if (this.newWebTool.jump_url.endsWith("/")) {
+                    icon = 'favicon.ico'
+                } else {
+                    icon = '/favicon.ico'
+                }
+                this.newWebTool.icon_url = this.newWebTool.jump_url + icon
+            }
+        },
+        saveLocal() {
+            this.otherList.push(this.newWebTool)
+            this.dialogVisible = false
+            this.saveBtn = true
+        },
+        localDelete(index) {
+            console.log(index)
+            this.otherList.splice(index, 1)
+            this.saveBtn = true
+        },
+        save() {
+            const ss = {'web_url': this.otherList}
+            this.btnLoading = true
+            UserConfigApi({action: 'modify', 'web_url': ss}).then(res => {
+                if (res) {
+                    this.closeDialog()
+                    this.getWebUrl()
+                    this.dialogVisible = false
+                    this.saveBtn = false
+                    this.editBtn = false
+                    ElMessage.success(res['msg'])
+                }
+                this.btnLoading = false
+            })
+        },
+        closeDialog() {
+            this.newWebTool = {title: '', jump_url: '', icon_url: ''}
+            this.icon_mode = true
         },
     }
 }
@@ -242,10 +334,19 @@ export default {
         }
     }
 
-    .other-box{
-        .headline{
+    .other-box {
+        .headline {
             display: flex;
             justify-content: space-between;
+        }
+
+        .tool-box {
+            .rightTopIcon {
+                width: 10px;
+                top: -9px;
+                right: -6px;
+                position: relative;
+            }
         }
     }
 }

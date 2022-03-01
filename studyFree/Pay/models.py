@@ -134,11 +134,11 @@ class PayConfig(models.Model):
                 pay_config.userServerConfig = json.dumps(data['userServerConfig'])
 
             if 'web_url' in data:
-                pay_config.userServerConfig = json.dumps(data['web_url'])
+                pay_config.web_url = json.dumps(data['web_url'])
 
             # 注意，一定要执行save才能将修改信息保存到数据库
             pay_config.save()
-            return {'ret': 0}
+            return {'ret': 0, 'msg': '修改成功'}
         except:
             traceback.print_exc()
             return {'ret': 1, 'msg': '修改用户信息失败！'}

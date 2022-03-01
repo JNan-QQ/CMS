@@ -12,7 +12,7 @@ from Pay.models import PayConfig
 from .forms import handle_uploaded_file
 from .lib.email_my import SendEmail
 from .lib.shara import jsonResponse, generate_random_str
-from .models import CelebrityQuotes, User, EmailCode
+from Common.models import CelebrityQuotes, User, EmailCode
 
 
 class Login:

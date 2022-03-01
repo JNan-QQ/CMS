@@ -2,7 +2,7 @@
     <div class="top">
         <div class="title">
             <div class="md_name">
-                <el-icon @click="this.$router.go(-1);">
+                <el-icon @click="this.$router.push('/Article');">
                     <d-arrow-left/>
                 </el-icon>
                 <span>{{ title }}</span></div>
