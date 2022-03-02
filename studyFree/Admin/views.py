@@ -1,6 +1,7 @@
 import json
 import os
 import time
+import traceback
 
 from Admin.models import webConfig
 from Common.lib.shara import jsonResponse
@@ -98,12 +99,15 @@ class Account:
         res = User.list_account(request.params)
         user_info = []
         if res['ret'] == 0:
-            for i in res['retlist']:
-                ret = PayConfig.list({'user_id': i['id']})
-                if ret['ret'] == 0:
-                    i.update(ret['retlist'][0])
-                    user_info.append(i)
-            res['retlist'] = user_info
+            try:
+                for i in res['retlist']:
+                    ret = PayConfig.list({'user_id': i['id']})
+                    if ret['ret'] == 0:
+                        i.update(ret['retlist'][0])
+                        user_info.append(i)
+                res['retlist'] = user_info
+            except:
+                traceback.print_exc()
         return jsonResponse(res)
 
     @staticmethod

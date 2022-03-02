@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 from Common.lib.shara import jsonResponse
 from Admin.models import webConfig
-from .alipay import AliPay
-from ..models import Order, PayConfig
+from Pay.ali.alipay import AliPay
+from Pay.models import Order, PayConfig
 
 
 class aliPay:

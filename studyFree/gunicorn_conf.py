@@ -8,7 +8,8 @@ workers = 3
 worker_class = "gevent"
 
 # 日志文件路径
-errorlog = "./log/gunicorn.log"
+errorlog = "./log/error.log"
+accesslog = './log/access.log' #正常时的log路径
 loglevel = "info"
 
 import os
