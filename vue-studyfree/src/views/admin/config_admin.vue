@@ -64,10 +64,17 @@
                             {{ item }}
                         </el-breadcrumb-item>
                     </el-breadcrumb>
-                    <div style="display: flex;padding: 5px">
-                        <el-button>上传文件</el-button>
-                        <el-button>新建文件夹</el-button>
-                        <el-button>删除</el-button>
+                    <div style="display: flex;padding: 5px;align-items: center;">
+                        <el-upload action="api/my_admin/files" name="file" :show-file-list="false"
+                                   :data="{action: 'addfile',file_path: breadcrumbItem.join('\\')}">
+                            <el-button type="primary" size="small">上传文件</el-button>
+                        </el-upload>
+                        <el-input v-model="dir_path" placeholder="Please input" size="small" style="margin-left: 3px">
+                            <template #prepend>新建目录</template>
+                            <template #append>
+                                <el-button :icon="Check" @click="makedir"></el-button>
+                            </template>
+                        </el-input>
                     </div>
                 </div>
                 <el-table :data="fileList" style="width: 100%">
@@ -112,7 +119,8 @@
 <script>
 import {ElMessage} from "element-plus";
 import {CqApi, FilesApi, WebConfigApi} from "@/api/admin"
-import {FolderOpened, Document} from "@element-plus/icons";
+import {FolderOpened, Document, Check} from "@element-plus/icons";
+import {markRaw} from "vue";
 
 export default {
     name: "config_admin",
@@ -124,7 +132,8 @@ export default {
             tools: {},
             fileList: [],
             breadcrumbItem: ['static'],
-            FolderOpened, Document
+            FolderOpened: markRaw(FolderOpened), Document: markRaw(Document), Check: markRaw(Check),
+            dir_path: ''
         }
     },
     components: {FolderOpened, Document},
@@ -210,6 +219,18 @@ export default {
             this.breadcrumbItem = this.breadcrumbItem.slice(0, index + 1)
             this.getFileList(this.breadcrumbItem.join('/'))
         },
+
+        makedir() {
+            FilesApi({
+                action: 'addDir',
+                dir_path: this.dir_path,
+                base_path: this.breadcrumbItem.join('\\')
+            }).then(res => {
+                if (res) {
+                    this.getFileList(this.breadcrumbItem.join('\\'))
+                }
+            })
+        }
     },
 
 }

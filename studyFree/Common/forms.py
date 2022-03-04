@@ -10,3 +10,4 @@ def handle_uploaded_file(f, f_path):
     with open(f_path, 'wb+') as destination:
         for chunk in f.chunks():
             destination.write(chunk)
+    return True

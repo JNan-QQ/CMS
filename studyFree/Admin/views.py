@@ -4,6 +4,7 @@ import time
 import traceback
 
 from Admin.models import webConfig
+from Common.forms import handle_uploaded_file
 from Common.lib.shara import jsonResponse
 from Common.models import User
 from FrontEnd.models import Tags, ArticleContent, NoteBook
@@ -311,6 +312,8 @@ class NoteBooks:
 class FileManage:
     def handler(self, request):
 
+        actionFormData = None
+
         # 将请求参数统一放入request 的 params 属性中，方便后续处理
         # GET请求 参数 在 request 对象的 GET属性中
         if request.method == 'GET':
@@ -319,7 +322,10 @@ class FileManage:
         # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
         elif request.method in ['POST', 'PUT', 'DELETE']:
             # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
+            try:
+                request.params = json.loads(request.body)
+            except:
+                actionFormData = request.POST.get('action', None)
 
         # 判断账号类型
         usertype = request.session.get('usertype', None)
@@ -328,9 +334,17 @@ class FileManage:
             return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
 
         # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
+        if actionFormData is None:
+            action = request.params['action']
+        else:
+            action = actionFormData
+
         if action == 'list':
             return self.list(request)
+        elif action == 'addfile':
+            return self.addfile(request)
+        elif action == 'addDir':
+            return self.addDir(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -356,3 +370,34 @@ class FileManage:
                     'path': f'static{os.path.join(file_path, i).split("static")[-1]}'})
         files = dirList + fileList
         return jsonResponse({'ret': 0, 'retlist': files})
+
+    @staticmethod
+    def addfile(request):
+        file = request.FILES.get("file", None)
+        file_path = request.POST.get("file_path", None)
+        file_name = str(file)
+
+        if file_path:
+            full_file_path = os.path.join(BASE_DIR, file_path, file_name)
+        else:
+            return jsonResponse({'ret': 1, 'msg': '没有获取到上传的文件的路径'})
+
+        if file is None:
+            return jsonResponse({'ret': 1, 'msg': '没有获取到上传的文件'})
+        else:
+            res = handle_uploaded_file(file, full_file_path)
+            if res:
+                return jsonResponse({'ret': 0})
+            else:
+                return jsonResponse({'ret': 1, 'msg': '上传文件失败'})
+
+    @staticmethod
+    def addDir(request):
+        dir_path: str = request.params['dir_path']
+        base_dir = request.params['base_path']
+        if not dir_path.startswith('static'):
+            dir_path = os.path.join(base_dir, dir_path)
+        if os.path.isfile(dir_path):
+            return jsonResponse({'ret': 1, 'msg': '请输入正确的目录'})
+        os.makedirs(os.path.join(BASE_DIR, dir_path), exist_ok=True)
+        return jsonResponse({'ret': 0})
