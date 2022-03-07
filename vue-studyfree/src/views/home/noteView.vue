@@ -74,6 +74,8 @@ import {DocumentAdd, Edit, Remove, CaretTop} from "@element-plus/icons";
 import {ElMessage, ElMessageBox} from "element-plus";
 import request from "../../api/request";
 import {markRaw} from "vue";
+import axios from "axios";
+import {upload_headers, upload_url} from "@/api/config";
 
 export default {
     name: "noteView",
@@ -83,7 +85,7 @@ export default {
             activeName: 1,
             bjList: [],
             saveLoading: false,
-            DocumentAdd: markRaw(DocumentAdd), Remove: markRaw(Remove), CaretTop: markRaw(CaretTop)
+            DocumentAdd: markRaw(DocumentAdd), Remove: markRaw(Remove), CaretTop: markRaw(CaretTop),
         }
     },
     components: {MdEditor, Edit},
@@ -155,10 +157,14 @@ export default {
                     return new Promise((rev, rej) => {
                         const form = new FormData();
                         form.append('file', file);
-                        form.append('action', 'uploadImg')
-                        form.append('file_name', file_name)
-                        form.append('file_type', 'notebook')
-                        request.post('/common/other', form).then((res) => rev(res)).catch((error) => rej(error));
+                        // form.append('action', 'uploadImg')
+                        // form.append('file_name', file_name)
+                        // form.append('file_type', 'notebook')
+                        // request.post('/common/other', form).then((res) => rev(res)).catch((error) => rej(error))
+                        axios.post('/upload_file/Practice/compositionUploadImg.html', form, {
+                            headers: upload_headers,
+                            withCredentials: true
+                        }).then((res) => rev(res)).catch((error) => rej(error))
                     });
                 })
             );

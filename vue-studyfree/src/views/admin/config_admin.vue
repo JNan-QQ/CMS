@@ -69,16 +69,16 @@
                                    :data="{action: 'addfile',file_path: breadcrumbItem.join('\\')}">
                             <el-button type="primary" size="small">上传文件</el-button>
                         </el-upload>
-                        <el-input v-model="dir_path" placeholder="Please input" size="small" style="margin-left: 3px">
+                        <el-input v-model="dir_path" placeholder="输入目录结构" size="small" style="margin-left: 3px">
                             <template #prepend>新建目录</template>
                             <template #append>
-                                <el-button :icon="Check" @click="makedir"></el-button>
+                                <el-button :icon="Check" @click="makedir" :disabled="dir_path"></el-button>
                             </template>
                         </el-input>
                     </div>
                 </div>
                 <el-table :data="fileList" style="width: 100%">
-                    <el-table-column label="Name" width="200">
+                    <el-table-column label="Name" width="400">
                         <template #default="scope">
                             <div style="display: flex; align-items: center">
                                 <el-icon v-if="scope.row.type==='file'">
@@ -106,6 +106,12 @@
                             <span style="margin: auto" v-else>--</span>
                         </template>
                     </el-table-column>
+                    <el-table-column fixed="right" label="操作">
+                        <template #default="scope">
+                            <el-button type="text" size="small" @click="modify(scope.row.name)">Edit</el-button>
+                            <el-button type="text" size="small" @click="deleteFD(scope.row.name)">Delete</el-button>
+                        </template>
+                    </el-table-column>
                 </el-table>
             </div>
         </el-tab-pane>
@@ -117,7 +123,7 @@
 </template>
 
 <script>
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import {CqApi, FilesApi, WebConfigApi} from "@/api/admin"
 import {FolderOpened, Document, Check} from "@element-plus/icons";
 import {markRaw} from "vue";
@@ -145,6 +151,7 @@ export default {
         this.getAliPayData('tools')
     },
     methods: {
+        // 获取后台数据
         getAliPayData(title) {
             WebConfigApi({action: 'admin_list_webConfig', title: title}).then(res => {
                 if (res) {
@@ -159,6 +166,8 @@ export default {
                 }
             })
         },
+
+        // 获取名人名言数据
         getCqData() {
             CqApi({action: 'listAll'}).then(res => {
                 if (res) {
@@ -180,6 +189,8 @@ export default {
                 })
             }
         },
+
+        // 保存配置
         saveConfig(id) {
             let config = {}
             let title = ''
@@ -203,6 +214,8 @@ export default {
                 }
             })
         },
+
+        // 删除名人名言
         deleteCq(id) {
             CqApi({action: 'delete', cq_id: id}).then(res => {
                 if (res) {
@@ -214,12 +227,15 @@ export default {
                 }
             })
         },
+
+        // 文件导航头
         change_bread_crumb_item(item) {
             const index = this.breadcrumbItem.indexOf(item)
             this.breadcrumbItem = this.breadcrumbItem.slice(0, index + 1)
             this.getFileList(this.breadcrumbItem.join('/'))
         },
 
+        // 新建文件夹
         makedir() {
             FilesApi({
                 action: 'addDir',
@@ -230,7 +246,55 @@ export default {
                     this.getFileList(this.breadcrumbItem.join('\\'))
                 }
             })
-        }
+        },
+
+        // 删除文件文件或文件夹
+        deleteFD(path) {
+            ElMessageBox.confirm(
+                '确认删除文件/文件夹：' + path + ' 吗?',
+                'Warning',
+                {
+                    confirmButtonText: '确认',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }
+            ).then(() => {
+                FilesApi({
+                    action: 'delete',
+                    path: this.breadcrumbItem.join('\\') + '\\' + path
+                }).then(res => {
+                    if (res) {
+                        ElMessage({
+                            type: 'success',
+                            message: '文件/文件夹： ' + path + ' 已删除！',
+                        })
+                        this.getFileList(this.breadcrumbItem.join('\\'))
+                    }
+                })
+            }).catch(()=>{})
+        },
+
+        // 修改文件名
+        modify(path) {
+            ElMessageBox.prompt('请输入新的文件/文件夹名', '输入', {
+                confirmButtonText: 'OK',
+                cancelButtonText: 'Cancel',
+            }).then(({value}) => {
+                FilesApi({
+                    action: 'modify',
+                    path: this.breadcrumbItem.join('\\') + '\\' + path,
+                    new_path: this.breadcrumbItem.join('\\') + '\\' + value
+                }).then(res => {
+                    if (res) {
+                        ElMessage({
+                            type: 'success',
+                            message: '文件名修改成功！',
+                        })
+                        this.getFileList(this.breadcrumbItem.join('\\'))
+                    }
+                })
+            }).catch(()=>{})
+        },
     },
 
 }

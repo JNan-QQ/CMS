@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import time
 import traceback
 
@@ -345,6 +346,10 @@ class FileManage:
             return self.addfile(request)
         elif action == 'addDir':
             return self.addDir(request)
+        elif action == 'delete':
+            return self.deleteFD(request)
+        elif action == 'modify':
+            return self.modifyFD(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -401,3 +406,28 @@ class FileManage:
             return jsonResponse({'ret': 1, 'msg': '请输入正确的目录'})
         os.makedirs(os.path.join(BASE_DIR, dir_path), exist_ok=True)
         return jsonResponse({'ret': 0})
+
+    @staticmethod
+    def deleteFD(request):
+        path = request.params['path']
+        full_path = os.path.join(BASE_DIR, path)
+        if os.path.isfile(full_path) and os.path.exists(full_path):
+            os.remove(full_path)
+        elif os.path.isdir(full_path) and os.path.exists(full_path):
+            shutil.rmtree(full_path)
+        else:
+            return jsonResponse({'ret': 1, 'msg': '未找到改文件，无法删除'})
+
+        return jsonResponse({'ret': 0})
+
+    @staticmethod
+    def modifyFD(request):
+        path = request.params['path']
+        new_path = request.params['new_path']
+        full_path = os.path.join(BASE_DIR, path)
+        full_new_path = os.path.join(BASE_DIR, new_path)
+        if os.path.exists(full_path) and not os.path.exists(full_new_path):
+            os.rename(full_path, full_new_path)
+            return jsonResponse({'ret': 0})
+        else:
+            return jsonResponse({'ret': 1, 'msg': '名称可能重复'})

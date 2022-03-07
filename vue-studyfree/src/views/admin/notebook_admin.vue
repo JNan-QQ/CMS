@@ -21,7 +21,7 @@
 <script>
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import {NoteBookApi} from "../../api/admin";
+import {NoteBookApi} from "@/api/admin";
 import {ElMessage} from "element-plus";
 
 export default {

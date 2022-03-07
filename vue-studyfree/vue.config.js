@@ -13,6 +13,15 @@ module.exports = {
                     '^/api_file': ''
                 }
             },
+            // ts转发
+            '/upload_file': {
+                target: 'https://student.waiyutong.org',
+                changeOrigin: true,
+                ws: true,
+                pathRewrite: {
+                    '^/upload_file': ''
+                }
+            },
             // api转发
             '/api': {
                 target: baseApi,
@@ -21,7 +30,8 @@ module.exports = {
                 pathRewrite: {
                     '^/api': ''
                 }
-            }
+            },
+
 
         }
     },
