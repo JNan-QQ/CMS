@@ -5,8 +5,10 @@ import traceback
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.core.paginator import Paginator, EmptyPage
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
+
+from Pay.models import PayConfig
 
 
 class User(AbstractUser):
@@ -49,17 +51,21 @@ class User(AbstractUser):
             if 'usertype' not in data:
                 data['usertype'] = 1000
 
-            user = User.objects.create(
-                username=username,
-                password=make_password(data['password']),
-                usertype=data['usertype'],
-                realName=data['realName'],
-                email=data['email'],
-                desc=data['desc']
-            )
+            with transaction.atomic():
+                user = User.objects.create(
+                    username=username,
+                    password=make_password(data['password']),
+                    usertype=data['usertype'],
+                    realName=data['realName'],
+                    email=data['email'],
+                    desc=data['desc']
+                )
+                PayConfig.objects.create(
+                    user_id=user.id
+                )
 
             return {'ret': 0, 'id': user.id}
-        except:
+        except 1:
             traceback.print_exc()
             return {'ret': 1, 'msg': '添加用户信息失败！'}
 

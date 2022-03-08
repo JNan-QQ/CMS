@@ -6,10 +6,10 @@ import oss2
 
 
 class ossApi:
-    access_key_id = os.getenv('OSS_TEST_ACCESS_KEY_ID', 'LTAI5t9Z7Vwmoy1Kzd3qfKVZ')
-    access_key_secret = os.getenv('OSS_TEST_ACCESS_KEY_SECRET', 'j6RYHSLzcgziys2v1gaWv6EnhskW09')
-    bucket_name = os.getenv('OSS_TEST_BUCKET', 'syudyfree')
-    endpoint = os.getenv('OSS_TEST_ENDPOINT', 'oss-cn-hongkong.aliyuncs.com')
+    access_key_id = os.getenv('OSS_TEST_ACCESS_KEY_ID', '')
+    access_key_secret = os.getenv('OSS_TEST_ACCESS_KEY_SECRET', '')
+    bucket_name = os.getenv('OSS_TEST_BUCKET', 'syud')
+    endpoint = os.getenv('OSS_TEST_ENDPOINT', 'oss-.aliyuncs.com')
 
     # 创建Bucket对象，所有Object相关的接口都可以通过Bucket对象来进行
     bucket = oss2.Bucket(oss2.Auth(access_key_id, access_key_secret), endpoint, bucket_name)
@@ -58,5 +58,5 @@ class ossApi:
 
 
 if __name__ == '__main__':
-    ossApi().determine_part_upload('123.txt', r'C:\Users\姜楠\Desktop\CMS\studyFree\requirements.txt')
-    ossApi().download('123.txt', r'C:\Users\姜楠\Desktop\CMS\studyFree\123.txt')
+    ossApi().determine_part_upload('123.txt', r'')
+    ossApi().download('123.txt', r'')

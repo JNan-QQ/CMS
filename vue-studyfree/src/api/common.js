@@ -77,14 +77,13 @@ export function qianDao(that) {
 }
 
 // 获取验证码
-export function registerEmailCode(email, that) {
+export function registerEmailCode(email,email_type, that) {
     that.btnCodeStatus = true
     return request({
         url: 'common/other',
         method: 'post',
-        data: {action: 'emailCode', email: email}
+        data: {action: 'emailCode', email: email, email_type: email_type}
     }).then(res => {
-        console.log('123')
         if (res) {
             ElMessage({
                 message: res['msg'],
@@ -96,11 +95,11 @@ export function registerEmailCode(email, that) {
 }
 
 // send email code
-export function sendEmailCode() {
+export function sendEmailCode(email_type) {
     return request({
         url: 'common/other',
         method: 'post',
-        data: {action: 'emailCode'}
+        data: {action: 'emailCode', email_type: email_type}
     }).then(res => {
         if (res) {
             ElMessage({

@@ -63,6 +63,7 @@
 import {ArrowRight, Refresh, ArrowLeftBold} from "@element-plus/icons";
 import {AccountApi, CommonApi, registerEmailCode} from "@/api/common";
 import {ElMessage} from "element-plus";
+import {email_conf} from "@/store/config";
 
 export default {
     name: "rPA",
@@ -89,7 +90,7 @@ export default {
     },
     methods: {
         getCode() {
-            registerEmailCode(this.email, this)
+            registerEmailCode(this.email, email_conf.email_modify_password, this)
         },
         getUserName() {
             this.btnCodeStatus = true

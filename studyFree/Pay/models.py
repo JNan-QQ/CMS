@@ -4,15 +4,13 @@ import traceback
 
 from django.db import models
 
-from Common.models import User
-
 
 # 用户付款相关配置
 class PayConfig(models.Model):
     # id
     id = models.BigAutoField(primary_key=True)
     # 对应用户id
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.ForeignKey('Common.User', on_delete=models.CASCADE)
     # F币
     coins = models.IntegerField(null=True, blank=True, default=0)
     # 经验
@@ -62,18 +60,18 @@ class PayConfig(models.Model):
             traceback.print_exc()
             return {'ret': 1, 'msg': '获取用户配置出错'}
 
-    @staticmethod
-    def add(data):
-        try:
-            user_id = data['user_id']
-            if PayConfig.objects.filter(user_id__id=user_id).exists():
-                return {'ret': 1, 'msg': f'账号已配置'}
-            payConfig = PayConfig.objects.create(
-                user_id_id=user_id
-            )
-            return {'ret': 0, 'pay_config_id': payConfig.id}
-        except:
-            return {'ret': 1, 'msg': '添加用户配置失败！'}
+    # @staticmethod
+    # def add(data):
+    #     try:
+    #         user_id = data['user_id']
+    #         if PayConfig.objects.filter(user_id__id=user_id).exists():
+    #             return {'ret': 1, 'msg': f'账号已配置'}
+    #         payConfig = PayConfig.objects.create(
+    #             user_id_id=user_id
+    #         )
+    #         return {'ret': 0, 'pay_config_id': payConfig.id}
+    #     except:
+    #         return {'ret': 1, 'msg': '添加用户配置失败！'}
 
     @staticmethod
     def modify(data):
@@ -225,7 +223,7 @@ class Products(models.Model):
 class Order(models.Model):
     id = models.BigAutoField(primary_key=True)
     # 用户
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey('Common.User', on_delete=models.CASCADE)
     orderNo = models.CharField(max_length=100, null=True, blank=True)
     money = models.DecimalField(max_digits=10, decimal_places=2)
     # 1： 未付款 | 2： 已付款

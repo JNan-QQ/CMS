@@ -24,7 +24,9 @@
         <el-table-column prop="email" label="邮箱" width="200"/>
         <el-table-column label="F币" width="150">
             <template #default="scope">
-                <el-input-number v-model="scope.row.coins" size="small" :controls="false"/>
+                <el-input-number v-model="scope.row.coins" size="small" :controls="false"
+                                 @change="changePayConfig(scope.row.coins,'coins',scope.row.id)"
+                />
             </template>
         </el-table-column>
         <el-table-column prop="lv" label="等级" width="60"/>
@@ -113,6 +115,7 @@ export default {
         this.getAccountData()
     },
     methods: {
+        // 获取用户信息
         getAccountData() {
             // 搜索过滤
             const search_items = {}
@@ -127,6 +130,7 @@ export default {
             })
 
         },
+
         // 编辑修改账号
         editBtnFunction(data) {
             this.newAccount = {
@@ -138,6 +142,7 @@ export default {
             }
             this.editBtn = true
         },
+
         // 添加账号
         addBtnFunction() {
             this.newAccount = {
@@ -148,11 +153,13 @@ export default {
             }
             this.editBtn = true
         },
+
         // 取消操作
         editBtnCancel() {
             this.editBtn = false
             this.newAccount = {}
         },
+
         //提交修改、添加账号
         modify_add_Account() {
             // 修改\添加请求
@@ -214,8 +221,9 @@ export default {
             }).catch()
         },
 
+        // 修改pay服务
         changePayConfig(value, mode, id) {
-            const paydirt = {user_id: id,action:'modify_payconfig'}
+            const paydirt = {user_id: id, action: 'modify_payconfig'}
             paydirt[mode] = value
             AccountApi(paydirt)
         },

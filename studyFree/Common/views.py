@@ -252,17 +252,21 @@ class Others:
 
     @staticmethod
     def emailCode(request):
+        # 获取信息
         code = generate_random_str()
         email = request.params.get('email', None)
+        email_type = request.params.get('email_type', None)
+        username = ''
         if not email:
             try:
                 email = request.session['email']
+                username = request.session['username']
             except:
                 return jsonResponse({'ret': 1, 'msg': '请填写正确的邮箱'})
         res = EmailCode.add({'email': email, 'code': code})
         if res['ret'] == 1:
             return jsonResponse(res)
-        res1 = SendEmail.sendEmail('【studyfree】 注册验证', f'你本次注册的六位验证码为：-> {code} <-,五分钟内有效。', [email])
+        res1 = SendEmail.sendEmail(email_type=email_type, receivers=[email], username=username, code=code)
         if not res1:
             return jsonResponse({'ret': 1, 'msg': '验证码邮件发送失败，请稍后重试'})
         return jsonResponse(res)

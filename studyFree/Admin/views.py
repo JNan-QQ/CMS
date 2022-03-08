@@ -120,9 +120,9 @@ class Account:
     @staticmethod
     def add(request):
         res = User.add_account(request.params)
-        user_id = res['id']
-        res1 = PayConfig.add({'user_id': user_id})
-        return jsonResponse(res1)
+        # user_id = res['id']
+        # res1 = PayConfig.add({'user_id': user_id})
+        return jsonResponse(res)
 
     @staticmethod
     def delete(request):

@@ -70,6 +70,7 @@ import {markRaw} from "vue"
 import {sign} from "../../api/Login"
 import {registerEmailCode} from "../../api/common"
 import {ElMessage} from "element-plus"
+import {email_conf} from "@/store/config";
 
 export default {
     name: "LoginIndex",
@@ -123,7 +124,7 @@ export default {
             }
         },
         getCode() {
-            registerEmailCode(this.registerForm.email,this)
+            registerEmailCode(this.registerForm.email, email_conf.email_register, this)
         }
     },
 }
