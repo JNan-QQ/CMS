@@ -60,19 +60,6 @@ class PayConfig(models.Model):
             traceback.print_exc()
             return {'ret': 1, 'msg': '获取用户配置出错'}
 
-    # @staticmethod
-    # def add(data):
-    #     try:
-    #         user_id = data['user_id']
-    #         if PayConfig.objects.filter(user_id__id=user_id).exists():
-    #             return {'ret': 1, 'msg': f'账号已配置'}
-    #         payConfig = PayConfig.objects.create(
-    #             user_id_id=user_id
-    #         )
-    #         return {'ret': 0, 'pay_config_id': payConfig.id}
-    #     except:
-    #         return {'ret': 1, 'msg': '添加用户配置失败！'}
-
     @staticmethod
     def modify(data):
         try:

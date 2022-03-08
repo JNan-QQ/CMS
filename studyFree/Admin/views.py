@@ -92,7 +92,7 @@ class Account:
         elif action == 'delete':
             return self.delete(request)
         elif action == 'modify_payconfig':
-            return self.modify_payconfig(request)
+            return self.modify_pay_config(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -120,8 +120,6 @@ class Account:
     @staticmethod
     def add(request):
         res = User.add_account(request.params)
-        # user_id = res['id']
-        # res1 = PayConfig.add({'user_id': user_id})
         return jsonResponse(res)
 
     @staticmethod
@@ -130,7 +128,7 @@ class Account:
         return jsonResponse(res)
 
     @staticmethod
-    def modify_payconfig(request):
+    def modify_pay_config(request):
         ret = PayConfig.modify(request.params)
         return jsonResponse(ret)
 
@@ -169,7 +167,7 @@ class Orders:
 
     @staticmethod
     def list(request):
-        request.params['usertype'] = 1
+        request.params['usertype'] = request.session['usertype']
         res = Order.list_order(request.params)
         return jsonResponse(res)
 

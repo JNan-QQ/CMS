@@ -61,7 +61,7 @@ class User(AbstractUser):
                     desc=data['desc']
                 )
                 PayConfig.objects.create(
-                    user_id=user.id
+                    user_id=user
                 )
 
             return {'ret': 0, 'id': user.id}
