@@ -113,5 +113,6 @@ export default {
 .page {
     text-align: center;
     margin: 10px auto auto;
+    position: relative;
 }
 </style>

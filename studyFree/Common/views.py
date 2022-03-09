@@ -9,11 +9,11 @@ from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 
-from Pay.models import PayConfig
 from Common.forms import handle_uploaded_file
 from Common.lib.email_my import SendEmail
 from Common.lib.shara import jsonResponse, generate_random_str
 from Common.models import CelebrityQuotes, User, EmailCode
+from Pay.models import PayConfig
 
 
 class Login:
@@ -278,8 +278,14 @@ class Others:
         file_name = file_name.replace('timeR', str(int(time.time())))
         if File:
             f_path = os.path.join(settings.BASE_DIR, 'static/images', file_type, file_name)
-            handle_uploaded_file(request.FILES['file'], f_path)
-            return jsonResponse({'ret': 0, 'url': f'static/images/{file_type}/{file_name}'})
+            ret = handle_uploaded_file(request.FILES['file'], f_path)
+            aviator_path = f'static/images/{file_type}/{file_name}'
+            if ret:
+                if file_type == 'aviator':
+                    User.modify_account({'user_id': request.session['user_id'], 'aviator': aviator_path})
+                return jsonResponse({'ret': 0, 'url': aviator_path})
+            else:
+                return jsonResponse({'ret': 1, 'msg': '修改头像失败'})
 
     @staticmethod
     def checkEmailCode(request):

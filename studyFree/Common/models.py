@@ -1,4 +1,5 @@
 import datetime
+import os.path
 import random
 import traceback
 
@@ -10,6 +11,7 @@ from django.db import models, transaction
 from django.db.models import Q
 
 from Pay.models import PayConfig
+from config.settings import BASE_DIR
 
 
 class User(AbstractUser):
@@ -118,6 +120,10 @@ class User(AbstractUser):
                 'ret': 1,
                 'msg': f'id 为`{account_id}`的用户不存在'
             }
+
+        # 删除用户头像
+        if account.aviator:
+            os.remove(os.path.join(BASE_DIR, account.aviator))
 
         # delete 方法就将该记录从数据库中删除了
         account.delete()

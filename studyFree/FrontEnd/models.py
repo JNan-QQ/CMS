@@ -1,4 +1,6 @@
 import datetime
+import glob
+import os.path
 import traceback
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -6,9 +8,10 @@ from django.db import models
 from django.db import transaction
 
 from Common.models import User
-
-
 # 文章标签
+from config.settings import BASE_DIR
+
+
 class Tags(models.Model):
     # 标签id
     id = models.BigAutoField(primary_key=True)
@@ -244,6 +247,11 @@ class NoteBook(models.Model):
             }
         if note.user_id.id == data['user_id']:
             note.delete()
+
+        # 删除笔记里的图片存储
+        for note_img in glob.glob(os.path.join(BASE_DIR, 'static/images/notebook', f'img_notebook_{note_id}_*.png')):
+            os.remove(note_img)
+
         return {'ret': 0}
 
     @staticmethod

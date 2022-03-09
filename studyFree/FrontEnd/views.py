@@ -1,8 +1,6 @@
 import json
 import os.path
 import traceback
-
-# Create your views here.
 from Common.lib.shara import jsonResponse
 from FrontEnd.models import Tags, ArticleContent, NoteBook
 from config import settings

@@ -4,11 +4,10 @@
             <div class="aviator">
                 <el-avatar :src="userdata.aviator" :size="150"></el-avatar>
                 <el-upload action="/api/common/other"
-                           :data="{action:'uploadImg',file_type:'aviator',file_name:'img_aviator_'+userdata.id+'_timeR.png'}"
+                           :data="{action:'uploadImg',file_type:'aviator',file_name:'img_aviator_'+userdata.user_id+'_.png'}"
                            :on-success="uploadImgSuccess"
                            :show-file-list="false"
-                           accept="image/png, image/jpeg, image/jpg"
-                >
+                           accept="image/png, image/jpeg, image/jpg">
                     <el-button>更换头像</el-button>
                 </el-upload>
             </div>
@@ -276,8 +275,11 @@ export default {
         // 上传头像图片成功后修改头像
         uploadImgSuccess(response, file, fileList) {
             if (response['ret'] === 0) {
-                this.userdata.aviator = response['url']
-                AccountApi({action: 'modify', 'aviator': response['url']})
+                this.userdata.aviator = 'api_file/' + response['url']
+                ElMessage({
+                    message: '修改成功，请刷新！',
+                    type: 'success',
+                })
             }
         },
 

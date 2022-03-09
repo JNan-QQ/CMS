@@ -11,16 +11,15 @@
                                     <edit/>
                                 </el-icon>
                             </template>
-                            <div
-                                style="margin: 2px;display: flex;justify-content: right;border-bottom: #eeeeee solid 2px">
+                            <div class="noteBtn" v-if="index + 1===activeName">
                                 <el-button @click="isEdit=true" v-if="!isEdit">编辑</el-button>
                                 <el-button v-if="isEdit" @click="isEdit=false">返回</el-button>
                                 <el-button v-if="isEdit" @click="saveNoteBook(item.id,item.content)"
                                            :loading="saveLoading">保存
                                 </el-button>
-                                <el-button @click="deleteNoteBook(item.id)">删除</el-button>
+                                <el-button @click="deleteNoteBook(item.id)" :loading="deleteBtn">删除</el-button>
                             </div>
-                            <div style="margin: 2px;">
+                            <div style="margin: 2px;" v-if="index + 1===activeName">
                                 <md-editor v-if="isEdit" v-model="item.content"
                                            @onSave="saveNoteBook(item.id,item.content)"
                                            @onUploadImg="onUploadImg"
@@ -82,7 +81,7 @@ export default {
             isEdit: false,
             activeName: 1,
             bjList: [],
-            saveLoading: false,
+            saveLoading: false,deleteBtn: false,
             DocumentAdd: markRaw(DocumentAdd), Remove: markRaw(Remove), CaretTop: markRaw(CaretTop),
         }
     },
@@ -113,8 +112,10 @@ export default {
                     type: 'warning',
                 }
             ).then(() => {
+                this.deleteBtn = true
                 noteContent({action: 'deleteNoteBook', 'note_id': id}).then(res => {
                     this.before()
+                    this.deleteBtn = false
                     ElMessage({
                         type: 'success',
                         message: '删除笔记成功',
@@ -205,6 +206,13 @@ export default {
                     padding: 10px 20px;
                     border-bottom: #04121c;
                     border-top: #04121c;
+                }
+
+                .noteBtn {
+                    margin: 2px;
+                    display: flex;
+                    justify-content: right;
+                    border-bottom: #eeeeee solid 2px;
                 }
             }
         }

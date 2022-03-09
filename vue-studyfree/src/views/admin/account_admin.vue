@@ -212,6 +212,7 @@ export default {
             ).then(() => {
                 AccountApi({action: 'delete', user_id: data['id']}).then(res => {
                     if (res) {
+                        this.getAccountData()
                         ElMessage({
                             message: '姓名为：' + data['realName'] + ' 的账号删除成功',
                             type: 'success',
