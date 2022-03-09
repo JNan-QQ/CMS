@@ -67,13 +67,13 @@
 </template>
 
 <script>
-import MdEditor from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
-import {noteContent} from "@/api/common";
-import {DocumentAdd, Edit, Remove, CaretTop} from "@element-plus/icons";
-import {ElMessage, ElMessageBox} from "element-plus";
-import request from "../../api/request";
-import {markRaw} from "vue";
+import MdEditor from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
+import {noteContent} from "@/api/common"
+import {DocumentAdd, Edit, Remove, CaretTop} from "@element-plus/icons"
+import {ElMessage, ElMessageBox} from "element-plus"
+import request from "../../api/request"
+import {markRaw} from "vue"
 
 export default {
     name: "noteView",
@@ -155,14 +155,14 @@ export default {
                     return new Promise((rev, rej) => {
                         const form = new FormData();
                         form.append('file', file);
-                        form.append('action', 'uploadImg')
-                        form.append('file_name', file_name)
-                        form.append('file_type', 'notebook')
-                        request.post('/common/other', form).then((res) => rev(res)).catch((error) => rej(error))
+                        form.append('action', 'uploadImg');
+                        form.append('file_name', file_name);
+                        form.append('file_type', 'notebook');
+                        request.post('/common/other', form).then((res) => rev(res)).catch((error) => rej(error));
                     });
                 })
             );
-            callback(res.map((item) => item.url));
+            callback(res.map((item) => 'api_file/' + item.url));
         },
 
         // 点击图片回到顶部方法，加计时器是为了过渡顺滑

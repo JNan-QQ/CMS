@@ -285,7 +285,7 @@ export default {
         changePassword() {
             if (this.newUserdata.password.length >= 6) {
                 sendEmailCode(email_conf.email_modify_password)
-                ElMessageBox.prompt('请输入邮箱接收到的验证码', 'Tip', {
+                ElMessageBox.prompt('请输入邮箱接收到的验证码', '提示', {
                     confirmButtonText: '确认',
                     cancelButtonText: '取消',
                 }).then(({value}) => {

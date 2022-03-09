@@ -1,5 +1,7 @@
 import json
+import traceback
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 
@@ -39,8 +41,10 @@ class webConfig(models.Model):
     def modify(data):
         try:
             web = webConfig.objects.get(id=data['webConfig_id'])
-        except:
-            return {'ret': 1, 'msg': '未找到数据'}
+        except KeyError:
+            return {'ret': 1, 'msg': '未输入配置字段'}
+        except ObjectDoesNotExist:
+            return {'ret': 1, 'msg': '输入的webconfig字段未找到'}
 
         if 'title' in data:
             web.title = data['title']

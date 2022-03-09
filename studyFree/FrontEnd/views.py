@@ -49,6 +49,7 @@ class Article:
     def list_md_content(request):
         tag_id = request.params['tag_id']
 
+        # noinspection PyBroadException
         try:
             filePathDict = ArticleContent.list({'tag_id': tag_id})
             filePath = os.path.join(settings.BASE_DIR, 'static', filePathDict['filePath'])
@@ -94,7 +95,7 @@ class Note:
     def addNoteBook(request):
         try:
             user_id = request.session['user_id']
-        except:
+        except KeyError:
             return jsonResponse({'ret': 1, 'msg': '未登录，请先登录'})
 
         ret = NoteBook.add({'user_id': user_id})
@@ -105,7 +106,7 @@ class Note:
     def listNoteBook(request):
         try:
             user_id = request.session['user_id']
-        except:
+        except KeyError:
             return jsonResponse({'ret': 1, 'msg': '未登录，请先登录'})
 
         ret = NoteBook.list({'user_id': user_id})
@@ -116,7 +117,7 @@ class Note:
     def deleteNoteBook(request):
         try:
             user_id = request.session['user_id']
-        except:
+        except KeyError:
             return jsonResponse({'ret': 1, 'msg': '未登录，请先登录'})
 
         ret = NoteBook.delete_note({'user_id': user_id, 'note_id': request.params['note_id']})
@@ -127,7 +128,7 @@ class Note:
     def modifyNoteBook(request):
         try:
             request.params['user_id'] = request.session['user_id']
-        except:
+        except KeyError:
             return jsonResponse({'ret': 1, 'msg': '未登录，请先登录'})
 
         ret = NoteBook.modify(request.params)

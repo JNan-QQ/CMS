@@ -6,6 +6,7 @@ import time
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 
 from Pay.models import PayConfig
@@ -103,8 +104,7 @@ class Login:
         else:
             return jsonResponse({'ret': 302, 'msg': '未登录'})
 
-    @staticmethod
-    def register(request):
+    def register(self, request):
         email = request.params['email']
         code = request.params['code']
         res = EmailCode.checkCode(email, code)
@@ -119,15 +119,10 @@ class Login:
             'realName': ''
         }
         res = User.add_account(data)
-        if res['ret'] == 1:
-            return jsonResponse(res)
 
-        user_id = res['id']
-        res1 = PayConfig.add({'user_id': user_id})
+        self.signin(request)
 
-        Login.signin(request)
-
-        return jsonResponse(res1)
+        return jsonResponse(res)
 
 
 class CQ:
@@ -194,13 +189,16 @@ class Download:
 
     @staticmethod
     def free(request):
+        # noinspection PyBroadException
         try:
             price = request.params['price']
             res = PayConfig.modify(
                 {'user_id': request.session['user_id'], 'coins': -int(price), 'exp': 10 * int(price)})
             return jsonResponse(res)
-        except:
+        except KeyError:
             return jsonResponse({'ret': 1, 'msg': '请先登录，再下载文章'})
+        except:
+            return jsonResponse({'ret': 1, 'msg': '其他异常'})
 
 
 class Others:
@@ -215,6 +213,7 @@ class Others:
         # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
         elif request.method in ['POST', 'PUT', 'DELETE']:
             # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+            # noinspection PyBroadException
             try:
                 request.params = json.loads(request.body)
             except:
@@ -240,8 +239,8 @@ class Others:
         elif action == 'uploadImg':
             return self.uploadImg(request)
         # 通过邮箱获取账号列表
-        elif action == 'emailAccount':
-            return self.emailAccount(request)
+        elif action == 'listEmailAccount':
+            return self.listEmailAccount(request)
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -261,7 +260,7 @@ class Others:
             try:
                 email = request.session['email']
                 username = request.session['username']
-            except:
+            except KeyError:
                 return jsonResponse({'ret': 1, 'msg': '请填写正确的邮箱'})
         res = EmailCode.add({'email': email, 'code': code})
         if res['ret'] == 1:
@@ -299,16 +298,16 @@ class Others:
             try:
                 user = User.objects.get(username=username, email=email)
                 ret = User.modify_account({'user_id': user.id, 'password': password})
-            except:
+            except ObjectDoesNotExist:
                 return jsonResponse({'ret': 1, 'msg': '未找到邮箱对应账号'})
         return jsonResponse(ret)
 
     @staticmethod
-    def emailAccount(request):
+    def listEmailAccount(request):
         try:
             email = request.params['email']
             code = request.params['code']
-        except:
+        except KeyError:
             return jsonResponse({'ret': 1, 'msg': '邮箱信息获取失败'})
         if not EmailCode.objects.filter(email=email, code=code, status=1).exists():
             return jsonResponse({'ret': 1, 'msg': '邮箱验证失败，请重试'})
@@ -341,8 +340,11 @@ class Accounts:
 
     @staticmethod
     def modify_account(request):
-        user_id = request.session['user_id']
-        usertype = request.session['usertype']
+        try:
+            user_id = request.session['user_id']
+            usertype = request.session['usertype']
+        except KeyError:
+            return jsonResponse({'ret': 1, 'msg': '请先登录'})
         if usertype != 1 and 'usertype' in request.params:
             request.params['usertype'] = 1005
         request.params['user_id'] = user_id
