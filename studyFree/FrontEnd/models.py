@@ -1,6 +1,7 @@
 import datetime
 import traceback
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db import transaction
 
@@ -15,7 +16,6 @@ class Tags(models.Model):
     tag_name = models.CharField(max_length=100, null=True, blank=True)
     # 子标签id （链接自身标签）
     tag_id = models.IntegerField(null=True, blank=True)
-    # tag_id = models.ForeignKey('self', on_delete=models.CASCADE, blank=True)
     # 标签 type
     # 1:一级标签 | 2：二级标签 | 3：三级标签
     tag_type = models.PositiveIntegerField()
@@ -30,6 +30,7 @@ class Tags(models.Model):
 
     @staticmethod
     def admin_add(data):
+        # noinspection PyBroadException
         try:
             if data['tag_type'] == 1:
                 data['tag_id'] = None
@@ -98,11 +99,10 @@ class Tags(models.Model):
         try:
             # 根据 id 从数据库中找到相应的记录
             tag = Tags.objects.get(id=data['id'])
-        except:
-            return {
-                'ret': 1,
-                'msg': '标签id不存在'
-            }
+        except ObjectDoesNotExist:
+            return {'ret': 1, 'msg': '未查询到标签对应的数据'}
+        except KeyError:
+            return {'ret': 1, 'msg': '请输入标签id'}
         if 'tag_name' in data:
             tag.tag_name = data['tag_name']
         if 'tag_id' in data:
@@ -121,11 +121,10 @@ class Tags(models.Model):
         try:
             # 根据 id 从数据库中找到相应的客户记录
             tag = Tags.objects.get(id=data['id'])
-        except:
-            return {
-                'ret': 1,
-                'msg': f'标签不存在'
-            }
+        except ObjectDoesNotExist:
+            return {'ret': 1, 'msg': f'未查询到标签对应的数据'}
+        except KeyError:
+            return {'ret': 1, 'msg': '请输入标签id'}
 
         # delete 方法就将该记录从数据库中删除了
         tag.delete()
@@ -152,8 +151,9 @@ class ArticleContent(models.Model):
 
     @staticmethod
     def list(data):
-        tag_id = data['tag_id']
+        # noinspection PyBroadException
         try:
+            tag_id = data['tag_id']
             if 'img' in data:
                 qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1).values('images')
             else:
@@ -170,11 +170,10 @@ class ArticleContent(models.Model):
         try:
             # 根据 id 从数据库中找到相应的记录
             article = ArticleContent.objects.get(id=data['id'])
-        except:
-            return {
-                'ret': 1,
-                'msg': '标签id不存在'
-            }
+        except ObjectDoesNotExist:
+            return {'ret': 1, 'msg': '标签id未查询到对应数据'}
+        except KeyError:
+            return {'ret': 1, 'msg': '请输入标签id'}
 
         if 'images' in data:
             article.images = data['images']
@@ -208,6 +207,7 @@ class NoteBook(models.Model):
     @staticmethod
     def add(data):
         user_id = data['user_id']
+        # noinspection PyBroadException
         try:
             qs = NoteBook.objects.filter(user_id__id=user_id)
             if len(qs) == 10:
@@ -223,6 +223,7 @@ class NoteBook(models.Model):
 
     @staticmethod
     def list(data):
+        # noinspection PyBroadException
         try:
             qs = NoteBook.objects.filter(user_id__id=data['user_id'], status=1).values().order_by('-id')
             qs = list(qs)
@@ -236,7 +237,7 @@ class NoteBook(models.Model):
         try:
             # 根据 id 从数据库中找到相应的客户记录
             note = NoteBook.objects.get(id=note_id)
-        except:
+        except ObjectDoesNotExist:
             return {
                 'ret': 1,
                 'msg': f'id 为`{note_id}`的笔记不存在'
@@ -251,7 +252,7 @@ class NoteBook(models.Model):
         try:
             # 根据 id 从数据库中找到相应的客户记录
             note = NoteBook.objects.get(id=note_id)
-        except:
+        except ObjectDoesNotExist:
             return {
                 'ret': 1,
                 'msg': f'id 为`{note_id}`的笔记不存在'

@@ -12,6 +12,7 @@ from Pay.models import Order, PayConfig
 
 
 class aliPay:
+    # noinspection PyBroadException
     try:
         ailiConfig = webConfig.list({'title': 'aliPay'})['retlist'][0]['config']
         ailiConfig = json.loads(ailiConfig)
@@ -29,13 +30,6 @@ class aliPay:
         # 支付宝沙箱里面的APPID，需要改成你自己的
         # appid="2021000118685158",
         appid=ailiConfig['appid'],
-        # # 如果支付成功，支付宝会向这个地址发送POST请求（校验是否支付已经完成），此地址要能够在公网进行访问，需要改成你自己的服务器地址
-        # app_notify_url="http://m4e1587419.qicp.vip/pay/success",
-        # # 如果支付成功，重定向回到你的网站的地址。需要你自己改，这里是我的服务器地址
-        # return_url="http://m4e1587419.qicp.vip/pay/result",
-        # alipay_public_key_path=AliPay.ALIPAY_PUBLIC,  # 支付宝公钥
-        # app_private_key_path=AliPay.APP_PRIVATE,  # 应用私钥
-        # debug=True,
         # 如果支付成功，支付宝会向这个地址发送POST请求（校验是否支付已经完成），此地址要能够在公网进行访问，需要改成你自己的服务器地址
         app_notify_url=ailiConfig['app_notify_url'],
         # 如果支付成功，重定向回到你的网站的地址。需要你自己改，这里是我的服务器地址

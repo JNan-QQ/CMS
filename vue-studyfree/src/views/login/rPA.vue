@@ -61,7 +61,7 @@
 
 <script>
 import {ArrowRight, Refresh, ArrowLeftBold} from "@element-plus/icons";
-import {AccountApi, CommonApi, registerEmailCode} from "@/api/common";
+import {CommonApi, registerEmailCode} from "@/api/common";
 import {ElMessage} from "element-plus";
 import {email_conf} from "@/store/config";
 
@@ -94,7 +94,7 @@ export default {
         },
         getUserName() {
             this.btnCodeStatus = true
-            CommonApi({action: 'emailAccount', email: this.email, code: this.code}).then(res => {
+            CommonApi({action: 'listEmailAccount', email: this.email, code: this.code}).then(res => {
                 if (res) {
                     this.usernameList = res['usernameList']
                 }

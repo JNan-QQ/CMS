@@ -4,6 +4,8 @@ import shutil
 import time
 import traceback
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from Admin.models import webConfig
 from Common.forms import handle_uploaded_file
 from Common.lib.shara import jsonResponse
@@ -108,8 +110,8 @@ class Account:
                         i.update(ret['retlist'][0])
                         user_info.append(i)
                 res['retlist'] = user_info
-            except:
-                traceback.print_exc()
+            except ObjectDoesNotExist:
+                return jsonResponse({'ret': 1, 'msg': f'未查询到用户的配置表'})
         return jsonResponse(res)
 
     @staticmethod
@@ -323,7 +325,7 @@ class FileManage:
             # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
             try:
                 request.params = json.loads(request.body)
-            except:
+            except UnicodeDecodeError:
                 actionFormData = request.POST.get('action', None)
 
         # 判断账号类型

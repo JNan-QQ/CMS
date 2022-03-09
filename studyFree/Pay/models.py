@@ -2,6 +2,7 @@ import datetime
 import json
 import traceback
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 
@@ -32,6 +33,7 @@ class PayConfig(models.Model):
 
     @staticmethod
     def list(data):
+        # noinspection PyBroadException
         try:
             qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('coins', 'lv', 'deadline', 'qd')
             qs = list(qs)
@@ -42,6 +44,7 @@ class PayConfig(models.Model):
 
     @staticmethod
     def listServerConfig(data):
+        # noinspection PyBroadException
         try:
             qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('userServerConfig')
             qs = list(qs)[0]
@@ -52,6 +55,7 @@ class PayConfig(models.Model):
 
     @staticmethod
     def listWebUrl(data):
+        # noinspection PyBroadException
         try:
             qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('web_url')
             qs = list(qs)[0]
@@ -62,12 +66,13 @@ class PayConfig(models.Model):
 
     @staticmethod
     def modify(data):
+        # noinspection PyBroadException
         try:
             user_id = data['user_id']
             try:
                 # 根据 user_id 从数据库中找到相应的客户记录
                 pay_config = PayConfig.objects.get(user_id__id=user_id)
-            except:
+            except ObjectDoesNotExist:
                 return {
                     'ret': 1,
                     'msg': f'id 为`{user_id}`的用户配置不存在'
@@ -151,6 +156,7 @@ class Products(models.Model):
 
     @staticmethod
     def add_products(data):
+        # noinspection PyBroadException
         try:
             Products.objects.create(
                 price=data['price'],
@@ -166,12 +172,13 @@ class Products(models.Model):
 
     @staticmethod
     def modify_products(data):
+        # noinspection PyBroadException
         try:
             product_id = data['product_id']
             try:
                 # 根据 id 从数据库中找到相应的客户记录
                 product = Products.objects.get(id=product_id)
-            except:
+            except ObjectDoesNotExist:
                 traceback.print_exc()
                 return {'ret': 1}
 
@@ -230,6 +237,7 @@ class Order(models.Model):
 
     @staticmethod
     def add_order(data):
+        # noinspection PyBroadException
         try:
             Order.objects.create(
                 user_id=data['user_id'],
@@ -244,12 +252,13 @@ class Order(models.Model):
 
     @staticmethod
     def modify_order(data):
+        # noinspection PyBroadException
         try:
             orderNo = data['orderNo']
             try:
                 # 根据 id 从数据库中找到相应的客户记录
                 orderLs = Order.objects.get(orderNo=orderNo)
-            except:
+            except ObjectDoesNotExist:
                 traceback.print_exc()
                 return {'ret': 1}
 

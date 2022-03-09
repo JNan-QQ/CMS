@@ -4,6 +4,7 @@ import traceback
 
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage
 from django.db import models, transaction
 from django.db.models import Q
@@ -76,7 +77,7 @@ class User(AbstractUser):
             try:
                 # 根据 id 从数据库中找到相应的客户记录
                 account = User.objects.get(id=account_id)
-            except:
+            except ObjectDoesNotExist:
                 return {
                     'ret': 1,
                     'msg': f'id 为`{account_id}`的用户不存在'
@@ -102,8 +103,8 @@ class User(AbstractUser):
             # 注意，一定要执行save才能将修改信息保存到数据库
             account.save()
             return {'ret': 0}
-        except:
-            return {'ret': 1, 'msg': '修改用户信息失败！'}
+        except KeyError:
+            return {'ret': 1, 'msg': '无法获取用户id'}
 
     @staticmethod
     def delete_account(data):
@@ -112,7 +113,7 @@ class User(AbstractUser):
         try:
             # 根据 id 从数据库中找到相应的客户记录
             account = User.objects.get(id=account_id)
-        except:
+        except ObjectDoesNotExist:
             return {
                 'ret': 1,
                 'msg': f'id 为`{account_id}`的用户不存在'
@@ -172,8 +173,8 @@ class User(AbstractUser):
         except EmptyPage:
             return {'ret': 0, 'retlist': [], 'total': 0}
 
-        except:
-            return {'ret': 2, 'msg': f'未知错误\n{traceback.format_exc()}'}
+        except KeyError:
+            return {'ret': 1, 'msg': '参数错误'}
 
 
 # 名人名言
@@ -235,6 +236,7 @@ class EmailCode(models.Model):
 
     @staticmethod
     def add(data):
+        # noinspection PyBroadException
         try:
             if EmailCode.objects.filter(email=data['email']).exists():
                 data['status'] = 1
@@ -246,9 +248,8 @@ class EmailCode(models.Model):
                     code=data['code']
                 )
                 return {'ret': 0, 'code_id': emailCode.id, 'msg': '6位验证码，已发送到你的邮箱'}
-        except:
-            traceback.print_exc()
-            return {'ret': 1, 'msg': '验证码添加失败'}
+        except Exception as e:
+            return {'ret': 1, 'msg': f'{e}'}
 
     @staticmethod
     def modify(data):
@@ -266,11 +267,14 @@ class EmailCode(models.Model):
             email.save()
 
             return {'ret': 0, 'msg': '6位验证码，已发送到你的邮箱'}
-        except:
-            return {'ret': 1, 'msg': '验证码异常'}
+        except ObjectDoesNotExist:
+            return {'ret': 1, 'msg': '邮箱与验证码不匹配'}
+        except KeyError:
+            return {'ret': 1, 'msg': '未获取到数据'}
 
     @staticmethod
     def checkCode(email, code):
+        # noinspection PyBroadException
         try:
             if EmailCode.objects.filter(email=email, code=code, status=1).exists():
                 res = EmailCode.modify({'status': 2, 'email': email, 'flg': False})
@@ -279,4 +283,3 @@ class EmailCode(models.Model):
                 return {'ret': 1, 'msg': '验证码错误，请重新输入'}
         except:
             return {'ret': 1, 'msg': '验证码可能已过期'}
-
