@@ -29,8 +29,8 @@ class payConfig:
             return self.listServerConfig(request)
         elif action == 'listWebUrl':
             return self.listWebUrl(request)
-        elif action == 'modify':
-            return self.modify(request)
+        # elif action == 'modify':
+        #     return self.modify(request)
         elif action == 'checkActive':
             return self.checkActive(request)
 
@@ -64,8 +64,11 @@ class payConfig:
 
     @staticmethod
     def modify(request):
-        request.params['user_id'] = request.session['user_id']
-        res = PayConfig.modify(request.params)
+        try:
+            request.params['user_id'] = request.session['user_id']
+            res = PayConfig.modify(request.params)
+        except KeyError:
+            res = {'ret': 1, 'msg': '请先登录'}
 
         return jsonResponse(res)
 

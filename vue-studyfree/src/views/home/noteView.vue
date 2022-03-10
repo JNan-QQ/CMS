@@ -185,7 +185,7 @@ export default {
 
     .noteBox {
         max-width: 1000px;
-        margin: auto;
+        margin: 10px auto auto;
         display: flex;
 
         .notebook {

@@ -2,6 +2,7 @@ import datetime
 import json
 import os
 import time
+import traceback
 
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
@@ -148,7 +149,7 @@ class CQ:
         if action == 'listAll':
             return self.listAll()
         if action == 'delete':
-            return jsonResponse(CelebrityQuotes.deleteCq(request.params))
+            return self.delete_cq(request)
 
     @staticmethod
     def list():
@@ -165,6 +166,13 @@ class CQ:
         if request.session['usertype'] != 1:
             return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
         res = CelebrityQuotes.add(request.params)
+        return jsonResponse(res)
+
+    @staticmethod
+    def delete_cq(request):
+        if request.session['usertype'] != 1:
+            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
+        res = CelebrityQuotes.deleteCq(request.params)
         return jsonResponse(res)
 
 
@@ -193,11 +201,12 @@ class Download:
         try:
             price = request.params['price']
             res = PayConfig.modify(
-                {'user_id': request.session['user_id'], 'coins': -int(price), 'exp': 10 * int(price)})
+                {'user_id': request.session['user_id'], 'coins': -abs(int(price)), 'exp': 10 * int(price)})
             return jsonResponse(res)
         except KeyError:
             return jsonResponse({'ret': 1, 'msg': '请先登录，再下载文章'})
         except:
+            traceback.print_exc()
             return jsonResponse({'ret': 1, 'msg': '其他异常'})
 
 
@@ -232,7 +241,7 @@ class Others:
         # 核对邮箱验证码
         elif action == 'checkEmailCode':
             return self.checkEmailCode(request)
-        # 核对邮箱验证码
+        # 重置密码
         elif action == 'resetPassword':
             return self.resetPassword(request)
         # 上传图片公共接口

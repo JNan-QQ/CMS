@@ -1,5 +1,17 @@
 <template>
     <div class="tool-view">
+
+        <div class="b_searchboxForm">
+            <input class="searchBox" maxlength="100" v-model="search_str"
+                   @keydown.enter="search_b" autofocus="autofocus">
+            <el-icon size="18" color="#7fb8e4" v-if="search_str!==''" @click="search_str=''">
+                <close-bold/>
+            </el-icon>
+            <el-icon size="24" color="#7fb8e4" @click="search_b">
+                <search/>
+            </el-icon>
+        </div>
+
         <div class="driver-box ss">
             <div class="headline">
                 <strong>WebDriver
@@ -99,7 +111,7 @@
 
 <script>
 import {WebConfigApi} from "@/api/admin";
-import {Edit, Plus, Select, CloseBold} from "@element-plus/icons";
+import {Edit, Plus, Select, CloseBold, Search} from "@element-plus/icons";
 import {markRaw} from "vue";
 import {ElMessage} from "element-plus";
 
@@ -112,16 +124,20 @@ export default {
             browser: {},
             tools_dict: {},
             otherList: [],
-            Edit: markRaw(Edit), Plus: markRaw(Plus), Select: markRaw(Select), CloseBold: markRaw(CloseBold),
+            Edit: markRaw(Edit),
+            Plus: markRaw(Plus),
+            Select: markRaw(Select),
+            CloseBold: markRaw(CloseBold),
             dialogVisible: false,
             newWebTool: {title: '', jump_url: '', icon_url: ''},
             icon_mode: true,
             btnLoading: false,
             saveBtn: false,
-            editBtn: false
+            editBtn: false,
+            search_str: ''
         }
     },
-    components: {CloseBold},
+    components: {CloseBold, Search},
     mounted() {
         this.getBrowser()
         this.getTools()
@@ -204,6 +220,10 @@ export default {
             this.newWebTool = {title: '', jump_url: '', icon_url: ''}
             this.icon_mode = true
         },
+        search_b(){
+            const url = 'https://cn.bing.com/search?q=' + this.search_str
+            window.open(url)
+        }
     }
 }
 </script>
@@ -213,11 +233,51 @@ export default {
     max-width: 1100px;
     margin: auto;
 
+    .b_searchboxForm {
+        width: 650px;
+        height: 48px;
+        border-radius: 24px;
+        position: relative;
+        font: 18px/normal 'Microsoft YaHei', Arial, Helvetica, Sans-Serif;
+        box-shadow: 0 0 0 1px #0000000d, 0 2px 4px 1px #0000000d;
+        border-left: 1px solid transparent;
+        border-right: none;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        background-color: #fff;
+        margin: 60px auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .searchBox {
+            width: 535px;
+            border-radius: 24px;
+            -webkit-appearance: none;
+            font-size: 16px;
+            margin: 1px 0 1px 1px;
+            padding: 0 10px 0 19px;
+            border: 0;
+            max-height: none;
+            outline: none;
+            box-sizing: border-box;
+            height: 44px;
+            vertical-align: top;
+            background-color: transparent;
+        }
+
+        .el-icon {
+            margin-right: 20px;
+            cursor: pointer;
+        }
+    }
+
     .ss {
         margin-bottom: 14px;
         border-radius: 4px;
         background: #fff;
         margin-top: 20px;
+        position: relative;
 
         .headline {
             padding: 15px 20px 0;
