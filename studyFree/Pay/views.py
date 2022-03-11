@@ -29,10 +29,12 @@ class payConfig:
             return self.listServerConfig(request)
         elif action == 'listWebUrl':
             return self.listWebUrl(request)
-        # elif action == 'modify':
-        #     return self.modify(request)
+        elif action == 'modify_config':
+            return self.modify_config(request)
         elif action == 'checkActive':
             return self.checkActive(request)
+        else:
+            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
     @staticmethod
     def userConfig(request):
@@ -63,10 +65,11 @@ class payConfig:
             return jsonResponse({'ret': 0, 'web_url': ''})
 
     @staticmethod
-    def modify(request):
+    def modify_config(request):
         try:
-            request.params['user_id'] = request.session['user_id']
-            res = PayConfig.modify(request.params)
+            user_id = request.session['user_id']
+            userServerConfig = request.params['userServerConfig']
+            res = PayConfig.modify({'user_id': user_id, 'userServerConfig': userServerConfig})
         except KeyError:
             res = {'ret': 1, 'msg': '请先登录'}
 

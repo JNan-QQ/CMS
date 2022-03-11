@@ -34,7 +34,13 @@
                     <el-icon>
                         <setting/>
                     </el-icon>
-                    <span>设置-杂项</span>
+                    <span>设置杂项</span>
+                </el-menu-item>
+                <el-menu-item index="5" v-if="userdata.usertype===1005||userdata.usertype===1">
+                    <el-icon>
+                        <star/>
+                    </el-icon>
+                    <span>服务配置</span>
                 </el-menu-item>
             </el-menu>
         </div>
@@ -103,40 +109,42 @@
             </div>
             <div v-else-if="activeIndex==='3'" class="content three">3</div>
             <div v-else-if="activeIndex==='4'" class="content four">
-                <div class="four-top">
-                    <div><span>开启高级模式：</span>
-                        <el-switch @change="changeUserType"
-                                   v-model="heightSwitch"
-                                   :disabled="heightSwitch"
-                                   inline-prompt
-                                   active-color="#13ce66"
-                                   inactive-color="#ff4949"
-                                   active-text="Y"
-                                   inactive-text="N">
-                        </el-switch>
-                    </div>
-                    <div>
-                        <el-button size="small" v-if="!editUserServerConfigSimple && !editUserServerConfig"
-                                   @click="editUserServerConfigSimple=true">
-                            编辑
-                        </el-button>
-                        <el-button size="small" v-if="!editUserServerConfig && !editUserServerConfigSimple"
-                                   @click="editUserServerConfig=true">
-                            编辑配置源码
-                        </el-button>
-                        <el-button size="small" v-if="editUserServerConfigSimple" @click="saveUserServerConfigSimple"
-                                   :loading="saveLoading">
-                            保存
-                        </el-button>
-                        <el-button size="small" v-if="editUserServerConfig" @click="saveUserServerConfig"
-                                   :loading="saveLoading">
-                            保存配置源码
-                        </el-button>
-                    </div>
+                <div v-if="userdata.usertype===1000">
+                    <span>开启高级模式：</span>
+                    <el-switch @change="changeUserType"
+                               v-model="heightSwitch"
+                               :disabled="heightSwitch"
+                               inline-prompt
+                               active-color="#13ce66"
+                               inactive-color="#ff4949"
+                               active-text="Y"
+                               inactive-text="N">
+                    </el-switch>
                 </div>
-                <div class="four-content">
-                    <el-empty description="无配置" v-if="userServerConfig === {} && !editUserServerConfig"></el-empty>
-                    <div v-if="userServerConfig !== {} && !editUserServerConfig" class="server-config">
+            </div>
+            <div v-else-if="activeIndex==='5'" class="content five">
+                <div class="five-top">
+                    <el-button size="small" v-if="!editUserConfig"
+                               @click="editUserConfigs('simple')">
+                        修改
+                    </el-button>
+                    <el-button size="small" v-if="!editUserConfig"
+                               @click="editUserConfigs">
+                        编辑配置源码
+                    </el-button>
+                    <el-button size="small" v-if="editUserServerConfigSimple" @click="saveUserServerConfigSimple"
+                               :loading="saveLoading">
+                        保存
+                    </el-button>
+                    <el-button size="small" v-if="editUserServerConfig" @click="saveUserServerConfig"
+                               :loading="saveLoading">
+                        保存配置源码
+                    </el-button>
+                </div>
+                <div class="five-content">
+                    <el-empty description="无配置" v-if="userServerConfig === '{}' && !editUserServerConfig && !editUserConfig" ></el-empty>
+                    <span v-if="userServerConfig === '{}' && editUserServerConfigSimple">如果没有内容请先编辑源码</span>
+                    <div v-if="userServerConfig !== '{}' && !editUserServerConfig" class="server-config">
                         <el-form :model="userServerConfigView" label-width="auto">
                             <el-form-item :label="value1['desc_name']" v-for="(value1,key1) in userServerConfigView">
                                 <div v-for="(value2,key2) in value1" class="server-config-items"
@@ -160,13 +168,14 @@
                         <el-input v-model="userServerConfig" :rows="20" type="textarea" placeholder="Please input"/>
                     </div>
                 </div>
+                <span style="font-size: 10px;float: right;margin-right: 10px;color: red;" v-if="userServerConfig !== '{}'">可以滚动查看</span>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import {Setting, InfoFilled, Tickets, MessageBox, Delete, Check, Close, Edit, Plus} from "@element-plus/icons";
+import {Setting, InfoFilled, Tickets, MessageBox, Delete, Check, Close, Edit, Plus, Star} from "@element-plus/icons";
 import {markRaw} from "vue"
 import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
@@ -185,8 +194,13 @@ export default {
             Delete: markRaw(Delete), Check: markRaw(Check), Close: markRaw(Close),
             editRealName: false,
             editPassword: false,
+            // 编辑源码
             editUserServerConfig: false,
+            // 简单编辑
             editUserServerConfigSimple: false,
+            // 进入编辑页面
+            editUserConfig: false,
+            // 保存标志
             saveLoading: false,
             heightSwitch: this.$store.state.userdata.usertype === 1005,
             newUserdata: {
@@ -199,7 +213,7 @@ export default {
             orderList: []
         }
     },
-    components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Plus},
+    components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Plus, Star},
     mounted() {
         checkLogin(this)
         getUserConfig(this)
@@ -311,9 +325,10 @@ export default {
         saveUserServerConfig() {
             this.saveLoading = true
             const userServerConfig = eval("(" + this.userServerConfig + ")")
-            UserConfigApi({action: 'modify', 'userServerConfig': userServerConfig}).then(res => {
+            UserConfigApi({action: 'modify_config', 'userServerConfig': userServerConfig}).then(res => {
                 if (res) {
                     this.editUserServerConfig = false
+                    this.editUserConfig = false
                     this.getUserConfigApi()
                 }
                 this.saveLoading = false
@@ -321,13 +336,22 @@ export default {
         },
         saveUserServerConfigSimple() {
             this.saveLoading = true
-            UserConfigApi({action: 'modify', 'userServerConfig': this.userServerConfigView}).then(res => {
+            UserConfigApi({action: 'modify_config', 'userServerConfig': this.userServerConfigView}).then(res => {
                 if (res) {
                     this.editUserServerConfigSimple = false
+                    this.editUserConfig = false
                     this.getUserConfigApi()
                 }
                 this.saveLoading = false
             })
+        },
+        editUserConfigs(type) {
+            this.editUserConfig = true
+            if (type==='simple'){
+                this.editUserServerConfigSimple = true
+            }else {
+                this.editUserServerConfig = true
+            }
         },
     },
 }
@@ -426,11 +450,22 @@ export default {
                 border-bottom: #1E9FFF solid 1px;
                 padding: 5px;
                 display: flex;
-                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .five {
+            text-align: left;
+
+            .five-top {
+                border-bottom: #1E9FFF solid 1px;
+                padding: 5px;
+                display: flex;
+                justify-content: flex-end;
                 align-items: center;
             }
 
-            .four-content {
+            .five-content {
                 margin-top: 10px;
                 padding: 10px;
 
@@ -438,10 +473,14 @@ export default {
                     margin-left: 5px;
                 }
 
+                .server-config::-webkit-scrollbar {
+                    display: none; /* Chrome Safari */
+                }
+
                 .server-config {
                     height: calc(65vh);
                     overflow-y: scroll;
-                    box-shadow: 5px 5px 5px 5px #ab9c9c;
+                    border: #dee3e3 solid 2px;
 
                     .el-form-item {
                         border-bottom: #105c94 solid 2px;
