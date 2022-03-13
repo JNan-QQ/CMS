@@ -4,7 +4,6 @@
 # @Author    :JN
 
 
-import hashlib
 import random
 import string
 

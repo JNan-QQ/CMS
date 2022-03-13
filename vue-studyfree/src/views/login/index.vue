@@ -71,6 +71,7 @@ import {sign} from "../../api/Login"
 import {registerEmailCode} from "../../api/common"
 import {ElMessage} from "element-plus"
 import {email_conf} from "@/store/config";
+import {encrypt} from "../../tools/mima";
 
 export default {
     name: "LoginIndex",
@@ -102,7 +103,11 @@ export default {
             this.btnSubmitStatus = true
             if (this.loginOrRegister) {
                 // 登录
-                sign(this.loginForm, this).then(res => {
+                sign({
+                    action: this.loginForm.action,
+                    username: this.loginForm.username,
+                    password: encrypt(this.loginForm.password)
+                }, this).then(res => {
                     if (res) {
                         this.$store.commit('changeUserInfo', res)
                         this.$router.push('/')
@@ -111,7 +116,13 @@ export default {
                 })
             } else {
                 // 注册
-                sign(this.registerForm).then(res => {
+                sign({
+                    username: this.registerForm.username,
+                    password: encrypt(this.registerForm.password),
+                    email: this.registerForm.email,
+                    code: this.registerForm.code,
+                    action: this.registerForm.action
+                }).then(res => {
                     if (res) {
                         ElMessage({
                             message: '恭喜你注册成功，请登陆',
@@ -123,6 +134,7 @@ export default {
                 })
             }
         },
+        // 获取邮箱验证码
         getCode() {
             registerEmailCode(this.registerForm.email, email_conf.email_register, this)
         }

@@ -12,6 +12,7 @@ from django.db.models import Q
 
 from Common.forms import handle_uploaded_file
 from Common.lib.email_my import SendEmail
+from Common.lib.mima import decipher
 from Common.lib.shara import jsonResponse, generate_random_str
 from Common.models import CelebrityQuotes, User, EmailCode
 from Pay.models import PayConfig
@@ -47,7 +48,7 @@ class Login:
     def signin(request):
         # 从 HTTP POST 请求中获取用户名、密码参数
         userName = request.params.get('username')
-        passWord = request.params.get('password')
+        passWord = decipher(request.params.get('password'))
 
         # 使用 Django auth 库里面的 方法校验用户名、密码
         user = authenticate(username=userName, password=passWord)
@@ -114,11 +115,12 @@ class Login:
             return jsonResponse(res)
         data = {
             'username': request.params['username'],
-            'password': request.params['password'],
+            'password': decipher(request.params['password']),
             'email': request.params['email'],
             'usertype': 1000,
             'realName': ''
         }
+        print(data)
         res = User.add_account(data)
 
         self.signin(request)
