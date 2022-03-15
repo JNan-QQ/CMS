@@ -136,3 +136,13 @@ export function CommonApi(data) {
         data: data
     })
 }
+
+
+//消息接口
+export function MessageApi(data) {
+    return request({
+        url: 'common/message',
+        method: 'post',
+        data: data
+    })
+}

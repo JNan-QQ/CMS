@@ -107,7 +107,12 @@
                     <el-table-column prop="status" label="订单状态" width="120"/>
                 </el-table>
             </div>
-            <div v-else-if="activeIndex==='3'" class="content three">3</div>
+            <div v-else-if="activeIndex==='3'" class="content three">
+                <div v-for="(item,index) in messageList">
+                    <span>{{ index + 1 }}</span>
+                    <span>{{ item.title }}</span>
+                </div>
+            </div>
             <div v-else-if="activeIndex==='4'" class="content four">
                 <div v-if="userdata.usertype===1000">
                     <span>开启高级模式：</span>
@@ -142,7 +147,8 @@
                     </el-button>
                 </div>
                 <div class="five-content">
-                    <el-empty description="无配置" v-if="userServerConfig === '{}' && !editUserServerConfig && !editUserConfig" ></el-empty>
+                    <el-empty description="无配置"
+                              v-if="userServerConfig === '{}' && !editUserServerConfig && !editUserConfig"></el-empty>
                     <span v-if="userServerConfig === '{}' && editUserServerConfigSimple">如果没有内容请先编辑源码</span>
                     <div v-if="userServerConfig !== '{}' && !editUserServerConfig" class="server-config">
                         <el-form :model="userServerConfigView" label-width="auto">
@@ -168,7 +174,8 @@
                         <el-input v-model="userServerConfig" :rows="20" type="textarea" placeholder="Please input"/>
                     </div>
                 </div>
-                <span style="font-size: 10px;float: right;margin-right: 10px;color: red;" v-if="userServerConfig !== '{}'">可以滚动查看</span>
+                <span style="font-size: 10px;float: right;margin-right: 10px;color: red;"
+                      v-if="userServerConfig !== '{}'">可以滚动查看</span>
             </div>
         </div>
     </div>
@@ -180,7 +187,7 @@ import {markRaw} from "vue"
 import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {AccountApi, CommonApi, sendEmailCode} from "@/api/common";
+import {AccountApi, CommonApi, MessageApi, sendEmailCode} from "@/api/common";
 import {UserConfigApi} from "@/api/pay";
 import {orderApi} from "@/api/pay";
 import {email_conf} from "@/store/config";
@@ -210,7 +217,8 @@ export default {
             },
             userServerConfig: {},
             userServerConfigView: {},
-            orderList: []
+            orderList: [],
+            messageList: []
         }
     },
     components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Plus, Star},
@@ -219,6 +227,7 @@ export default {
         getUserConfig(this)
         this.getUserConfigApi()
         this.getOrderApi()
+        this.getMessageApi()
     },
     watch: {
         // 监听用户类型
@@ -242,6 +251,15 @@ export default {
             orderApi({action: 'list'}).then(res => {
                 if (res) {
                     this.orderList = res['retlist']
+                }
+            })
+        },
+
+        // 通知列表
+        getMessageApi() {
+            MessageApi({action: 'list'}).then(res => {
+                if (res) {
+                    this.messageList = res['retlist']
                 }
             })
         },
@@ -347,9 +365,9 @@ export default {
         },
         editUserConfigs(type) {
             this.editUserConfig = true
-            if (type==='simple'){
+            if (type === 'simple') {
                 this.editUserServerConfigSimple = true
-            }else {
+            } else {
                 this.editUserServerConfig = true
             }
         },

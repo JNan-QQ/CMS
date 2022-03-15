@@ -197,7 +197,7 @@ class NoteBook(models.Model):
     # title
     title = models.CharField(max_length=100, null=True, blank=True, default='默认标题')
     # content
-    content = models.TextField(null=True, blank=True, default='请在此输入内容，支持markdown语法')
+    content = models.TextField(null=True, blank=True, default='请在此输入内容，支持markdown语法，不要输入保密信息！')
     # time
     time = models.DateTimeField(auto_now=datetime.datetime.now)
     # user_id

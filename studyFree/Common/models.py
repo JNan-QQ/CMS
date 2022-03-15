@@ -289,3 +289,109 @@ class EmailCode(models.Model):
                 return {'ret': 1, 'msg': '验证码错误，请重新输入'}
         except:
             return {'ret': 1, 'msg': '验证码可能已过期'}
+
+
+# 通知
+class Message(models.Model):
+    # 通知id
+    id = models.BigAutoField(primary_key=True)
+
+    # 通知标题
+    title = models.CharField(max_length=100, null=True, blank=True)
+
+    # 通知内容
+    content = models.TextField(null=True, blank=True)
+
+    # 接收类型
+    # 1005： vip通知 | 1000： free通知  | 1006：个人通知  | 1007：暂时不选
+    group_type = models.PositiveIntegerField()
+
+    # 通知类型
+    #
+    message_type = models.PositiveIntegerField()
+
+    # 个人通知用户id
+    user = models.CharField(max_length=100, null=True, blank=True)
+
+    # status
+    status = models.BooleanField(default=True)
+
+    # 创建时间
+    creat_time = models.DateTimeField(auto_now=datetime.datetime.now)
+
+    class Meta:
+        db_table = "study_message"
+        app_label = "Common"
+
+    @staticmethod
+    def add(data):
+        # noinspection PyBroadException
+        try:
+            group_type = data['group_type']
+            if group_type == 1006:
+                user_str = f"|{'|'.join(data['user_list'])}|"
+            else:
+                user_str = ''
+
+            # 事务
+            with transaction.atomic():
+                message = Message.objects.create(
+                    title=data['title'],
+                    content=data['content'],
+                    group_type=group_type,
+                    user=user_str
+                )
+
+                if group_type == 1007:
+                    batch = []
+                elif group_type == 1006:
+                    batch = [MessageNews(message_id_id=message.id, user_id_id=user_id) for user_id in data['user_list']]
+                else:
+                    batch = [MessageNews(message_id_id=message.id, user_id=user) for user in
+                             User.objects.filter(usertype=data['group_type'])]
+
+                #  在多对多关系表中 添加了 多条关联记录
+                MessageNews.objects.bulk_create(batch)
+            return {'ret': 0}
+
+        except Exception as e:
+            return {'ret': 1, 'msg': f'{e}'}
+
+    @staticmethod
+    def list(user_id, usertype, page_size=10, page_num=1):
+        if usertype == 1:
+            qs = Message.objects.values().order_by('-id')
+        else:
+            qs = Message.objects.filter(Q(group_type=usertype) | Q(user__contains=f'|{user_id}|')).values().order_by(
+                '-id')
+
+            # 使用分页对象，设定每页多少条记录
+        page_nt = Paginator(qs, page_size)
+
+        # 从数据库中读取数据，指定读取其中第几页
+        page = page_nt.page(page_num)
+
+        # 将 QuerySet 对象 转化为 list 类型
+        retlist = list(page)
+
+        # total指定了 一共有多少数据
+        return {'ret': 0, 'retlist': retlist, 'total': page_nt.count}
+
+
+# 新通知
+class MessageNews(models.Model):
+    # id
+    id = models.BigAutoField(primary_key=True)
+
+    # 通知id
+    message_id = models.ForeignKey(Message, on_delete=models.CASCADE)
+
+    # 用户id
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # 创建时间
+    creat_time = models.DateTimeField(auto_now=datetime.datetime.now)
+
+    class Meta:
+        db_table = "study_message_new"
+        app_label = "Common"

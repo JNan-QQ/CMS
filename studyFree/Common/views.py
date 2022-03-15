@@ -14,7 +14,7 @@ from Common.forms import handle_uploaded_file
 from Common.lib.email_my import SendEmail
 from Common.lib.mima import decipher
 from Common.lib.shara import jsonResponse, generate_random_str
-from Common.models import CelebrityQuotes, User, EmailCode
+from Common.models import CelebrityQuotes, User, EmailCode, Message
 from Pay.models import PayConfig
 
 
@@ -368,3 +368,45 @@ class Accounts:
         ret = User.modify_account(request.params)
 
         return jsonResponse(ret)
+
+
+# 通知
+class MessageView:
+    def handler(self, request):
+        # 将请求参数统一放入request 的 params 属性中，方便后续处理
+        # GET请求 参数 在 request 对象的 GET属性中
+        if request.method == 'GET':
+            request.params = request.GET
+
+        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
+        elif request.method in ['POST', 'PUT', 'DELETE']:
+            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+            request.params = json.loads(request.body)
+
+        # 根据不同的action分派给不同的函数进行处理
+        action = request.params['action']
+
+        # 添加新闻
+        if action == 'list':
+            return self.list(request)
+        if action == 'add':
+            return self.add(request)
+
+    @staticmethod
+    def list(request):
+        try:
+            user_id = request.session['user_id']
+            usertype = request.session['usertype']
+            page_size = request.params.get('page_size', 10)
+            page_num = request.params.get('page_num', 1)
+            ret = Message.list(user_id, usertype, page_size, page_num)
+            return jsonResponse(ret)
+        except KeyError:
+            return jsonResponse({'ret': 1, 'msg': '参数错误！'})
+
+    @staticmethod
+    def add(request):
+        if request.session['usertype'] != 1:
+            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
+        res = Message.add(request.params)
+        return jsonResponse(res)
