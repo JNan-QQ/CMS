@@ -82,7 +82,7 @@
 import {Delete, Edit, Loading, Search} from '@element-plus/icons'
 import {markRaw} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {AccountApi, PayConfigApi} from "../../api/admin";
+import {AccountApi} from "@/api/admin";
 
 export default {
     name: "account_admin",

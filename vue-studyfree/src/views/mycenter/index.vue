@@ -48,55 +48,7 @@
             <div class="top-btn">
                 <el-button :icon="Delete" circle @click="this.$router.go(-1);"></el-button>
             </div>
-            <div v-if="activeIndex==='1'" class="content one">
-                <el-card class="box-card">
-                    <template #header>
-                        <div class="card-header">
-                            <span>个人信息</span>
-                            <el-button class="button" type="text" v-if="!editPassword" @click="editPassword=true">重置密码
-                            </el-button>
-                            <div v-else style="display: flex">
-                                <el-input placeholder="请输入新密码" v-model="newUserdata.password"/>
-                                <el-button :icon="Check" @click="changePassword"></el-button>
-                                <el-button :icon="Close" @click="editPassword=false"></el-button>
-                            </div>
-                        </div>
-                    </template>
-                    <div class="item">
-                        <span>用户名：</span><span class="item-content username">{{ userdata.username }}</span>
-                    </div>
-                    <div class="item">
-                        <span>姓　名：</span>
-                        <span class="item-content realName" v-if="!editRealName">{{ userdata.realName }}</span>
-                        <div style="display: flex" v-if="editRealName">
-                            <el-input v-model="newUserdata.realName"></el-input>
-                            <el-button type="success" :icon="Check" @click="changeRealName"></el-button>
-                            <el-button type="danger" :icon="Close" @click="editRealName=false;"></el-button>
-                        </div>
-                        <el-icon style="margin-left: 10px;" v-else @click="editRealName=true;">
-                            <edit/>
-                        </el-icon>
-                    </div>
-                    <div class="item">
-                        <span>Ｆ　币：</span><span class="item-content coins">{{ userdata.coins }}</span>
-                        <el-icon style="margin-left: 10px" :size="14" @click="this.$router.push('/pay')">
-                            <plus/>
-                        </el-icon>
-                    </div>
-                    <div class="item">
-                        <span>等　级：</span><span class="item-content lv">{{ userdata.lv }}</span>
-                    </div>
-                    <div class="item">
-                        <span>时　间：</span><span class="item-content deadline">{{ userdata.deadline }}</span>
-                        <el-icon style="margin-left: 10px" :size="14" @click="this.$router.push('/pay')">
-                            <plus/>
-                        </el-icon>
-                    </div>
-                    <div class="item">
-                        <span>邮　箱：</span><span class="item-content email">{{ userdata.email }}</span>
-                    </div>
-                </el-card>
-            </div>
+            <MyInfo v-if="activeIndex==='1'"></MyInfo>
             <div v-else-if="activeIndex==='2'" class="content two">
                 <el-empty :image-size="200" v-if="orderList === []"></el-empty>
                 <el-table :data="orderList" stripe style="width: 100%" v-else max-height="500">
@@ -113,20 +65,7 @@
                     <span>{{ item.title }}</span>
                 </div>
             </div>
-            <div v-else-if="activeIndex==='4'" class="content four">
-                <div v-if="userdata.usertype===1000">
-                    <span>开启高级模式：</span>
-                    <el-switch @change="changeUserType"
-                               v-model="heightSwitch"
-                               :disabled="heightSwitch"
-                               inline-prompt
-                               active-color="#13ce66"
-                               inactive-color="#ff4949"
-                               active-text="Y"
-                               inactive-text="N">
-                    </el-switch>
-                </div>
-            </div>
+            <ToolMy v-else-if="activeIndex==='4'"></ToolMy>
             <div v-else-if="activeIndex==='5'" class="content five">
                 <div class="five-top">
                     <el-button size="small" v-if="!editUserConfig"
@@ -182,15 +121,19 @@
 </template>
 
 <script>
-import {Setting, InfoFilled, Tickets, MessageBox, Delete, Check, Close, Edit, Plus, Star} from "@element-plus/icons";
+import {Setting, InfoFilled, Tickets, MessageBox, Delete, Check, Close, Edit, Plus, Star} from "@element-plus/icons"
 import {markRaw} from "vue"
-import {checkLogin} from "@/api/Login";
-import {getUserConfig} from "@/api/pay";
-import {ElMessage, ElMessageBox} from "element-plus";
-import {AccountApi, CommonApi, MessageApi, sendEmailCode} from "@/api/common";
-import {UserConfigApi} from "@/api/pay";
-import {orderApi} from "@/api/pay";
-import {email_conf} from "@/store/config";
+import {checkLogin} from "@/api/Login"
+import {getUserConfig} from "@/api/pay"
+import {ElMessage, ElMessageBox} from "element-plus"
+import {AccountApi, MessageApi} from "@/api/common"
+import {UserConfigApi} from "@/api/pay"
+import {orderApi} from "@/api/pay"
+import MyInfo from "./myInfo"
+import MessageMy from "./message"
+import OrderMy from "./order"
+import Services from "./services"
+import ToolMy from "./tool"
 
 export default {
     name: "index",
@@ -198,9 +141,7 @@ export default {
         return {
             userdata: this.$store.state.userdata,
             activeIndex: "1",
-            Delete: markRaw(Delete), Check: markRaw(Check), Close: markRaw(Close),
-            editRealName: false,
-            editPassword: false,
+            Delete: markRaw(Delete),
             // 编辑源码
             editUserServerConfig: false,
             // 简单编辑
@@ -209,19 +150,13 @@ export default {
             editUserConfig: false,
             // 保存标志
             saveLoading: false,
-            heightSwitch: this.$store.state.userdata.usertype === 1005,
-            newUserdata: {
-                username: '',
-                realName: '',
-                password: '',
-            },
             userServerConfig: {},
             userServerConfigView: {},
             orderList: [],
             messageList: []
         }
     },
-    components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Plus, Star},
+    components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Star, MyInfo, ToolMy, MessageMy, OrderMy, Services},
     mounted() {
         checkLogin(this)
         getUserConfig(this)
@@ -269,41 +204,6 @@ export default {
             this.activeIndex = index
         },
 
-        // 改变用户类型
-        changeUserType(val) {
-            ElMessageBox.confirm(
-                '确认开启高级功能? 开启后无法关闭',
-                '提示',
-                {
-                    confirmButtonText: '确认',
-                    cancelButtonText: '取消',
-                    type: 'warning',
-                }
-            ).then(() => {
-                AccountApi({action: 'modify', usertype: 1005})
-            }).catch(() => {
-                this.heightSwitch = false
-            })
-        },
-
-        // 更改真实姓名
-        changeRealName() {
-            if (this.newUserdata.realName) {
-                AccountApi({action: 'modify', 'realName': this.newUserdata.realName}).then(res => {
-                    console.log(res)
-                    if (res) {
-                        this.editRealName = false
-                        this.userdata.realName = this.newUserdata.realName
-                    }
-                })
-            } else {
-                ElMessage({
-                    message: '请输入姓名！',
-                    type: 'warning',
-                })
-            }
-        },
-
         // 上传头像图片成功后修改头像
         uploadImgSuccess(response, file, fileList) {
             if (response['ret'] === 0) {
@@ -315,31 +215,6 @@ export default {
             }
         },
 
-        // 修改密码
-        changePassword() {
-            if (this.newUserdata.password.length >= 6) {
-                sendEmailCode(email_conf.email_modify_password)
-                ElMessageBox.prompt('请输入邮箱接收到的验证码', '提示', {
-                    confirmButtonText: '确认',
-                    cancelButtonText: '取消',
-                }).then(({value}) => {
-                    CommonApi({action: 'checkEmailCode', code: value}).then(res => {
-                        if (res) {
-                            AccountApi({action: 'modify', 'password': this.newUserdata.password})
-                        }
-                    })
-                }).catch(() => {
-
-                })
-            } else {
-                ElMessage({
-                    message: '请输入至少6位的密码！',
-                    type: 'warning',
-                })
-            }
-
-
-        },
         saveUserServerConfig() {
             this.saveLoading = true
             const userServerConfig = eval("(" + this.userServerConfig + ")")
@@ -352,6 +227,7 @@ export default {
                 this.saveLoading = false
             })
         },
+
         saveUserServerConfigSimple() {
             this.saveLoading = true
             UserConfigApi({action: 'modify_config', 'userServerConfig': this.userServerConfigView}).then(res => {
@@ -363,6 +239,7 @@ export default {
                 this.saveLoading = false
             })
         },
+
         editUserConfigs(type) {
             this.editUserConfig = true
             if (type === 'simple') {
@@ -429,36 +306,6 @@ export default {
             height: 100%;
             width: 100%;
             text-align: center;
-        }
-
-        .one {
-            .box-card {
-                margin: 10px;
-
-                .item {
-                    margin: 20px 10px;
-                    font-size: 16px;
-                    text-align: left;
-                    border-bottom: #e0dddd solid 1px;
-                    display: flex;
-                    flex-direction: row;
-                    align-items: center;
-
-                    .el-icon:hover {
-                        color: #1E9FFF;
-                    }
-
-                    .item-content {
-                        font-weight: bold;
-                    }
-                }
-            }
-
-            .card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
         }
 
         .four {

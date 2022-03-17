@@ -237,21 +237,29 @@ class Others:
         # 签到
         if action == 'qd':
             return self.qd(request)
-        # 获取邮箱验证码
+
+        # 发送邮箱验证码
         elif action == 'emailCode':
             return self.emailCode(request)
-        # 核对邮箱验证码
-        elif action == 'checkEmailCode':
-            return self.checkEmailCode(request)
-        # 重置密码
-        elif action == 'resetPassword':
-            return self.resetPassword(request)
+
+        # 修改密码
+        elif action == 'changePassword':
+            return self.changePassword(request)
+        # 修改用户名与用户类型
+        elif action == 'changeUserInfo':
+            return self.changeUserInfo(request)
+
         # 上传图片公共接口
         elif action == 'uploadImg':
             return self.uploadImg(request)
+
         # 通过邮箱获取账号列表
         elif action == 'listEmailAccount':
             return self.listEmailAccount(request)
+        # 重置密码
+        elif action == 'resetPassword':
+            return self.resetPassword(request)
+
         else:
             return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
 
@@ -299,12 +307,6 @@ class Others:
                 return jsonResponse({'ret': 1, 'msg': '修改头像失败'})
 
     @staticmethod
-    def checkEmailCode(request):
-        email = request.session['email']
-        ret = EmailCode.checkCode(email, request.params['code'])
-        return jsonResponse(ret)
-
-    @staticmethod
     def resetPassword(request):
         email = request.params['email']
         code = request.params['code']
@@ -318,6 +320,25 @@ class Others:
             except ObjectDoesNotExist:
                 return jsonResponse({'ret': 1, 'msg': '未找到邮箱对应账号'})
         return jsonResponse(ret)
+
+    @staticmethod
+    def changeUserInfo(request):
+        data = {'user_id': request.session['user_id']}
+
+        if 'realName' in request.params:
+            data['realName'] = request.params['realName']
+        elif 'usertype' in request.params:
+            if request.session['usertype'] != 1:
+                data['usertype'] = 1005
+            else:
+                data['user_id'] = request.params['user_id']
+                data['usertype'] = request.params['usertype']
+        elif 'desc' in request.params:
+            data['desc'] = request.params['desc']
+
+        res = User.modify_account(data)
+
+        return jsonResponse(res)
 
     @staticmethod
     def listEmailAccount(request):
@@ -335,39 +356,54 @@ class Others:
 
         return jsonResponse({'ret': 0, 'usernameList': usernameList})
 
-
-class Accounts:
-    def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
-
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        # 添加新闻
-        if action == 'modify':
-            return self.modify_account(request)
-
     @staticmethod
-    def modify_account(request):
+    def changePassword(request):
         try:
             user_id = request.session['user_id']
-            usertype = request.session['usertype']
+            password = decipher(request.params['password'])
+            code = request.params['code']
+            email = request.session['email']
+            res = EmailCode.checkCode(email, code)
+            if res['ret'] == 1:
+                return jsonResponse(res)
+            res = User.modify_account({'user_id': user_id, 'password': password})
+            return jsonResponse(res)
         except KeyError:
-            return jsonResponse({'ret': 1, 'msg': '请先登录'})
-        if usertype != 1 and 'usertype' in request.params:
-            request.params['usertype'] = 1005
-        request.params['user_id'] = user_id
-        ret = User.modify_account(request.params)
+            return jsonResponse({'ret': 1, 'msg': '参数错误！'})
 
-        return jsonResponse(ret)
+
+# class Accounts:
+#     def handler(self, request):
+#         # 将请求参数统一放入request 的 params 属性中，方便后续处理
+#         # GET请求 参数 在 request 对象的 GET属性中
+#         if request.method == 'GET':
+#             request.params = request.GET
+#
+#         # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
+#         elif request.method in ['POST', 'PUT', 'DELETE']:
+#             # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+#             request.params = json.loads(request.body)
+#
+#         # 根据不同的action分派给不同的函数进行处理
+#         action = request.params['action']
+#
+#         # 添加新闻
+#         if action == 'modify':
+#             return self.modify_account(request)
+#
+#     @staticmethod
+#     def modify_account(request):
+#         try:
+#             user_id = request.session['user_id']
+#             usertype = request.session['usertype']
+#         except KeyError:
+#             return jsonResponse({'ret': 1, 'msg': '请先登录'})
+#         if usertype != 1 and 'usertype' in request.params:
+#             request.params['usertype'] = 1005
+#         request.params['user_id'] = user_id
+#         ret = User.modify_account(request.params)
+#
+#         return jsonResponse(ret)
 
 
 # 通知

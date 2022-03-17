@@ -6,10 +6,10 @@
 
 from django.urls import path
 
-from Common.views import Others, Accounts, MessageView
+from Common.views import Others, MessageView
 
 urlpatterns = [
     path('other', Others().handler),
-    path('account', Accounts().handler),
+    # path('account', Accounts().handler),
     path('message', MessageView().handler),
 ]

@@ -32,37 +32,37 @@
                     <el-icon>
                         <setting/>
                     </el-icon>
-                    <template #title>网站配置</template>
+                    <span>网站配置</span>
                 </el-menu-item>
                 <el-menu-item index="2">
                     <el-icon>
                         <user/>
                     </el-icon>
-                    <template #title>账号管理</template>
+                    <span>账号管理</span>
                 </el-menu-item>
                 <el-menu-item index="3">
                     <el-icon>
                         <notification/>
                     </el-icon>
-                    <template #title>订单管理</template>
+                    <span>订单管理</span>
                 </el-menu-item>
                 <el-menu-item index="4">
                     <el-icon>
                         <message/>
                     </el-icon>
-                    <template #title>通知管理</template>
+                    <span>通知管理</span>
                 </el-menu-item>
                 <el-menu-item index="5">
                     <el-icon>
                         <document/>
                     </el-icon>
-                    <template #title>文章管理</template>
+                    <span>文章管理</span>
                 </el-menu-item>
                 <el-menu-item index="6">
                     <el-icon>
                         <notebook/>
                     </el-icon>
-                    <template #title>笔记管理</template>
+                    <span>笔记管理</span>
                 </el-menu-item>
             </el-menu>
         </div>
