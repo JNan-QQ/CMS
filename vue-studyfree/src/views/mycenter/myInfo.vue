@@ -56,6 +56,7 @@ import {Check, Close, Edit, Plus} from "@element-plus/icons";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {CommonApi, sendEmailCode} from "@/api/common";
 import {email_conf} from "@/store/config";
+import {getUserConfig} from "@/api/pay";
 
 export default {
     name: "myInfo",
@@ -73,6 +74,9 @@ export default {
         }
     },
     components: {Edit, Plus,},
+    mounted() {
+        getUserConfig(this)
+    },
     methods: {
         // 更改真实姓名
         changeRealName() {

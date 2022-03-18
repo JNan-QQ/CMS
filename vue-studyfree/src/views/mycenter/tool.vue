@@ -27,6 +27,12 @@ export default {
             heightSwitch: this.$store.state.userdata.usertype === 1005,
         }
     },
+    watch: {
+        // 监听用户类型
+        '$store.state.userdata.usertype'() {
+            this.heightSwitch = this.$store.state.userdata.usertype === 1005
+        },
+    },
     methods: {
         // 改变用户类型
         changeUserType(val) {
@@ -48,6 +54,17 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+.content {
+    height: 100%;
+    width: 100%;
+    text-align: left;
 
+    .four-top {
+        border-bottom: #1E9FFF solid 1px;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+    }
+}
 </style>
