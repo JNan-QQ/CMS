@@ -14,7 +14,7 @@ from Common.forms import handle_uploaded_file
 from Common.lib.email_my import SendEmail
 from Common.lib.mima import decipher
 from Common.lib.shara import jsonResponse, generate_random_str
-from Common.models import CelebrityQuotes, User, EmailCode, Message
+from Common.models import CelebrityQuotes, User, EmailCode, Message, MessageNews
 from Pay.models import PayConfig
 
 
@@ -372,40 +372,6 @@ class Others:
             return jsonResponse({'ret': 1, 'msg': '参数错误！'})
 
 
-# class Accounts:
-#     def handler(self, request):
-#         # 将请求参数统一放入request 的 params 属性中，方便后续处理
-#         # GET请求 参数 在 request 对象的 GET属性中
-#         if request.method == 'GET':
-#             request.params = request.GET
-#
-#         # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-#         elif request.method in ['POST', 'PUT', 'DELETE']:
-#             # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-#             request.params = json.loads(request.body)
-#
-#         # 根据不同的action分派给不同的函数进行处理
-#         action = request.params['action']
-#
-#         # 添加新闻
-#         if action == 'modify':
-#             return self.modify_account(request)
-#
-#     @staticmethod
-#     def modify_account(request):
-#         try:
-#             user_id = request.session['user_id']
-#             usertype = request.session['usertype']
-#         except KeyError:
-#             return jsonResponse({'ret': 1, 'msg': '请先登录'})
-#         if usertype != 1 and 'usertype' in request.params:
-#             request.params['usertype'] = 1005
-#         request.params['user_id'] = user_id
-#         ret = User.modify_account(request.params)
-#
-#         return jsonResponse(ret)
-
-
 # 通知
 class MessageView:
     def handler(self, request):
@@ -425,8 +391,16 @@ class MessageView:
         # 添加新闻
         if action == 'list':
             return self.list(request)
-        if action == 'add':
+        elif action == 'add':
             return self.add(request)
+        elif action == 'getOneMessage':
+            return self.getOneMessage(request)
+        elif action == 'modify':
+            return self.modify(request)
+        elif action == 'delete':
+            return self.deleteMessage(request)
+        else:
+            return jsonResponse({'ret': 1, 'msg': '参数出错'})
 
     @staticmethod
     def list(request):
@@ -445,4 +419,25 @@ class MessageView:
         if request.session['usertype'] != 1:
             return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
         res = Message.add(request.params)
+        return jsonResponse(res)
+
+    @staticmethod
+    def modify(request):
+        if request.session['usertype'] != 1:
+            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
+        res = Message.modify(request.params)
+        return jsonResponse(res)
+
+    @staticmethod
+    def deleteMessage(request):
+        if request.session['usertype'] != 1:
+            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
+        res = Message.deleteMessage(request.params)
+        return jsonResponse(res)
+
+    @staticmethod
+    def getOneMessage(request):
+        user_id = request.session['user_id']
+        message_id = request.params['message_id']
+        res = MessageNews.deleteOne(user_id, message_id)
         return jsonResponse(res)

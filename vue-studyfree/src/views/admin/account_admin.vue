@@ -21,6 +21,7 @@
         <el-table-column prop="id" label="id" sortable width="60"/>
         <el-table-column prop="username" label="用户名" width="100"/>
         <el-table-column prop="realName" label="姓名" width="100"/>
+        <el-table-column prop="usertype" label="用户类型" width="100"/>
         <el-table-column prop="email" label="邮箱" width="200"/>
         <el-table-column label="F币" width="150">
             <template #default="scope">

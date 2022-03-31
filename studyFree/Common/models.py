@@ -307,7 +307,7 @@ class Message(models.Model):
     group_type = models.PositiveIntegerField()
 
     # 通知类型
-    #
+    # 1:邮件类通知 2：时间类通知 3：充值类通知 4：优惠码通知
     message_type = models.PositiveIntegerField()
 
     # 个人通知用户id
@@ -328,10 +328,6 @@ class Message(models.Model):
         # noinspection PyBroadException
         try:
             group_type = data['group_type']
-            if group_type == 1006:
-                user_str = f"|{'|'.join(data['user_list'])}|"
-            else:
-                user_str = ''
 
             # 事务
             with transaction.atomic():
@@ -339,13 +335,15 @@ class Message(models.Model):
                     title=data['title'],
                     content=data['content'],
                     group_type=group_type,
-                    user=user_str
+                    user=data['user'],
+                    message_type=data['message_type']
                 )
 
                 if group_type == 1007:
                     batch = []
                 elif group_type == 1006:
-                    batch = [MessageNews(message_id_id=message.id, user_id_id=user_id) for user_id in data['user_list']]
+                    batch = [MessageNews(message_id_id=message.id, user_id_id=user_id) for user_id in
+                             data['user'].split('|') if user_id]
                 else:
                     batch = [MessageNews(message_id_id=message.id, user_id=user) for user in
                              User.objects.filter(usertype=data['group_type'])]
@@ -358,14 +356,14 @@ class Message(models.Model):
             return {'ret': 1, 'msg': f'{e}'}
 
     @staticmethod
-    def list(user_id, usertype, page_size=10, page_num=1):
+    def list(user_id, usertype, page_size, page_num):
         if usertype == 1:
             qs = Message.objects.values().order_by('-id')
         else:
-            qs = Message.objects.filter(Q(group_type=usertype) | Q(user__contains=f'|{user_id}|')).values().order_by(
-                '-id')
+            qs = Message.objects.filter(Q(group_type=usertype) | Q(user__contains=f'|{user_id}|')).filter(status=True) \
+                .values('id', 'title', 'content', 'creat_time', 'message_type').order_by('-id')
 
-            # 使用分页对象，设定每页多少条记录
+        # 使用分页对象，设定每页多少条记录
         page_nt = Paginator(qs, page_size)
 
         # 从数据库中读取数据，指定读取其中第几页
@@ -374,8 +372,49 @@ class Message(models.Model):
         # 将 QuerySet 对象 转化为 list 类型
         retlist = list(page)
 
+        newRetlist = []
+        for i in retlist:
+            if MessageNews.objects.filter(message_id__id=i['id'], user_id__id=user_id).exists():
+                i['isRead'] = True
+            else:
+                i['isRead'] = False
+            newRetlist.append(i)
+
         # total指定了 一共有多少数据
-        return {'ret': 0, 'retlist': retlist, 'total': page_nt.count}
+        return {'ret': 0, 'retlist': newRetlist, 'total': page_nt.count}
+
+    @staticmethod
+    def modify(data):
+        try:
+            message = Message.objects.get(id=data['id'])
+            if 'title' in data:
+                message.title = data['title']
+            if 'content' in data:
+                message.content = data['content']
+            if 'group_type' in data:
+                message.group_type = data['group_type']
+            if 'message_type' in data:
+                message.message_type = data['message_type']
+            if 'user' in data:
+                message.user = data['user']
+            if 'status' in data:
+                message.status = data['status']
+
+            message.save()
+
+            return {'ret': 0}
+        except Exception as e:
+            return {'ret': 1, 'msg': e}
+
+    @staticmethod
+    def deleteMessage(data):
+        # noinspection PyBroadException
+        try:
+            message = Message.objects.get(id=data['message_id'])
+            message.delete()
+            return {'ret': 0}
+        except Exception as e:
+            return {'ret': 1, 'msg': e}
 
 
 # 新通知
@@ -395,3 +434,14 @@ class MessageNews(models.Model):
     class Meta:
         db_table = "study_message_new"
         app_label = "Common"
+
+    @staticmethod
+    def deleteOne(user_id, message_id):
+        # noinspection PyBroadException
+        try:
+            message = MessageNews.objects.get(user_id__id=user_id, message_id__id=message_id)
+            message.delete()
+        except:
+            pass
+
+        return {'ret': 0}
