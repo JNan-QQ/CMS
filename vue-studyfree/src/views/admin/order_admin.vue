@@ -23,10 +23,7 @@
         <el-table-column prop="money" label="付款金额(元)" min-width="10%"/>
         <el-table-column prop="create_time" label="时间" min-width="10%"/>
         <el-table-column prop="status" label="订单状态" min-width="10%"/>
-        <el-table-column label="操作" min-width="20%" #default="props">
-            <!--            <el-button type="primary" :icon="Edit" circle @click="editBtnFunction(props.row)"></el-button>-->
-            <!--            <el-button type="success" :icon="Loading" circle @click="resetPassword(props.row.id)"></el-button>-->
-            <!--            <el-button type="danger" :icon="Delete" circle @click="deleteAccount(props.row)"></el-button>-->
+        <el-table-column label="操作" min-width="20%" #default="scope">
         </el-table-column>
     </el-table>
     <div class="page">

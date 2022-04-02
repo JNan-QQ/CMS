@@ -36,7 +36,7 @@
                 </el-popover>
             </template>
         </el-table-column>
-        <el-table-column prop="group_type" label="接收组" width="100">
+        <el-table-column label="接收组" width="100">
             <template #default="scope">
                 <span v-if="scope.row['group_type']===1005">VIP用户组</span>
                 <span v-if="scope.row['group_type']===1000">免费用户组</span>
@@ -44,14 +44,14 @@
                 <span v-if="scope.row['group_type']===1007">自选</span>
             </template>
         </el-table-column>
-        <el-table-column prop="user" label="接收者id" width="100">
+        <el-table-column label="接收者id" width="100">
             <template #default="scope">
-                <div v-if="scope.row['user']!==null">
-                    <span v-for="item in scope.row['user'].split('|')">{{ item }}&nbsp;</span>
+                <div v-if="scope.row['user']!==''">
+                    <span v-for="item in scope.row['user']?.split('|')">{{ item }}&nbsp;</span>
                 </div>
             </template>
         </el-table-column>
-        <el-table-column prop="message_type" label="通知类型" width="100">
+        <el-table-column label="通知类型" width="100">
             <template #default="scope">
                 <span v-if="scope.row['message_type']===1">邮件</span>
                 <span v-if="scope.row['message_type']===2">时间</span>
@@ -62,17 +62,15 @@
         <el-table-column prop="status" label="通知状态" width="100"/>
         <el-table-column label="创建时间" width="180">
             <template #default="scope">
-                <span>{{ scope.row['creat_time'].split('T')[0] }}</span>
+                <span>{{ scope.row['creat_time']?.split('T')[0] }}</span>
             </template>
         </el-table-column>
-        <el-table-column label="操作">
-            <template #default="scope">
-                <el-button type="text" @click="changeDialogVisible('modify',scope.row)">修改</el-button>
-                <el-button type="text" :loading="disabledLoading" @click="disable(scope.row)">
-                    <span v-if="scope.row.status===true">禁用</span><span v-else>启用</span>
-                </el-button>
-                <el-button type="text" @click="deleteMessage(scope.row.id)" :loading="deleteLoading">删除</el-button>
-            </template>
+        <el-table-column label="操作" #default="scope">
+            <el-button type="text" @click="changeDialogVisible('modify',scope.row)">修改</el-button>
+            <el-button type="text" :loading="disabledLoading" @click="disable(scope.row)">
+                <span v-if="scope.row.status===true">禁用</span><span v-else>启用</span>
+            </el-button>
+            <el-button type="text" @click="deleteMessage(scope.row.id)" :loading="deleteLoading">删除</el-button>
         </el-table-column>
     </el-table>
     <!--    翻页      -->
@@ -169,7 +167,12 @@ export default {
                 search_items[this.select_type] = this.select_value
             }
             // 发送列出通知请求
-            MessageApi({search_items: search_items, action: 'list',page_num: this.current_page, page_size: this.page_size}).then(res => {
+            MessageApi({
+                search_items: search_items,
+                action: 'list',
+                page_num: this.current_page,
+                page_size: this.page_size
+            }).then(res => {
                 if (res) {
                     this.messageData = res['retlist']
                     this.total = res['total']
@@ -229,8 +232,8 @@ export default {
         // 禁用、启用
         disable(data) {
             this.disabledLoading = true
-            MessageApi({action: 'modify', status: !data.status, id: data.id}).then(res=>{
-                if (res){
+            MessageApi({action: 'modify', status: !data.status, id: data.id}).then(res => {
+                if (res) {
                     this.getMessageData()
                 }
                 this.disabledLoading = false
