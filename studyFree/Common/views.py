@@ -1,5 +1,4 @@
 import datetime
-import json
 import os
 import time
 import traceback
@@ -10,39 +9,26 @@ from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 
+from Admin.models import webConfig
 from Common.forms import handle_uploaded_file
 from Common.lib.email_my import SendEmail
+from Common.lib.handler import dispatcherBase
 from Common.lib.mima import decipher
-from Common.lib.shara import jsonResponse, generate_random_str
+from Common.lib.shara import jsonResponse, generate_random_str, NOT_LOGIN, IS_LOGIN
 from Common.models import CelebrityQuotes, User, EmailCode, Message, MessageNews
 from Pay.models import PayConfig
 
 
 class Login:
     def handler(self, request):
+        Action2Handler = {
+            'signin': self.signin,
+            'signout': self.signout,
+            'checkLogin': self.checkLogin,
+            'register': self.register
+        }
 
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
-
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-        if action == 'signin':
-            return self.signin(request)
-        elif action == 'signout':
-            return self.signout(request)
-        elif action == 'checkLogin':
-            return self.checkLogin(request)
-        elif action == 'register':
-            return self.register(request)
-        else:
-            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, NOT_LOGIN)
 
     @staticmethod
     def signin(request):
@@ -130,36 +116,22 @@ class Login:
 
 class CQ:
     def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'list': self.list,
+            'add': self.add,
+            'listAll': self.listAll,
+            'delete': self.delete_cq
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        # 添加新闻
-        if action == 'list':
-            return self.list()
-        if action == 'add':
-            return self.add(request)
-        if action == 'listAll':
-            return self.listAll()
-        if action == 'delete':
-            return self.delete_cq(request)
+        return dispatcherBase(request, Action2Handler, NOT_LOGIN)
 
     @staticmethod
-    def list():
+    def list(request):
         ret = CelebrityQuotes.listQuotes()
         return jsonResponse(ret)
 
     @staticmethod
-    def listAll():
+    def listAll(request):
         ret = CelebrityQuotes.listAll()
         return jsonResponse(ret)
 
@@ -180,22 +152,12 @@ class CQ:
 
 class Download:
     def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
+        Action2Handler = {
+            'free': self.free
+        }
 
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        # 添加新闻
-        if action == 'free':
-            return self.free(request)
+        return dispatcherBase(request, Action2Handler, NOT_LOGIN)
 
     @staticmethod
     def free(request):
@@ -215,53 +177,18 @@ class Download:
 class Others:
     def handler(self, request):
 
-        action = None
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'qd': self.qd,  # 签到
+            'emailCode': self.emailCode,  # 获取验证码
+            'changePassword': self.changePassword,  # 修改密码 知道密码
+            'resetPassword': self.resetPassword,  # 修改密码 不知道密码
+            'changeUserInfo': self.changeUserInfo,  # 改变用户信息
+            'uploadImg': self.uploadImg,  # 上传图片公共接口
+            'listEmailAccount': self.listEmailAccount,  # 通过邮箱获取账号列表
+            'list_webConfig': self.list_webConfig  # 部分网址配置
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            # noinspection PyBroadException
-            try:
-                request.params = json.loads(request.body)
-            except:
-                action = request.POST['action']
-
-        # 根据不同的action分派给不同的函数进行处理
-        if not action:
-            action = request.params['action']
-
-        # 签到
-        if action == 'qd':
-            return self.qd(request)
-
-        # 发送邮箱验证码
-        elif action == 'emailCode':
-            return self.emailCode(request)
-
-        # 修改密码
-        elif action == 'changePassword':
-            return self.changePassword(request)
-        # 修改用户名与用户类型
-        elif action == 'changeUserInfo':
-            return self.changeUserInfo(request)
-
-        # 上传图片公共接口
-        elif action == 'uploadImg':
-            return self.uploadImg(request)
-
-        # 通过邮箱获取账号列表
-        elif action == 'listEmailAccount':
-            return self.listEmailAccount(request)
-        # 重置密码
-        elif action == 'resetPassword':
-            return self.resetPassword(request)
-
-        else:
-            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, NOT_LOGIN)
 
     @staticmethod
     def qd(request):
@@ -360,47 +287,44 @@ class Others:
     def changePassword(request):
         try:
             user_id = request.session['user_id']
-            password = decipher(request.params['password'])
-            code = request.params['code']
-            email = request.session['email']
-            res = EmailCode.checkCode(email, code)
-            if res['ret'] == 1:
+            userName = request.session['username']
+            old_password = decipher(request.params['old_password'])
+            new_password = decipher(request.params['new_password'])
+
+            # 使用 Django auth 库里面的 方法校验用户名、密码
+            user = authenticate(username=userName, password=old_password)
+            # 如果能找到用户，并且密码正确
+            if user is not None:
+                res = User.modify_account({'user_id': user_id, 'password': new_password})
                 return jsonResponse(res)
-            res = User.modify_account({'user_id': user_id, 'password': password})
-            return jsonResponse(res)
+            else:
+                return jsonResponse({'ret': 1, 'msg': '未找到该用户'})
         except KeyError:
             return jsonResponse({'ret': 1, 'msg': '参数错误！'})
+
+    @staticmethod
+    def list_webConfig(request):
+        title = request.params['title']
+        if title not in ['tools', 'pay']:
+            return jsonResponse({'ret': 1, 'msg': '无权查看'})
+        res = webConfig.list({'title': title})
+
+        return jsonResponse(res)
 
 
 # 通知
 class MessageView:
     def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
+        Action2Handler = {
+            'list': self.list,  # 列出通知
+            'add': self.add,  # 添加一个通知管理员操作
+            'getOneMessage': self.getOneMessage,  # 获取通知内容 并 取消未读操作
+            'modify': self.modify,  # 修改一个通知管理员操作
+            'delete': self.deleteMessage,  # 删除通知
+        }
 
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        # 添加新闻
-        if action == 'list':
-            return self.list(request)
-        elif action == 'add':
-            return self.add(request)
-        elif action == 'getOneMessage':
-            return self.getOneMessage(request)
-        elif action == 'modify':
-            return self.modify(request)
-        elif action == 'delete':
-            return self.deleteMessage(request)
-        else:
-            return jsonResponse({'ret': 1, 'msg': '参数出错'})
+        return dispatcherBase(request, Action2Handler, IS_LOGIN)
 
     @staticmethod
     def list(request):

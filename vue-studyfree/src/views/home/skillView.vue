@@ -1,6 +1,6 @@
 <template>
-    <div style="width: 100%;height: 100%;text-align: center">
-        <p>待更新</p>
+    <div class="content">
+        <span>待更新</span>
     </div>
 
 </template>
@@ -11,6 +11,16 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="less">
+.content {
+    width: 100%;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span{
+        font-size: 60px;
+        color: #5e3df3;
+    }
+}
 </style>

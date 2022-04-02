@@ -279,8 +279,11 @@ class NoteBook(models.Model):
 
     @staticmethod
     def admin_list():
-        qs = NoteBook.objects.values('id', 'status', 'title', 'content', 'time', 'user_id__username')
-        qs = list(qs)
-        for i in range(len(qs)):
-            qs[i]['time'] = qs[i]['time'].strftime('%Y-%m-%d %H:%M:%S')
-        return {'ret': 0, 'retlist': qs}
+        try:
+            qs = NoteBook.objects.values('id', 'status', 'title', 'content', 'time', 'user_id__username')
+            qs = list(qs)
+            for i in range(len(qs)):
+                qs[i]['time'] = qs[i]['time'].strftime('%Y-%m-%d %H:%M:%S')
+            return {'ret': 0, 'retlist': qs}
+        except Exception as e:
+            print(e)

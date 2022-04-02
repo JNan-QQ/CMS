@@ -127,6 +127,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {CqApi, FilesApi, WebConfigApi} from "@/api/admin"
 import {FolderOpened, Document, Check} from "@element-plus/icons";
 import {markRaw} from "vue";
+import {checkLogin} from "@/api/Login";
 
 export default {
     name: "config_admin",

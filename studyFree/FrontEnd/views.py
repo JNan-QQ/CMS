@@ -1,35 +1,22 @@
 import json
 import os.path
 import traceback
-from Common.lib.shara import jsonResponse
+
+from Common.lib.handler import dispatcherBase
+from Common.lib.shara import jsonResponse, NOT_LOGIN, IS_LOGIN
 from FrontEnd.models import Tags, ArticleContent, NoteBook
 from config import settings
 
 
 class Article:
     def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'slideTags': self.listSlideTags,  # 文章类别标签
+            'contentTags': self.listContentTags,  # 文章小结标签
+            'markdownContent': self.list_md_content,  # 获取文章内容
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        # 添加新闻
-        if action == 'slideTags':
-            return self.listSlideTags(request)
-        elif action == 'contentTags':
-            return self.listContentTags(request)
-        elif action == 'markdownContent':
-            return self.list_md_content(request)
-        else:
-            return jsonResponse({'ret': 1, "msg": 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, NOT_LOGIN)
 
     @staticmethod
     def listSlideTags(request):
@@ -64,30 +51,15 @@ class Article:
 
 class Note:
     def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
+        Action2Handler = {
+            'addNoteBook': self.addNoteBook,  # 添加笔记
+            'listNoteBook': self.listNoteBook,  # 获取笔记
+            'deleteNoteBook': self.deleteNoteBook,  # 删除笔记
+            'modifyNoteBook': self.modifyNoteBook,  # 修改笔记
+        }
 
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        # 添加新闻
-        if action == 'addNoteBook':
-            return self.addNoteBook(request)
-        elif action == 'listNoteBook':
-            return self.listNoteBook(request)
-        elif action == 'deleteNoteBook':
-            return self.deleteNoteBook(request)
-        elif action == 'modifyNoteBook':
-            return self.modifyNoteBook(request)
-        else:
-            return jsonResponse({'ret': 1, "msg": 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, IS_LOGIN)
 
     @staticmethod
     def addNoteBook(request):

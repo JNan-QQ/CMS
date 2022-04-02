@@ -27,6 +27,18 @@ def generate_random_str(random_length=6):
     return random_str
 
 
+# 公共参数
+
+# 登录状态
+NOT_LOGIN = 0
+IS_LOGIN = 100
+IS_MGR = 1
+
+# 用户类型
+MGR = 1
+FREE = 1000
+VIP = 1005
+
 if __name__ == "__main__":
     a = generate_random_str()
     print(a)

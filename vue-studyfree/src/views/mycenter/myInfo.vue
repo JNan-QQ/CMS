@@ -4,13 +4,9 @@
             <template #header>
                 <div class="card-header">
                     <span>个人信息</span>
-                    <el-button class="button" type="text" v-if="!editPassword" @click="editPassword=true">重置密码
+                    <el-button class="button" type="text" @click="editPassword=true">
+                        重置密码
                     </el-button>
-                    <div v-else style="display: flex">
-                        <el-input placeholder="请输入新密码" v-model="newUserdata.password"/>
-                        <el-button :icon="Check" @click="changePassword"></el-button>
-                        <el-button :icon="Close" @click="editPassword=false"></el-button>
-                    </div>
                 </div>
             </template>
             <div class="item">
@@ -48,6 +44,26 @@
             </div>
         </el-card>
     </div>
+    <el-dialog v-model="editPassword" title="修改密码" width="30%" destroy-on-close center>
+        <el-form :model="passwords" label-width="120px">
+            <el-form-item label="原密码：">
+                <el-input v-model="passwords.old_password"/>
+            </el-form-item>
+            <el-form-item label="新密码：">
+                <el-input v-model="passwords.new_password1"/>
+            </el-form-item>
+            <el-form-item label="再次输入：">
+                <el-input v-model="passwords.new_password2"/>
+                <div style="width: 100%" v-if="checkNewPassWord">
+                    <span style="float: right;font-size: 10px;color: red">两次输入的新密码不相同，请确认！！！</span>
+                </div>
+            </el-form-item>
+        </el-form>
+        <div style="display: flex;justify-content: space-evenly;">
+            <el-button type="success" @click="changePassword" :loading="submitLoading">提交</el-button>
+            <el-button type="warning" @click="editPassword=false">取消</el-button>
+        </div>
+    </el-dialog>
 </template>
 
 <script>
@@ -57,6 +73,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {CommonApi, sendEmailCode} from "@/api/common";
 import {email_conf} from "@/store/config";
 import {getUserConfig} from "@/api/pay";
+import {encrypt} from "@/tools/mima";
 
 export default {
     name: "myInfo",
@@ -68,14 +85,25 @@ export default {
             newUserdata: {
                 username: '',
                 realName: '',
-                password: '',
             },
+            passwords: {
+                old_password: '',
+                new_password1: '',
+                new_password2: ''
+            },
+            checkNewPassWord: false,
+            submitLoading: false,
             Check: markRaw(Check), Close: markRaw(Close),
         }
     },
     components: {Edit, Plus,},
     mounted() {
         getUserConfig(this)
+    },
+    watch: {
+        "passwords.new_password2"() {
+            this.checkNewPassWord = this.passwords.new_password1 !== this.passwords.new_password2
+        }
     },
     methods: {
         // 更改真实姓名
@@ -97,42 +125,26 @@ export default {
 
         // 修改密码
         changePassword() {
-            if (this.newUserdata.password.length >= 6) {
-                sendEmailCode(email_conf.email_modify_password)
-                ElMessageBox.prompt('请输入邮箱接收到的验证码', '提示', {
-                    confirmButtonText: '确认',
-                    cancelButtonText: '取消',
-                    beforeClose: (action, instance, done) => {
-                        if (action === 'confirm') {
-                            instance.confirmButtonLoading = true
-                            instance.confirmButtonText = 'Loading...'
-                            CommonApi({
-                                action: 'changePassword',
-                                code: instance.inputValue,
-                                password: this.newUserdata.password
-                            }).then(res => {
-                                if (res) {
-                                    ElMessage({
-                                        message: '密码修改成功！',
-                                        type: 'success',
-                                    })
-                                    done()
-                                    this.editPassword = false
-                                }
-                                instance.confirmButtonLoading = false
-                                instance.confirmButtonText = '确认'
-                            })
-                        } else {
-                            done()
+
+            if (this.passwords.new_password1 === this.passwords.new_password2) {
+                if (this.passwords.old_password && this.passwords.new_password1) {
+                    this.submitLoading = true
+                    CommonApi({
+                        action: 'changePassword',
+                        old_password: encrypt(this.passwords.old_password),
+                        new_password: encrypt(this.passwords.new_password2)
+                    }).then(res => {
+                        if (res) {
                             this.editPassword = false
+                            ElMessage.success('密码修改成功！！！')
                         }
-                    }
-                })
+                        this.submitLoading = false
+                    })
+                } else {
+                    ElMessage.warning('密码不能为空！！！')
+                }
             } else {
-                ElMessage({
-                    message: '请输入至少6位的密码！',
-                    type: 'warning',
-                })
+                ElMessage.warning('请检查两次输入的密码是否相同！！！')
             }
         }
     }

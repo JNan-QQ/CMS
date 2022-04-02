@@ -32,10 +32,10 @@ request.interceptors.response.use(
         // 后台返回 标识 ret = {0:成功，1：失败，302：未登录}
 
         if (res['ret'] === 302) {
-            ElMessage({
-                message: '未登录，请先登录',
-                type: 'warning',
-            })
+            // ElMessage({
+            //     message: '未登录，请先登录',
+            //     type: 'warning',
+            // })
         } else if (res['ret'] === 1) {
             ElMessage({
                 message: res['msg'],

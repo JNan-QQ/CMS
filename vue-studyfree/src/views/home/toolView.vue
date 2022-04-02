@@ -114,6 +114,7 @@ import {WebConfigApi} from "@/api/admin";
 import {Edit, Plus, Select, CloseBold, Search} from "@element-plus/icons";
 import {markRaw} from "vue";
 import {ElMessage} from "element-plus";
+import {CommonApi} from "@/api/common";
 
 const {UserConfigApi} = require("../../api/pay");
 
@@ -165,7 +166,7 @@ export default {
             this.browser = browserInfo
         },
         getTools() {
-            WebConfigApi({action: 'admin_list_webConfig', title: 'tools'}).then(res => {
+            CommonApi({action: 'list_webConfig', title: 'tools'}).then(res => {
                 this.tools_dict = eval('(' + res['retlist'][0]['config'] + ')')
             })
         },

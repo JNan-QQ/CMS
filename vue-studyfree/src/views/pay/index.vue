@@ -47,9 +47,9 @@
 import {Back} from "@element-plus/icons";
 import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
-import {orderApi, productApi} from "../../api/pay";
+import {orderApi, productApi} from "@/api/pay";
 import {ElMessage} from "element-plus";
-import {CommonApi} from "../../api/common";
+import {CommonApi} from "@/api/common";
 
 const {WebConfigApi} = require("../../api/admin");
 
@@ -57,13 +57,22 @@ export default {
     name: "index",
     data() {
         return {
-            productsList: [{title: '12345', timeDays: '20', price: '500', desc: ''}],
+            userdata: this.$store.state.userdata,
+            productsList: [],
             money: 0,
             F: 500,
             Z: 1
         }
     },
     components: {Back},
+    // 监听函数
+    watch: {
+        'userdata.usertype'() {
+            if (this.userdata.isLogin !== true) {
+                this.$router.push('/home')
+            }
+        },
+    },
     mounted() {
         checkLogin(this)
         getUserConfig(this)
@@ -73,7 +82,7 @@ export default {
                 }
             }
         )
-        WebConfigApi({action: 'admin_list_webConfig', title: 'pay'}).then(res => {
+        CommonApi({action: 'list_webConfig', title: 'pay'}).then(res => {
             if (res) {
                 let ss = eval('(' + res['retlist'][0]['config'] + ')')
                 this.F = parseInt(ss.F)

@@ -3,38 +3,23 @@ import json
 import time
 import traceback
 
-from Common.lib.shara import jsonResponse
+from Common.lib.handler import dispatcherBase
+from Common.lib.shara import jsonResponse, NOT_LOGIN, IS_LOGIN
 from Pay.ali.aliApi import aliPay
 from Pay.models import PayConfig, Order, Products
 
 
 class payConfig:
     def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'userConfig': self.userConfig,  # 获取用户pay信息
+            'listServerConfig': self.listServerConfig,  # 获取用户服务器配置
+            'listWebUrl': self.listWebUrl,  # 获取url
+            'modify_config': self.modify_config,  # 修改用户服务器配置
+            'checkActive': self.checkActive  # 检查是否激活
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        if action == 'userConfig':
-            return self.userConfig(request)
-        elif action == 'listServerConfig':
-            return self.listServerConfig(request)
-        elif action == 'listWebUrl':
-            return self.listWebUrl(request)
-        elif action == 'modify_config':
-            return self.modify_config(request)
-        elif action == 'checkActive':
-            return self.checkActive(request)
-        else:
-            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, NOT_LOGIN)
 
     @staticmethod
     def userConfig(request):
@@ -106,27 +91,12 @@ class payConfig:
 
 class payOrder:
     def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'list': self.listOrder,  # 列出订单
+            'createOrder': aliPay().createOrder,  # 创建一个订单
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        if action == 'list':
-            return self.listOrder(request)
-        elif action == 'add':
-            return self.addOrder(request)
-        elif action == 'modify':
-            return self.modifyOrder(request)
-        elif action == 'createOrder':
-            return aliPay().createOrder(request)
+        return dispatcherBase(request, Action2Handler, NOT_LOGIN)
 
     @staticmethod
     def listOrder(request):
@@ -139,34 +109,15 @@ class payOrder:
             traceback.print_exc()
             return jsonResponse({'ret': 1, 'msg': '未登陆'})
 
-    @staticmethod
-    def modifyOrder(request):
-        pass
-
-    @staticmethod
-    def addOrder(request):
-        pass
-
 
 class payProduct:
     def handler(self, request):
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'list': self.listProduct,  # 获取用户pay信息
+            'addTime': self.addTime,  # 获取用户服务器配置
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-
-        if action == 'list':
-            return self.listProduct(request)
-        elif action == 'addTime':
-            return self.addTime(request)
+        return dispatcherBase(request, Action2Handler, IS_LOGIN)
 
     @staticmethod
     def listProduct(request):

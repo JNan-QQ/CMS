@@ -54,13 +54,13 @@
                                                 <li class="num-items">
                                                     <a>
                                                         <span class="num ksd-num-count1">0</span>
-                                                        <span class="ktext">关注</span>
+                                                        <span class="ktext">笔记</span>
                                                     </a>
                                                 </li>
                                                 <li class="num-items">
                                                     <a>
                                                         <span class="num ksd-num-count2">0</span>
-                                                        <span class="ktext">粉丝</span>
+                                                        <span class="ktext">关注</span>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -119,7 +119,7 @@
                                                     订购会员
                                                 </div>
                                             </li>
-                                            <li class="items">
+                                            <li class="items" v-if="false">
                                                 <div>
                                                     <el-icon>
                                                         <position/>

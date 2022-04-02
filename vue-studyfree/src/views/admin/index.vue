@@ -64,6 +64,12 @@
                     </el-icon>
                     <span>笔记管理</span>
                 </el-menu-item>
+                <el-menu-item index="100" v-if="activeIndex==='100'">
+                    <el-icon>
+                        <grape/>
+                    </el-icon>
+                    <span>欢迎页面</span>
+                </el-menu-item>
             </el-menu>
         </div>
         <div class="right">
@@ -77,6 +83,7 @@
             <Message_admin ref="message_admin" v-else-if="activeIndex==='4'"></Message_admin>
             <Article_admin ref="article_admin" v-else-if="activeIndex==='5'"></Article_admin>
             <Notebook_admin ref="notebook_admin" v-else-if="activeIndex==='6'"></Notebook_admin>
+            <div v-else-if="activeIndex==='100'" class="welcome"><span>欢迎登录后台系统</span></div>
         </div>
     </div>
 </template>
@@ -84,18 +91,16 @@
 <script>
 import {
     ArrowDown, ArrowRight, Close, DArrowLeft, Flag, Headset, Document,
-    Message, Notebook, Notification, Setting, User
+    Message, Notebook, Notification, Setting, User, Grape
 } from "@element-plus/icons"
 import {markRaw} from "vue"
 import {checkLogin, sign} from "@/api/Login";
-import {ElMessage} from "element-plus";
 import Account_admin from "./account_admin";
 import Config_admin from "./config_admin";
 import Order_admin from "./order_admin";
 import Message_admin from "./message_admin";
 import Article_admin from "./article_admin";
 import Notebook_admin from "./notebook_admin";
-
 
 
 export default {
@@ -105,7 +110,7 @@ export default {
             userdata: this.$store.state.userdata,
             isCollapse: false,
             ArrowRight,
-            activeIndex: '1',
+            activeIndex: '100',
             tps: ['success', '', 'danger', 'warning', 'info'],
             // 面包学导航
             index_page: [],
@@ -117,6 +122,7 @@ export default {
         }
     },
     components: {
+        Grape,
         Notebook_admin,
         Article_admin,
         Message_admin,
@@ -146,10 +152,6 @@ export default {
         'userdata.usertype'() {
             if (this.userdata.usertype !== 1) {
                 this.$router.push('/home')
-                ElMessage({
-                    message: '你不是管理员，无法访问',
-                    type: 'warning',
-                })
             }
         },
     },
@@ -262,6 +264,18 @@ export default {
         .el-tag {
             position: relative;
             margin: 5px
+        }
+
+        .welcome {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            span{
+                font-size: 40px;
+                color: #e8ee67;
+            }
         }
 
     }

@@ -12,12 +12,20 @@
                        inactive-text="N">
             </el-switch>
         </div>
+        <div v-else class="cdk">
+            <span>CDK兑换：</span>
+            <el-input v-model="cdk" placeholder="请输入CDK兑换码" :suffix-icon="Key"/>
+            <el-button type="warning">兑换</el-button>
+        </div>
     </div>
 </template>
 
 <script>
 import {ElMessageBox} from "element-plus";
 import {CommonApi} from "@/api/common";
+import {Key} from "@element-plus/icons";
+import {markRaw} from "vue";
+
 
 export default {
     name: "tool",
@@ -25,6 +33,8 @@ export default {
         return {
             userdata: this.$store.state.userdata,
             heightSwitch: this.$store.state.userdata.usertype === 1005,
+            Key: markRaw(Key),
+            cdk: '',
         }
     },
     watch: {
@@ -33,6 +43,7 @@ export default {
             this.heightSwitch = this.$store.state.userdata.usertype === 1005
         },
     },
+    components: {Key},
     methods: {
         // 改变用户类型
         changeUserType(val) {
@@ -60,11 +71,23 @@ export default {
     width: 100%;
     text-align: left;
 
-    .four-top {
-        border-bottom: #1E9FFF solid 1px;
+    div {
         padding: 5px;
+    }
+
+    .cdk {
         display: flex;
         align-items: center;
+
+        span {
+            margin-left: 10px;
+            margin-right: 5px;
+        }
+
+        .el-input {
+            width: 40%;
+            margin-right: 8px;
+        }
     }
 }
 </style>

@@ -8,7 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from Admin.models import webConfig
 from Common.forms import handle_uploaded_file
-from Common.lib.shara import jsonResponse
+from Common.lib.handler import dispatcherBase
+from Common.lib.shara import jsonResponse, IS_MGR
 from Common.models import User
 from FrontEnd.models import Tags, ArticleContent, NoteBook
 from Pay.models import Order, PayConfig
@@ -18,31 +19,13 @@ from config.settings import BASE_DIR
 class WebConfigs:
     def handler(self, request):
 
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'admin_list_webConfig': self.admin_list_webConfig,
+            'admin_add_webConfig': self.admin_add_webConfig,
+            'admin_modify_webConfig': self.admin_modify_webConfig
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 判断账号类型
-        usertype = request.session.get('usertype', None)
-        is_login = request.session.get('is_login', None)
-        if usertype != 1 or not is_login:
-            if request.params['action'] != 'admin_list_webConfig':
-                return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-        if action == 'admin_list_webConfig':
-            return self.admin_list_webConfig(request)
-        elif action == 'admin_add_webConfig':
-            return self.admin_add_webConfig(request)
-        elif action == 'admin_modify_webConfig':
-            return self.admin_modify_webConfig(request)
+        return dispatcherBase(request, Action2Handler, IS_MGR)
 
     @staticmethod
     def admin_list_webConfig(request):
@@ -65,38 +48,18 @@ class WebConfigs:
 
 
 class Account:
+
     def handler(self, request):
 
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'list': self.list,
+            'modify': self.modify,
+            'add': self.add,
+            'delete': self.delete,
+            'modify_payconfig': self.modify_pay_config
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 判断账号类型
-        usertype = request.session.get('usertype', None)
-        is_login = request.session.get('is_login', None)
-        if usertype != 1 or not is_login:
-            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-        if action == 'list':
-            return self.list(request)
-        elif action == 'modify':
-            return self.modify(request)
-        elif action == 'add':
-            return self.add(request)
-        elif action == 'delete':
-            return self.delete(request)
-        elif action == 'modify_payconfig':
-            return self.modify_pay_config(request)
-        else:
-            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, IS_MGR)
 
     @staticmethod
     def list(request):
@@ -137,35 +100,11 @@ class Account:
 
 class Orders:
     def handler(self, request):
+        Action2Handler = {
+            'list': self.list,
+        }
 
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
-
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 判断账号类型
-        usertype = request.session.get('usertype', None)
-        is_login = request.session.get('is_login', None)
-        if usertype != 1 or not is_login:
-            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-        if action == 'list':
-            return self.list(request)
-        elif action == 'modify':
-            return self.modify(request)
-        elif action == 'add':
-            return self.add(request)
-        elif action == 'delete':
-            return self.delete(request)
-        else:
-            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, IS_MGR)
 
     @staticmethod
     def list(request):
@@ -173,57 +112,21 @@ class Orders:
         res = Order.list_order(request.params)
         return jsonResponse(res)
 
-    @staticmethod
-    def modify(request):
-        res = User.modify_account(request.params)
-        return jsonResponse(res)
-
-    @staticmethod
-    def add(request):
-        res = User.add_account(request.params)
-        return jsonResponse(res)
-
-    @staticmethod
-    def delete(request):
-        res = User.delete_account(request.params)
-        return jsonResponse(res)
-
 
 class Article:
     def handler(self, request):
 
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'list': self.list,
+            'modify': self.modify,
+            'add': self.add,
+            'delete': self.delete,
+            'img_md': self.imgMd,
+            'modify_content': self.modify_content
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
+        }
 
-        # 判断账号类型
-        usertype = request.session.get('usertype', None)
-        is_login = request.session.get('is_login', None)
-        if usertype != 1 or not is_login:
-            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-        if action == 'list':
-            return self.list(request)
-        elif action == 'modify':
-            return self.modify(request)
-        elif action == 'add':
-            return self.add(request)
-        elif action == 'delete':
-            return self.delete(request)
-        elif action == 'img_md':
-            return self.imgMd()
-        elif action == 'modify_content':
-            return self.modify_content(request)
-        else:
-            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, IS_MGR)
 
     @staticmethod
     def list(request):
@@ -272,33 +175,15 @@ class Article:
 class NoteBooks:
     def handler(self, request):
 
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
+        Action2Handler = {
+            'list': self.list,
+            'modify': self.modify,
+        }
 
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            request.params = json.loads(request.body)
-
-        # 判断账号类型
-        usertype = request.session.get('usertype', None)
-        is_login = request.session.get('is_login', None)
-        if usertype != 1 or not is_login:
-            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
-
-        # 根据不同的action分派给不同的函数进行处理
-        action = request.params['action']
-        if action == 'list':
-            return self.list()
-        elif action == 'modify':
-            return self.modify(request)
-        else:
-            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, IS_MGR)
 
     @staticmethod
-    def list():
+    def list(request):
         res = NoteBook.admin_list()
         return jsonResponse(res)
 
@@ -313,45 +198,15 @@ class NoteBooks:
 class FileManage:
     def handler(self, request):
 
-        actionFormData = None
+        Action2Handler = {
+            'list': self.list,
+            'addfile': self.addfile,
+            'addDir': self.addDir,
+            'delete': self.deleteFD,
+            'modify': self.modifyFD
+        }
 
-        # 将请求参数统一放入request 的 params 属性中，方便后续处理
-        # GET请求 参数 在 request 对象的 GET属性中
-        if request.method == 'GET':
-            request.params = request.GET
-
-        # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
-        elif request.method in ['POST', 'PUT', 'DELETE']:
-            # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
-            try:
-                request.params = json.loads(request.body)
-            except UnicodeDecodeError:
-                actionFormData = request.POST.get('action', None)
-
-        # 判断账号类型
-        usertype = request.session.get('usertype', None)
-        is_login = request.session.get('is_login', None)
-        if usertype != 1 or not is_login:
-            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号访问'})
-
-        # 根据不同的action分派给不同的函数进行处理
-        if actionFormData is None:
-            action = request.params['action']
-        else:
-            action = actionFormData
-
-        if action == 'list':
-            return self.list(request)
-        elif action == 'addfile':
-            return self.addfile(request)
-        elif action == 'addDir':
-            return self.addDir(request)
-        elif action == 'delete':
-            return self.deleteFD(request)
-        elif action == 'modify':
-            return self.modifyFD(request)
-        else:
-            return jsonResponse({'ret': 1, 'msg': 'action参数错误'})
+        return dispatcherBase(request, Action2Handler, IS_MGR)
 
     @staticmethod
     def list(request):
