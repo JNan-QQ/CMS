@@ -335,7 +335,7 @@ class Message(models.Model):
                     title=data['title'],
                     content=data['content'],
                     group_type=group_type,
-                    user=data['user'],
+                    user=data.get('user', ''),
                     message_type=data['message_type']
                 )
 
