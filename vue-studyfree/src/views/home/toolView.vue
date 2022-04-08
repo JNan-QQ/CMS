@@ -1,6 +1,5 @@
 <template>
     <div class="tool-view">
-
         <div class="b_searchboxForm">
             <input class="searchBox" maxlength="100" v-model="search_str"
                    @keydown.enter="search_b" autofocus="autofocus">
@@ -11,7 +10,6 @@
                 <search/>
             </el-icon>
         </div>
-
         <div class="driver-box ss">
             <div class="headline">
                 <strong>WebDriver

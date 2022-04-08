@@ -12,17 +12,17 @@
                 </ul>
             </div>
         </div>
-        <div class="courseListBox">
+        <div class="courseListBox" v-loading="loading" element-loading-background="#414444" element-loading-text="加载中...">
             <div class="course_stage_item" v-for="(tag2,index) in contentTagList">
                 <h2>
                     <span class="cro_icon1">{{ index + 1 }}</span>
-                    <span>第{{ chineseIndex[index] }}阶段：{{ tag2.tag_name }}</span>
+                    <span>第{{ chineseIndex[index] }}阶段：{{ tag2['tag_name'] }}</span>
                 </h2>
                 <div class="path-course-r">
                     <div class="content" v-for="tag3 in tag2.content" @click="toMarkdown(tag3.id)">
                         <el-image fit="fill" :src="`api_file/static/` + tag3.images"></el-image>
                         <div>
-                            <h3>{{ tag3.tag_name }}</h3>
+                            <h3>{{ tag3['tag_name'] }}</h3>
                             <div class="views">
                                 <span class="desc">这是一个描述</span>
                                 <div class="hot">
@@ -36,7 +36,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     </div>
     <div class="blog-footer">
         <p>
@@ -61,13 +61,10 @@ export default {
     data() {
         return {
             isActive: 0,
-            tagList: [{id: 0, tag_name: ''}],
-            contentTagList: [{
-                id: 0,
-                tag_name: '',
-                content: [{id: 1, tag_name: '', images: 'images/python-default.png'}]
-            }],
-            chineseIndex: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十']
+            tagList: [],
+            contentTagList: [],
+            chineseIndex: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十'],
+            loading: false
         }
     },
     components: {Pointer},
@@ -82,12 +79,14 @@ export default {
         }
     },
     mounted() {
+        this.loading = true
         getSlideTags().then(res => {
             if (res) {
                 this.tagList = res['retlist']
                 getArticleContentTags({action: 'contentTags', 'tag_id': this.tagList[this.isActive].id}).then(res => {
                     if (res) {
                         this.contentTagList = res['retlist']
+                        this.loading = false
                     }
                 })
             }
@@ -101,11 +100,6 @@ export default {
         },
         toMarkdown(id) {
             this.$router.push('/md?id=' + id)
-            // let routeUrl = this.$router.resolve({
-            //     path: '/md',
-            //     query: {id: id}
-            // })
-            // window.open(routeUrl.href, '_blank')
         }
     },
 }
@@ -189,7 +183,7 @@ export default {
         padding-right: 15px;
         padding-left: 15px;
         width: 100%;
-        min-height: 310px;
+        height: calc(100vh - 420px);
 
         .course_stage_item {
             position: relative;

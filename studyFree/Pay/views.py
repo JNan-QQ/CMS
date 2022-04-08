@@ -33,11 +33,11 @@ class payConfig:
     def listServerConfig(request):
         if request.session.get('is_login', None):
             if request.session['usertype'] not in [1, 1005]:
-                return jsonResponse({'ret': 0, 'ServerConfig': ''})
+                return jsonResponse({'ret': 0, 'userServerConfig': ''})
             res = PayConfig.listServerConfig({'user_id': request.session['user_id']})
             return jsonResponse(res)
         else:
-            return jsonResponse({'ret': 0, 'ServerConfig': ''})
+            return jsonResponse({'ret': 0, 'userServerConfig': ''})
 
     @staticmethod
     def listWebUrl(request):

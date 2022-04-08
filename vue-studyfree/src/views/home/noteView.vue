@@ -1,5 +1,5 @@
 <template>
-    <div class="noteView" id="noteView">
+    <div class="noteView" id="noteView" v-loading="loading" element-loading-background="#414444" element-loading-text="加载中...">
         <div class="noteBox">
             <div class="notebook">
                 <div class="bJ">
@@ -81,8 +81,9 @@ export default {
             isEdit: false,
             activeName: 1,
             bjList: [],
-            saveLoading: false,deleteBtn: false,
+            saveLoading: false, deleteBtn: false,
             DocumentAdd: markRaw(DocumentAdd), Remove: markRaw(Remove), CaretTop: markRaw(CaretTop),
+            loading: false
         }
     },
     components: {MdEditor, Edit},
@@ -91,9 +92,11 @@ export default {
     },
     methods: {
         before() {
+            this.loading = true
             noteContent({action: 'listNoteBook'}).then(res => {
                 if (res) {
                     this.bjList = res['retlist']
+                    this.loading = false
                 }
             })
         },
