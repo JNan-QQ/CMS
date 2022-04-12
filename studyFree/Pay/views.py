@@ -16,6 +16,7 @@ class payConfig:
             'listServerConfig': self.listServerConfig,  # 获取用户服务器配置
             'listWebUrl': self.listWebUrl,  # 获取url
             'modify_config': self.modify_config,  # 修改用户服务器配置
+            'modify_webUrl': self.modify_webUrl,  # 修改用户链接配置
             'checkActive': self.checkActive  # 检查是否激活
         }
 
@@ -48,6 +49,16 @@ class payConfig:
             return jsonResponse(res)
         else:
             return jsonResponse({'ret': 0, 'web_url': ''})
+
+    @staticmethod
+    def modify_webUrl(request):
+        try:
+            web_url = request.params['web_url']
+            user_id = request.session['user_id']
+            res = PayConfig.modify({'user_id': user_id, 'web_url': web_url})
+            return jsonResponse(res)
+        except KeyError:
+            return jsonResponse({'ret': 1, 'msg': '参数错误'})
 
     @staticmethod
     def modify_config(request):

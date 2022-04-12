@@ -6,16 +6,19 @@
             <div class="navbar-collapse">
                 <ul class="navbar-nav">
                     <router-link to="/Article">
-                        <li><a>文章</a><i class="bgd-left">热门</i></li>
+                        <li @click="is_active='文章'">
+                            <a :class="{ active: is_active==='文章' }">文章</a><i class="bgd-left">热门</i>
+                        </li>
                     </router-link>
                     <router-link to="/Note">
-                        <li><a>笔记</a></li>
+                        <li @click="is_active='笔记'"><a :class="{ active: is_active==='笔记' }">笔记</a></li>
                     </router-link>
                     <router-link to="/Skill">
-                        <li><a>技巧</a></li>
+                        <li @click="is_active='技巧'"><a :class="{ active: is_active==='技巧' }">技巧</a></li>
                     </router-link>
                     <router-link to="/Tool">
-                        <li v-if="userdata.isLogin"><a>工具</a></li>
+                        <li v-if="userdata.isLogin" @click="is_active='工具'"><a
+                            :class="{ active: is_active==='工具' }">工具</a></li>
                     </router-link>
                 </ul>
                 <router-link to="/login" v-if="!userdata.isLogin">
@@ -183,6 +186,7 @@ export default {
             Avatar: markRaw(Avatar), Notebook: markRaw(Notebook), Document: markRaw(Document), Flag: markRaw(Flag),
             userdata: this.$store.state.userdata,
             inHome: false,
+            is_active: '文章'
         }
     },
     components: {Document, CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
@@ -306,6 +310,10 @@ a:link, a:visited {
                     border-radius: 10px;
                     padding: 4px 22px;
 
+                }
+
+                a.active{
+                    color: #1E9FFF;
                 }
 
                 a:hover {

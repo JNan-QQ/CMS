@@ -30,8 +30,14 @@
             <el-table :data="cq" style="width: 100%">
                 <el-table-column label="名人名言" prop="content"/>
                 <el-table-column label="作者" prop="author"/>
-                <el-table-column label="Operations">
+                <el-table-column align="center">
+                    <template #header>
+                        <el-button @click="change_cq_flg('add')">添加名言</el-button>
+                    </template>
                     <template #default="scope">
+                        <el-button size="small" type="warning" @click="change_cq_flg('modify',scope.row)">
+                            Modify
+                        </el-button>
                         <el-button size="small" type="danger" @click="deleteCq(scope.row.id)">
                             Delete
                         </el-button>
@@ -120,6 +126,20 @@
             <el-button @click="saveConfig(3)" type="success" style="margin: 5px">保存</el-button>
         </el-tab-pane>
     </el-tabs>
+
+    <el-dialog v-model="cq_flg" :title="new_cq['action']" center width="30%">
+        <el-form :model="new_cq">
+            <el-form-item label="名言：">
+                <el-input v-model="new_cq.content"/>
+            </el-form-item>
+            <el-form-item label="作者：">
+                <el-input v-model="new_cq.author"/>
+            </el-form-item>
+        </el-form>
+        <div style="text-align: center;">
+            <el-button type="success" @click="change_cq">提交</el-button>
+        </div>
+    </el-dialog>
 </template>
 
 <script>
@@ -135,6 +155,8 @@ export default {
         return {
             ailiPay: {},
             cq: [],
+            cq_flg: false,
+            new_cq: {},
             pay: {},
             tools: {},
             fileList: [],
@@ -176,6 +198,26 @@ export default {
                 }
             })
         },
+        // 改变名人名言标志
+        change_cq_flg(mode, item = '') {
+            if (mode === 'add') {
+                this.new_cq = {content: '', author: '', action: 'add'}
+
+            } else {
+                this.new_cq = item
+                this.new_cq.action = 'modify'
+            }
+            this.cq_flg = true
+        },
+        change_cq() {
+            CqApi(this.new_cq).then(res => {
+                if (res) {
+                    this.cq_flg = false
+                    this.getCqData()
+                }
+            })
+        },
+
         getFileList(file_path, name) {
             if (file_path) {
                 if (name) {
@@ -272,7 +314,8 @@ export default {
                         this.getFileList(this.breadcrumbItem.join('\\'))
                     }
                 })
-            }).catch(()=>{})
+            }).catch(() => {
+            })
         },
 
         // 修改文件名
@@ -294,7 +337,8 @@ export default {
                         this.getFileList(this.breadcrumbItem.join('\\'))
                     }
                 })
-            }).catch(()=>{})
+            }).catch(() => {
+            })
         },
     },
 

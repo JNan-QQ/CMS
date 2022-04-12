@@ -120,7 +120,8 @@ class CQ:
             'list': self.list,
             'add': self.add,
             'listAll': self.listAll,
-            'delete': self.delete_cq
+            'delete': self.delete_cq,
+            'modify': self.modify
         }
 
         return dispatcherBase(request, Action2Handler, NOT_LOGIN)
@@ -140,6 +141,13 @@ class CQ:
         if request.session['usertype'] != 1:
             return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
         res = CelebrityQuotes.add(request.params)
+        return jsonResponse(res)
+
+    @staticmethod
+    def modify(request):
+        if request.session['usertype'] != 1:
+            return jsonResponse({'ret': 1, 'msg': '请使用管理员账号操作'})
+        res = CelebrityQuotes.modifyCq(request.params)
         return jsonResponse(res)
 
     @staticmethod
