@@ -19,7 +19,7 @@
                 </strong>
             </div>
             <div class="tool-box" style="display: block">
-                <ul>
+                <ul v-loading="loading_tool" element-loading-background="#ffffff" element-loading-text="加载中...">
                     <li v-for="item in tools_dict['WebDriver']">
                         <a :title="item.name" :href="item['jump_url']" target="_blank">
                             <el-image :src="item['icon_url']" fit="fill"
@@ -35,7 +35,7 @@
                 <strong>工具网址</strong>
             </div>
             <div class="tool-box" style="display: block">
-                <ul>
+                <ul v-loading="loading_tool" element-loading-background="#ffffff" element-loading-text="加载中...">
                     <li v-for="item in tools_dict['UrlCollection']">
                         <a :href="item['jump_url']" target="_blank">
                             <el-image :src="item['icon_url']" fit="fill" class="icon"/>
@@ -57,7 +57,7 @@
                 </el-button-group>
             </div>
             <div class="tool-box" style="display: block">
-                <ul>
+                <ul v-loading="loading_other" element-loading-background="#ffffff" element-loading-text="加载中...">
                     <li v-for="(item,index) in otherList">
                         <a :href="item['jump_url']" target="_blank">
                             <el-image :src="item['icon_url']" fit="fill" class="icon"/>
@@ -108,7 +108,6 @@
 </template>
 
 <script>
-import {WebConfigApi} from "@/api/admin";
 import {Edit, Plus, Select, CloseBold, Search} from "@element-plus/icons";
 import {markRaw} from "vue";
 import {ElMessage} from "element-plus";
@@ -133,7 +132,8 @@ export default {
             btnLoading: false,
             saveBtn: false,
             editBtn: false,
-            search_str: ''
+            search_str: '',
+            loading_tool: false, loading_other: false,
         }
     },
     components: {CloseBold, Search},
@@ -164,11 +164,14 @@ export default {
             this.browser = browserInfo
         },
         getTools() {
+            this.loading_tool = true
             CommonApi({action: 'list_webConfig', title: 'tools'}).then(res => {
                 this.tools_dict = eval('(' + res['retlist'][0]['config'] + ')')
+                this.loading_tool = false
             })
         },
         getWebUrl() {
+            this.loading_other = true
             UserConfigApi({action: 'listWebUrl'}).then((res) => {
                 if (res) {
                     if (res['web_url'].hasOwnProperty('web_url')) {
@@ -176,6 +179,7 @@ export default {
                     }
                     this.saveBtn = false
                     this.editBtn = false
+                    this.loading_other = false
                 }
             })
         },
@@ -203,7 +207,7 @@ export default {
         save() {
             const ss = {'web_url': this.otherList}
             this.btnLoading = true
-            UserConfigApi({action: 'modify', 'web_url': ss}).then(res => {
+            UserConfigApi({action: 'modify_webUrl', 'web_url': ss}).then(res => {
                 if (res) {
                     this.closeDialog()
                     this.getWebUrl()
@@ -219,7 +223,7 @@ export default {
             this.newWebTool = {title: '', jump_url: '', icon_url: ''}
             this.icon_mode = true
         },
-        search_b(){
+        search_b() {
             const url = 'https://cn.bing.com/search?q=' + this.search_str
             window.open(url)
         }
@@ -408,6 +412,10 @@ export default {
             }
         }
     }
+}
+
+ul{
+    min-height: 50px;
 }
 
 </style>

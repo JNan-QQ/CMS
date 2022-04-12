@@ -222,6 +222,25 @@ class CelebrityQuotes(models.Model):
         cq.delete()
         return {'ret': 0}
 
+    @staticmethod
+    def modifyCq(data):
+        try:
+            # 根据 id 从数据库中找到相应的客户记录
+            cq = CelebrityQuotes.objects.get(id=data['id'])
+        except ObjectDoesNotExist:
+            return {
+                'ret': 1,
+                'msg': f'名言不存在，请刷新'
+            }
+        if 'content' in data:
+            cq.content = data['content']
+        if 'author' in data:
+            cq.author = data['author']
+
+        cq.save()
+
+        return {'ret': 0}
+
 
 # 验证码
 class EmailCode(models.Model):

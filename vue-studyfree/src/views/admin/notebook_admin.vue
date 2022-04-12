@@ -1,5 +1,5 @@
 <template>
-    <el-table :data="notebookData" style="width: 100%">
+    <el-table :data="notebookData" style="width: 100%" v-loading="loading_table" element-loading-text="加载中...">
         <el-table-column type="expand">
             <template #default="props">
                 <md-editor v-model="props.row.content" previewOnly/>
@@ -30,6 +30,7 @@ export default {
     data() {
         return {
             notebookData: [],
+            loading_table: false
         }
     },
     mounted() {
@@ -37,9 +38,11 @@ export default {
     },
     methods: {
         getNoteBookData() {
+            this.loading_table = true
             NoteBookApi({action: 'list'}).then(res => {
                 if (res) {
                     this.notebookData = res['retlist']
+                    this.loading_table = false
                 }
             })
         },

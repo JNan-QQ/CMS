@@ -14,9 +14,9 @@
             </template>
         </el-input>
         <el-button type="primary" plain @click="" style="position: relative">添加</el-button>
-        <!--        <el-button type="success" plain size="small" @click="addMost">批量添加</el-button>-->
     </div>
-    <el-table :data="orderList.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table">
+    <el-table :data="orderList.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
+              v-loading="loading_table" element-loading-text="加载中...">
         <el-table-column prop="id" label="id" min-width="10%" sortable/>
         <el-table-column prop="orderNo" label="订单号" min-width="10%"/>
         <el-table-column prop="user__username" label="用户名" min-width="10%"/>
@@ -62,6 +62,7 @@ export default {
             Search: markRaw(Search),
             Edit: markRaw(Edit),
             Loading: markRaw(Loading),
+            loading_table: false
         }
     },
     mounted() {
@@ -69,6 +70,7 @@ export default {
     },
     methods: {
         getOrderData() {
+            this.loading_table = true
             // 搜索过滤
             const search_items = {}
             if (this.select_type && this.select_value) {
@@ -78,6 +80,7 @@ export default {
             OrderApi({search_items: search_items, action: 'list'}).then(res => {
                 if (res) {
                     this.orderList = res['retlist']
+                    this.loading_table = false
                 }
             })
         },

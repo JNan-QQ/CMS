@@ -5,14 +5,15 @@
                 <p class="product-desctext">开开心心学习，快快乐乐生活</p>
             </div>
             <div class="tag_items">
-                <ul>
+                <ul v-loading="loading" element-loading-background="#7a85df">
                     <li v-for="(item,index) in tagList" :class="{active: isActive === index}"
-                        @click="getTagContent(index)">{{ item.tag_name }}
+                        @click="getTagContent(index)">{{ item['tag_name'] }}
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="courseListBox" v-loading="loading" element-loading-background="#414444" element-loading-text="加载中...">
+        <div class="courseListBox" v-loading="loading" element-loading-background="#414444"
+             element-loading-text="加载中...">
             <div class="course_stage_item" v-for="(tag2,index) in contentTagList">
                 <h2>
                     <span class="cro_icon1">{{ index + 1 }}</span>
@@ -36,7 +37,7 @@
                     </div>
                 </div>
             </div>
-        </div >
+        </div>
     </div>
     <div class="blog-footer">
         <p>
@@ -107,7 +108,6 @@ export default {
 
 <style lang="less" scoped>
 .main-article {
-    //background-color: #e0dddd;
     position: relative;
     height: calc(100vh - 140px);
     overflow-y: auto;
@@ -136,12 +136,14 @@ export default {
         }
 
         .tag_items {
-
-            text-align: center;
             margin-top: 40px;
             color: #FFFFFF;
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
 
             ul {
+                width: fit-content;
                 list-style: none;
 
                 li {

@@ -2,7 +2,7 @@
     <el-button style="float: right;position: relative" type="success" size="small"
                @click="addBtn('tag1')">添加Tag标签
     </el-button>
-    <el-collapse v-model="activeName" accordion>
+    <el-collapse v-model="activeName" accordion v-loading="loading_table" element-loading-text="加载中...">
         <el-collapse-item :name="tags.id" v-for="tags in articleData">
             <template #title>
                 <span style="margin-left: 5px">{{ tags.tag_name }}</span>
@@ -118,7 +118,8 @@ export default {
             newContent: {},
             Edit: markRaw(Edit), Delete: markRaw(Delete),
             options_images: [],
-            options_md: []
+            options_md: [],
+            loading_table: false
         }
     },
     mounted() {
@@ -126,10 +127,12 @@ export default {
     },
     methods: {
         getArticleData() {
-            // 发送列出账号请求
+            this.loading_table = true
+            // 发送列出通知请求
             ArticleApi({action: 'list'}).then(res => {
                 if (res) {
                     this.articleData = res['retlist']
+                    this.loading_table = false
                 }
             })
 

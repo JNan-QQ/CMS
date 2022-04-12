@@ -14,10 +14,10 @@
             </template>
         </el-input>
         <el-button type="primary" plain @click="addBtnFunction" style="position: relative">添加</el-button>
-        <!--        <el-button type="success" plain size="small" @click="addMost">批量添加</el-button>-->
     </div>
 
-    <el-table :data="accountData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table">
+    <el-table :data="accountData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
+              v-loading="loading_table" element-loading-text="加载中...">
         <el-table-column prop="id" label="id" sortable width="60"/>
         <el-table-column prop="username" label="用户名" width="100"/>
         <el-table-column prop="realName" label="姓名" width="100"/>
@@ -107,6 +107,7 @@ export default {
             select_type: '',
             // 字段值
             select_value: '',
+            loading_table: false
 
         }
     },
@@ -118,6 +119,7 @@ export default {
     methods: {
         // 获取用户信息
         getAccountData() {
+            this.loading_table = true
             // 搜索过滤
             const search_items = {}
             if (this.select_type && this.select_value) {
@@ -127,6 +129,7 @@ export default {
             AccountApi({search_items: search_items, action: 'list'}).then(res => {
                 if (res) {
                     this.accountData = res['retlist']
+                    this.loading_table = false
                 }
             })
 

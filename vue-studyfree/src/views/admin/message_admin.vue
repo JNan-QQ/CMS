@@ -16,7 +16,7 @@
         <el-button type="primary" plain style="position: relative" @click="changeDialogVisible('add')">添加</el-button>
     </div>
 
-    <el-table :data="messageData" border class="table">
+    <el-table :data="messageData" border class="table" v-loading="loading_table" element-loading-text="加载中...">
         <el-table-column prop="id" label="id" sortable width="80"/>
         <el-table-column label="标题" width="200">
             <template #default="scope">
@@ -146,7 +146,8 @@ export default {
             select_value: '',
             deleteLoading: false,
             disabledLoading: false,
-            saveLoading: false
+            saveLoading: false,
+            loading_table: false
 
         }
     },
@@ -161,6 +162,7 @@ export default {
     methods: {
         // 获取消息列表
         getMessageData() {
+            this.loading_table = true
             // 搜索过滤
             const search_items = {}
             if (this.select_type && this.select_value) {
@@ -176,6 +178,7 @@ export default {
                 if (res) {
                     this.messageData = res['retlist']
                     this.total = res['total']
+                    this.loading_table = false
                 }
             })
         },
