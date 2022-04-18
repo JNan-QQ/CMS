@@ -123,7 +123,6 @@ class Article:
             'delete': self.delete,
             'img_md': self.imgMd,
             'modify_content': self.modify_content
-
         }
 
         return dispatcherBase(request, Action2Handler, IS_MGR)
@@ -149,20 +148,23 @@ class Article:
         return jsonResponse(res)
 
     @staticmethod
-    def imgMd():
+    def imgMd(request):
         img = []
         md = []
-        for i in os.listdir(f'{BASE_DIR}/static/images/article'):
-            img.append({
-                'img_name': i,
-                'img_path': f'images/article/{i}'
-            })
+        try:
+            for i in os.listdir(f'{BASE_DIR}/static/images/article'):
+                img.append({
+                    'img_name': i,
+                    'img_path': f'images/article/{i}'
+                })
 
-        for i in os.listdir(f'{BASE_DIR}/static/md'):
-            md.append({
-                'md_name': i,
-                'md_path': f'md/{i}'
-            })
+            for i in os.listdir(f'{BASE_DIR}/static/md'):
+                md.append({
+                    'md_name': i,
+                    'md_path': f'md/{i}'
+                })
+        except:
+            print(traceback.print_exc())
 
         return jsonResponse({'ret': 0, 'images': img, 'md': md})
 
@@ -174,7 +176,6 @@ class Article:
 
 class NoteBooks:
     def handler(self, request):
-
         Action2Handler = {
             'list': self.list,
             'modify': self.modify,

@@ -5,7 +5,7 @@
     <el-collapse v-model="activeName" accordion v-loading="loading_table" element-loading-text="加载中...">
         <el-collapse-item :name="tags.id" v-for="tags in articleData">
             <template #title>
-                <span style="margin-left: 5px">{{ tags.tag_name }}</span>
+                <span style="margin-left: 5px">{{ tags['tag_name'] }}</span>
                 <el-button class="title-btn" @click="addBtn('tag2',tags.id)">添加子章节</el-button>
                 <el-button class="title-btn" @click="editTag(tags.id,'tag1')">编辑Tag标签</el-button>
                 <el-button class="title-btn" @click="deleteTag(tags.id)">删除Tag标签</el-button>
@@ -15,7 +15,7 @@
                 <el-card class="box-card" v-for="tag2 in tags['tag_child']">
                     <template #header>
                         <div class="card-header">
-                            <span>{{ tag2.tag_name }}</span>
+                            <span>{{ tag2['tag_name'] }}</span>
                             <div style="position: relative">
                                 <el-button class="button" type="success" size="small" @click="addBtn('tag3',tag2.id)">
                                     添加章节内容
@@ -31,7 +31,7 @@
                         <div v-for="content in tag2['tag_child']" class="content">
                             <div>
                                 <el-image :src="'api_file/static/' + content['contentList'].images"></el-image>
-                                <span>{{ content.tag_name }}</span>
+                                <span>{{ content['tag_name'] }}</span>
                             </div>
                             <div class="btn-group">
                                 <el-button type="primary" :icon="Edit" circle size="small"
@@ -81,7 +81,7 @@
     <el-dialog v-model="editBtn" title="文章信息" width="30%" destroy-on-close center>
         <el-form ref="form" :model="newTags" label-position="left" label-width="80px">
             <el-form-item label="标签名：">
-                <el-input v-model="newTags.tag_name"></el-input>
+                <el-input v-model="newTags['tag_name']"></el-input>
             </el-form-item>
             <el-form-item label="状态：">
                 <el-select v-model="newTags.status" placeholder="Select">

@@ -3,6 +3,7 @@
 # @Time      :2022/4/1 15:13
 # @Author    :JN
 import json
+import traceback
 
 from Common.lib.shara import jsonResponse, IS_LOGIN, IS_MGR, MGR
 
@@ -30,9 +31,10 @@ def dispatcherBase(request, action2HandlerTable, LOGIN_STATUS=None):
     # POST/PUT/DELETE 请求 参数 从 request 对象的 body 属性中获取
     elif request.method in ['POST', 'PUT', 'DELETE']:
         # 根据接口，POST/PUT/DELETE 请求的消息体都是 json格式
+        # noinspection PyBroadException
         try:
             request.params = json.loads(request.body)
-        except UnicodeDecodeError:
+        except:
             actionFormData = request.POST.get('action', None)
 
     # 根据不同的action分派给不同的函数进行处理

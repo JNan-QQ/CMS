@@ -72,8 +72,14 @@
                     </el-breadcrumb>
                     <div style="display: flex;padding: 5px;align-items: center;">
                         <el-upload action="api/my_admin/files" name="file" :show-file-list="false"
-                                   :data="{action: 'addfile',file_path: breadcrumbItem.join('\\')}">
-                            <el-button type="primary" size="small">上传文件</el-button>
+                                   :data="{action: 'addfile',file_path: breadcrumbItem.join('\\')}"
+                                   :on-success="uploadFileSuccess" :on-progress="Uploading">
+                            <el-button type="primary" size="small" v-if="!uploadBtn">上传文件</el-button>
+                            <el-progress :percentage="percentage"
+                                         :color="customColorMethod"
+                                         v-else :text-inside="true"
+                                         :stroke-width="15"
+                                         style="width: 200px"/>
                         </el-upload>
                         <el-input v-model="dir_path" placeholder="输入目录结构" size="small" style="margin-left: 3px">
                             <template #prepend>新建目录</template>
@@ -163,7 +169,9 @@ export default {
             breadcrumbItem: ['static'],
             FolderOpened: markRaw(FolderOpened), Document: markRaw(Document), Check: markRaw(Check),
             dir_path: '',
-            loading_table: false
+            loading_table: false,
+            uploadBtn: false,
+            percentage: 0, //进度条0-100
         }
     },
     components: {FolderOpened, Document},
@@ -343,9 +351,36 @@ export default {
             }).catch(() => {
             })
         },
+
+        // 文件上传成功
+        uploadFileSuccess(response, uploadFile, uploadFiles) {
+            ElMessage({
+                type: 'success',
+                message: '文件上传成功！',
+            })
+            this.getFileList(this.breadcrumbItem.join('\\'))
+            this.uploadBtn = false
+        },
+
+        // 文件上传过程中
+        Uploading(evt, uploadFile, uploadFiles) {
+            this.uploadBtn = true
+            this.percentage = parseInt(evt.percent)
+        },
+        // 进度条颜色
+        customColorMethod(percentage) {
+            if (percentage < 30) {
+                return '#97b4f1'
+            } else if (percentage < 80) {
+                return '#e6a23c'
+            } else {
+                return '#67c23a'
+            }
+        }
     },
 
 }
+
 </script>
 
 <style scoped>
