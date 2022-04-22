@@ -6,7 +6,7 @@ import traceback
 from Common.lib.handler import dispatcherBase
 from Common.lib.shara import jsonResponse, NOT_LOGIN, IS_LOGIN
 from Pay.ali.aliApi import aliPay
-from Pay.models import PayConfig, Order, Products
+from Pay.models import PayConfig, Order, Products, cdkUser
 
 
 class payConfig:
@@ -141,4 +141,18 @@ class payProduct:
         product = Products.objects.get(id=product_id)
         res = PayConfig.modify({'user_id': request.session['user_id'], 'coins': -product.price, 'exp': product.price,
                                 'addDays': product.timeDays})
+        return jsonResponse(res)
+
+
+class cdk_view:
+    def handler(self, request):
+        Action2Handler = {
+            'useCdk': self.useCdk,  # 获取用户pay信息
+        }
+
+        return dispatcherBase(request, Action2Handler, IS_LOGIN)
+
+    @staticmethod
+    def useCdk(request):
+        res = cdkUser.add({'cdk': request.params['cdk'], 'user_id': request.session['user_id']})
         return jsonResponse(res)

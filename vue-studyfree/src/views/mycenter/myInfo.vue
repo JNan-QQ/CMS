@@ -33,8 +33,8 @@
             <div class="item">
                 <span>等　级：</span><span class="item-content lv">{{ userdata.lv }}</span>
             </div>
-            <div class="item">
-                <span>时　间：</span><span class="item-content deadline">{{ userdata.deadline }}</span>
+            <div class="item" :class="[new Date(userdata.deadline) > new Date() ? 'green' : 'yellow']">
+                <span>时　间：</span><span>{{ userdata.deadline }}</span>
                 <el-icon style="margin-left: 10px" :size="14" @click="this.$router.push('/pay')">
                     <plus/>
                 </el-icon>
@@ -103,7 +103,7 @@ export default {
     watch: {
         "passwords.new_password2"() {
             this.checkNewPassWord = this.passwords.new_password1 !== this.passwords.new_password2
-        }
+        },
     },
     methods: {
         // 更改真实姓名
@@ -176,6 +176,16 @@ export default {
             .item-content {
                 font-weight: bold;
             }
+
+
+        }
+
+        .green {
+            color: green;
+        }
+
+        .yellow {
+            color: #ff6200;
         }
     }
 

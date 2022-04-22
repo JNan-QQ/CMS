@@ -12,7 +12,7 @@ from Common.lib.handler import dispatcherBase
 from Common.lib.shara import jsonResponse, IS_MGR
 from Common.models import User
 from FrontEnd.models import Tags, ArticleContent, NoteBook
-from Pay.models import Order, PayConfig
+from Pay.models import Order, PayConfig, CDK
 from config.settings import BASE_DIR
 
 
@@ -287,3 +287,42 @@ class FileManage:
             return jsonResponse({'ret': 0})
         else:
             return jsonResponse({'ret': 1, 'msg': '名称可能重复'})
+
+
+class CDK_view:
+    def handler(self, request):
+        Action2Handler = {
+            'list': self.list,
+            'modify': self.modify,
+            'add': self.add,
+            'delete': self.delete_cdk
+        }
+
+        return dispatcherBase(request, Action2Handler, IS_MGR)
+
+    @staticmethod
+    def list(request):
+        data = request.params
+        if 'page_size' not in data:
+            data['page_size'] = 10
+        if 'page_num' not in data:
+            data['page_num'] = 1
+
+        res = CDK.list(data)
+
+        return jsonResponse(res)
+
+    @staticmethod
+    def modify(request):
+        res = CDK.modify(request.params)
+        return jsonResponse(res)
+
+    @staticmethod
+    def add(request):
+        res = CDK.add(request.params)
+        return jsonResponse(res)
+
+    @staticmethod
+    def delete_cdk(request):
+        res = CDK.delete_cdk(request.params)
+        return jsonResponse(res)

@@ -27,7 +27,7 @@
 import {marked} from "marked"
 import {downloadFree, getArticleContent} from "@/api/common";
 import {DArrowLeft} from "@element-plus/icons";
-import {ElMessage, ElMessageBox} from "element-plus";
+import {ElMessageBox} from "element-plus";
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 
@@ -99,7 +99,7 @@ export default {
                     this.muLu.push(name)
                 }
             })
-        }
+        },
     }
 }
 </script>

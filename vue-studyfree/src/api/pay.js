@@ -38,3 +38,11 @@ export function productApi(data) {
         data: data
     })
 }
+
+export function cdkApi(data) {
+    return request({
+        url: 'pay/cdk',
+        method: 'post',
+        data: data
+    })
+}

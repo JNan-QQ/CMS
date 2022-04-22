@@ -64,3 +64,12 @@ export function FilesApi(data) {
         data: data
     })
 }
+
+// 获取名人名言
+export function CdkApi(data) {
+    return request({
+        url: 'my_admin/cdk',
+        method: 'post',
+        data: data
+    })
+}

@@ -64,6 +64,12 @@
                     </el-icon>
                     <span>笔记管理</span>
                 </el-menu-item>
+                <el-menu-item index="7">
+                    <el-icon>
+                        <key/>
+                    </el-icon>
+                    <span>CDK</span>
+                </el-menu-item>
                 <el-menu-item index="100" v-if="activeIndex==='100'">
                     <el-icon>
                         <grape/>
@@ -83,6 +89,7 @@
             <Message_admin ref="message_admin" v-else-if="activeIndex==='4'"></Message_admin>
             <Article_admin ref="article_admin" v-else-if="activeIndex==='5'"></Article_admin>
             <Notebook_admin ref="notebook_admin" v-else-if="activeIndex==='6'"></Notebook_admin>
+            <Cdk_admin ref="cdk_admin" v-else-if="activeIndex==='7'"></Cdk_admin>
             <div v-else-if="activeIndex==='100'" class="welcome"><span>欢迎登录后台系统</span></div>
         </div>
     </div>
@@ -91,7 +98,7 @@
 <script>
 import {
     ArrowDown, ArrowRight, Close, DArrowLeft, Flag, Headset, Document,
-    Message, Notebook, Notification, Setting, User, Grape
+    Message, Notebook, Notification, Setting, User, Grape, Key
 } from "@element-plus/icons"
 import {markRaw} from "vue"
 import {checkLogin, sign} from "@/api/Login";
@@ -101,7 +108,7 @@ import Order_admin from "./order_admin";
 import Message_admin from "./message_admin";
 import Article_admin from "./article_admin";
 import Notebook_admin from "./notebook_admin";
-
+import Cdk_admin from "./cdk_admin";
 
 export default {
     name: 'admin',
@@ -117,11 +124,12 @@ export default {
             // 标签页
             index_table: [],
             activeName: '',
-            pathList: ['网站配置', "账号管理", '订单管理', '通知管理', '文章管理', '笔记管理'],
+            pathList: ['网站配置', "账号管理", '订单管理', '通知管理', '文章管理', '笔记管理','CDK'],
 
         }
     },
     components: {
+        Key,
         Grape,
         Notebook_admin,
         Article_admin,
@@ -129,17 +137,18 @@ export default {
         Order_admin,
         Config_admin,
         Account_admin,
-        User: markRaw(User),
-        Setting: markRaw(Setting),
-        Notebook: markRaw(Notebook),
+        Cdk_admin,
+        User,
+        Setting,
+        Notebook,
         Headset: markRaw(Headset),
         Flag: markRaw(Flag),
-        Message: markRaw(Message),
-        Notification: markRaw(Notification),
+        Message,
+        Notification,
         DArrowLeft: markRaw(DArrowLeft), ArrowRight: markRaw(ArrowRight),
         ArrowDown: markRaw(ArrowDown),
         Close: markRaw(Close),
-        Document: markRaw(Document),
+        Document,
     },
 
     // 加载函数
@@ -272,7 +281,8 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
-            span{
+
+            span {
                 font-size: 40px;
                 color: #e8ee67;
             }

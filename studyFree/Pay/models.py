@@ -3,10 +3,15 @@ import json
 import traceback
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import models
-
+from django.core.paginator import Paginator, EmptyPage
+from django.db import models, transaction
 
 # 用户付款相关配置
+from django.db.models import Q
+
+from Common.lib.shara import generate_random_str
+
+
 class PayConfig(models.Model):
     # id
     id = models.BigAutoField(primary_key=True)
@@ -294,3 +299,187 @@ class Order(models.Model):
             qs[i]['status'] = Order.GENDER_CHOICES[qs[i]['status']][1]
 
         return {'ret': 0, 'retlist': qs}
+
+
+class CDK(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # cdk
+    cdk = models.CharField(max_length=26, null=True, blank=True)
+    # 结束时间
+    endTime = models.DateTimeField()
+    # 创建时间
+    create_time = models.DateTimeField(default=datetime.datetime.now)
+    # cdk数量
+    num = models.IntegerField(default=0)
+    # coin
+    coins = models.IntegerField(default=0)
+    # days
+    days = models.IntegerField(default=0)
+    # 状态
+    status = models.BooleanField(default=True)
+    # 备用
+    tmp1 = models.CharField(max_length=100, null=True, blank=True)
+    tmp2 = models.CharField(max_length=100, null=True, blank=True)
+    tmp3 = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        db_table = "pay_cdk"
+        app_label = "Pay"
+
+    @staticmethod
+    def add(data):
+        cdk_str = generate_random_str(10)
+        # noinspection PyBroadException
+        try:
+            CDK.objects.create(
+                cdk=cdk_str,
+                endTime=data['endTime'],
+                num=data['num'],
+                coins=data['coins'],
+                days=data['days']
+            )
+            return {"ret": 0}
+        except Exception as e:
+            traceback.print_exc()
+            return {'ret': 1, 'msg': e}
+
+    @staticmethod
+    def modify(data):
+        # noinspection PyBroadException
+        try:
+            cdk_id = data['cdk_id']
+            try:
+                # 根据 id 从数据库中找到相应的客户记录
+                cdk = CDK.objects.get(id=cdk_id)
+            except ObjectDoesNotExist:
+                traceback.print_exc()
+                return {'ret': 1}
+
+            if 'status' in data:
+                cdk.status = data['status']
+            if 'coins' in data:
+                cdk.coins = data['coins']
+            if 'days' in data:
+                cdk.days = data['days']
+            if 'num' in data:
+                cdk.num = data['num']
+            if 'endTime' in data:
+                cdk.endTime = data['endTime']
+            if 'minus' in data:
+                cdk.num -= abs(data['minus'])
+
+            cdk.save()
+
+            return {'ret': 0}
+
+        except Exception as e:
+            return {'ret': 1, 'msg': e}
+
+    @staticmethod
+    def list(data):
+        try:
+            # .order_by('-id') 表示按照 id字段的值 倒序排列
+            # 这样可以保证最新的记录显示在最前面
+            qs = CDK.objects.values().order_by('-id')
+
+            search_items = data['search_items']
+            if 'cdk_id' in search_items:
+                qs = qs.filter(id=search_items['cdk_id'])
+            elif 'cdk' in search_items:
+                qs = qs.filter(cdk=search_items['cdk'])
+            elif 'status' in search_items:
+                qs = qs.filter(status=search_items['status'])
+
+            # 查看是否有 关键字 搜索 参数
+            keywords = data.get('keywords', None)
+            if keywords:
+                conditions = [Q(username=one) for one in keywords.split(' ') if one]
+                query = Q()
+                for condition in conditions:
+                    query &= condition
+                qs = qs.filter(query)
+
+            # 要获取的第几页 # 每页要显示多少条记录
+            page_num = data['page_num']
+            page_size = data['page_size']
+
+            # 使用分页对象，设定每页多少条记录
+            pgn = Paginator(qs, page_size)
+
+            # 从数据库中读取数据，指定读取其中第几页
+            page = pgn.page(page_num)
+
+            # 将 QuerySet 对象 转化为 list 类型
+            retlist = list(page)
+
+            # total指定了 一共有多少数据
+            return {'ret': 0, 'retlist': retlist, 'total': pgn.count}
+
+        except EmptyPage:
+            return {'ret': 0, 'retlist': [], 'total': 0}
+
+        except KeyError:
+            return {'ret': 1, 'msg': '参数错误'}
+
+    @staticmethod
+    def delete_cdk(data):
+        # noinspection PyBroadException
+        try:
+            cdk_id = data['cdk_id']
+            cdk = CDK.objects.get(id=cdk_id)
+            cdk.delete()
+            return {'ret': 0}
+        except Exception as e:
+            return {'ret': 1, 'msg': e}
+
+
+class cdkUser(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    # cdk_id
+    cdk_id = models.ForeignKey('Pay.CDK', on_delete=models.CASCADE)
+    # user_id
+    user_id = models.ForeignKey('Common.User', on_delete=models.CASCADE)
+    # 创建时间
+    create_time = models.DateTimeField(auto_now=True)
+    # coin
+    coins = models.IntegerField(default=0)
+    # days
+    days = models.IntegerField(default=0)
+    # 备用
+    tmp1 = models.CharField(max_length=100, null=True, blank=True)
+    tmp2 = models.CharField(max_length=100, null=True, blank=True)
+    tmp3 = models.CharField(max_length=100, null=True, blank=True)
+
+    class Meta:
+        db_table = "cdk_user"
+        app_label = "Pay"
+
+    @staticmethod
+    def add(data):
+        try:
+            # noinspection PyBroadException
+            try:
+                cdk = CDK.objects.get(cdk=data['cdk'])
+                if cdk.num == 0:
+                    return {'ret': 1, 'msg': '你来晚了！cdk已被抢完！！！'}
+                if cdk.endTime < datetime.datetime.now():
+                    return {'ret': 1, 'msg': 'cdk已过期'}
+            except:
+                return {'ret': 1, 'msg': '无效cdk！'}
+
+            if cdkUser.objects.filter(cdk_id__id=cdk.id, user_id__id=data['user_id']).exists():
+                return {'ret': 1, 'msg': f'不能重复兑换!'}
+
+            with transaction.atomic():
+                cdkUser.objects.create(
+                    cdk_id=cdk,
+                    user_id_id=data['user_id'],
+                    coins=cdk.coins,
+                    days=cdk.days
+                )
+                CDK.modify({'minus': 1, 'cdk_id': cdk.id})
+                PayConfig.modify({'user_id': data['user_id'], 'coins': cdk.coins, 'addDays': cdk.days})
+            return {"ret": 0}
+        except Exception as e:
+            traceback.print_exc()
+            return {'ret': 1, 'msg': e}

@@ -12,6 +12,7 @@ import myCenter from "@/views/mycenter"
 import pay from "@/views/pay"
 import admin from '@/views/admin'
 import rpa from '@/views/login/rPA.vue'
+import mdView from '@/components/mdView.vue'
 
 
 const routes = [
@@ -48,10 +49,15 @@ const routes = [
         name: 'rPa',
         component: rpa
     },
+    // {
+    //     path: '/md',
+    //     name: 'MarkDownView',
+    //     component: markdownView
+    // },
     {
         path: '/md',
         name: 'MarkDownView',
-        component: markdownView
+        component: mdView
     },
     {
         path: '/myCenter',

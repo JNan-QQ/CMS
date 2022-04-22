@@ -67,11 +67,11 @@
 <script>
 import {Promotion, UserFilled} from "@element-plus/icons"
 import {markRaw} from "vue"
-import {sign} from "../../api/Login"
-import {registerEmailCode} from "../../api/common"
+import {sign} from "@/api/Login"
+import {registerEmailCode} from "@/api/common"
 import {ElMessage} from "element-plus"
 import {email_conf} from "@/store/config";
-import {encrypt} from "../../tools/mima";
+import {encrypt} from "@/tools/mima";
 
 export default {
     name: "LoginIndex",

@@ -15,16 +15,17 @@
         <div v-else class="cdk">
             <span>CDK兑换：</span>
             <el-input v-model="cdk" placeholder="请输入CDK兑换码" :suffix-icon="Key"/>
-            <el-button type="warning">兑换</el-button>
+            <el-button type="warning" @click="useCdk" :loading="cdkBtn">兑换</el-button>
         </div>
     </div>
 </template>
 
 <script>
-import {ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import {CommonApi} from "@/api/common";
 import {Key} from "@element-plus/icons";
 import {markRaw} from "vue";
+import {cdkApi} from "@/api/pay";
 
 
 export default {
@@ -35,6 +36,7 @@ export default {
             heightSwitch: this.$store.state.userdata.usertype === 1005,
             Key: markRaw(Key),
             cdk: '',
+            cdkBtn:false
         }
     },
     watch: {
@@ -56,9 +58,25 @@ export default {
                     type: 'warning',
                 }
             ).then(() => {
-                CommonApi({action: 'changeUserInfo', usertype: 1005})
+                CommonApi({action: 'changeUserInfo', usertype: 1005}).then(res=>{
+                    if (res){
+                        ElMessage.success('用户权限升级成功！！！')
+                    }
+                })
             }).catch(() => {
                 this.heightSwitch = false
+            })
+        },
+
+        // 使用cdk
+        useCdk() {
+            this.cdkBtn = true
+            cdkApi({action: 'useCdk', cdk: this.cdk}).then(res=>{
+                if (res){
+                    this.cdk = ''
+                    ElMessage.success('CDK兑换成功！！！')
+                }
+                this.cdkBtn = false
             })
         },
     }

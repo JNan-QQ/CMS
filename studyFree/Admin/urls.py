@@ -6,7 +6,7 @@
 
 from django.urls import path
 
-from Admin.views import Account, Orders, Article, NoteBooks, WebConfigs, FileManage
+from Admin.views import Account, Orders, Article, NoteBooks, WebConfigs, FileManage, CDK_view
 
 urlpatterns = [
     path('webconfig', WebConfigs().handler),
@@ -15,4 +15,5 @@ urlpatterns = [
     path('article', Article().handler),
     path('notebook', NoteBooks().handler),
     path('files', FileManage().handler),
+    path('cdk', CDK_view().handler),
 ]
