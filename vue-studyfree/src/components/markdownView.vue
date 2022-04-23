@@ -11,16 +11,19 @@
             </div>
         </div>
     </div>
-    <!--    <div class="markdown-body" v-html="articleContent"></div>-->
+
     <div class="md-view">
-        <md-editor v-model="articleContent" previewOnly/>
-        <el-card class="mu-lu">
-            <ul>
-                <li style="text-align: center;font-size: 18px;margin-bottom: 10px">目录</li>
-                <li v-for="item in muLu"><a :href="'#'+item" class="ml">{{ item }}</a></li>
-            </ul>
-        </el-card>
+        <md-editor v-model="baseArticleContent" previewOnly/>
     </div>
+
+    <el-collapse v-model="activeName" accordion class="mu-lu">
+        <el-collapse-item :title="item.title" :name="index+1" v-for="(item,index) in headlamp">
+            <ul>
+                <li v-for="item1 in item.child"><a :href="'#'+item1.title">{{ item1.title }}</a></li>
+            </ul>
+        </el-collapse-item>
+    </el-collapse>
+
 </template>
 
 <script>
@@ -29,16 +32,15 @@ import {downloadFree, getArticleContent} from "@/api/common";
 import {DArrowLeft} from "@element-plus/icons";
 import {ElMessageBox} from "element-plus";
 import MdEditor from 'md-editor-v3';
-import 'md-editor-v3/lib/style.css';
 
 export default {
     name: "markdownView",
     data() {
         return {
-            articleContent: "",
             baseArticleContent: "",
             title: "",
-            muLu: []
+            headlamp: [],
+            activeName: 1
         }
     },
     components: {DArrowLeft, MdEditor},
@@ -47,14 +49,12 @@ export default {
         getArticleContent({action: 'markdownContent', tag_id: param['id']}).then(res => {
             this.baseArticleContent = res['mdContent']
             this.title = res['title']
-            this.articleContent = marked(res['mdContent'])
         })
     },
     watch: {
         'baseArticleContent'() {
-            console.log('1213')
-            this.getMuLuList()
-        }
+            this.H_title()
+        },
     },
     methods: {
         downloadMarkdown() {
@@ -89,16 +89,27 @@ export default {
             })
 
         },
-        getMuLuList() {
-            this.$nextTick(res => {
-                // DOM 现在更新了
-                // `this` 绑定到当前实例
-                const mu_lu_list = document.getElementsByTagName('h2')
-                for (let i = 0; i < mu_lu_list.length; i++) {
-                    const name = mu_lu_list[i].getAttribute('id');
-                    this.muLu.push(name)
+
+        H_title() {
+            // marked设置
+            const rendererMD = new marked.Renderer();
+
+            // 调整标题内容
+            rendererMD.heading = (text, level) => {
+                if (level === 2) {
+                    this.headlamp.push({title: text.replace(/&#39;/g,"'"), level: 2, child: []})
+                } else if (level === 3) {
+                    this.headlamp[this.headlamp.length - 1].child.push({title: text.replace(/&#39;/g,"'"), level: 3})
                 }
-            })
+            };
+
+            marked.setOptions({
+                renderer: rendererMD
+            });
+
+            // 这里的html就是插入到页面的元素文本了
+            marked(this.baseArticleContent)
+            console.log(this.headlamp)
         },
     }
 }
@@ -146,29 +157,28 @@ export default {
     }
 }
 
-.md-view {
-    display: flex;
+.mu-lu {
+    width: 200px;
+    margin-top: 10px;
+    position: absolute;
+    top: calc(10vh);
+    right: 5px;
+    border-radius: 4px;
 
-    .mu-lu {
-        width: 160px;
-        margin-top: 10px;
-        position: absolute;
-        right: calc(50vw - 480px - 180px);
-        border-radius: 4px;
+    ul {
+        padding: 5px;
+        list-style-type: none;
 
-        ul{
-            padding: 5px;
-            list-style-type:none;
-            li{
-                white-space:nowrap;
-                text-overflow:ellipsis;
-                overflow: hidden;
-                margin-top: 4px;
-                margin-bottom: 4px;
-                font-size: 16px;
-                a{
-                    color: wheat;
-                }
+        li {
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            font-size: 16px;
+
+            a {
+                color: wheat;
             }
         }
     }
