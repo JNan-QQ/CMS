@@ -698,7 +698,7 @@ print(a)										# [
 
 ### 6.	列表切片
 
-[列表、元组 | 白月黑羽 (byhy.net)](https://www.byhy.net/tut/py/basic/07/#列表的sequence操作)
+[列表、元组 | 白月黑羽 (byhy.net)](https://www.byhy.net/tut/py/basic/07/#列表的sequence操作?target=_blank)
 
 
 
