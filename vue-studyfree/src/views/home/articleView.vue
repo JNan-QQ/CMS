@@ -25,12 +25,9 @@
                         <div>
                             <h3>{{ tag3['tag_name'] }}</h3>
                             <div class="views">
-                                <span class="desc">这是一个描述</span>
                                 <div class="hot">
-                                    <el-icon>
-                                        <pointer/>
-                                    </el-icon>
-                                    <span>23354</span>
+                                    <i class="el-ali-browse"></i>
+                                    <span>{{ tag3['clicks'] }}</span>
                                 </div>
                             </div>
                         </div>
@@ -55,7 +52,7 @@
 
 <script>
 import {getArticleContentTags, getSlideTags} from "@/api/common";
-import {Pointer} from '@element-plus/icons';
+import {} from '@element-plus/icons';
 
 export default {
     name: "articleView",
@@ -68,7 +65,6 @@ export default {
             loading: false
         }
     },
-    components: {Pointer},
     watch: {
         isActive() {
             const tag_id = this.tagList[this.isActive].id
@@ -247,25 +243,20 @@ export default {
 
                         .views {
                             display: flex;
-                            justify-content: space-between;
+                            justify-content: flex-end;
                             align-items: center;
                             height: 16px;
                             margin-top: 5px;
 
-                            .desc {
-                                max-width: 65%;
-                                overflow: hidden; //超出的文本隐藏
-                                text-overflow: ellipsis; //溢出用省略号显示
-                                white-space: nowrap; //溢出不换行
-                            }
-
                             .hot {
-                                height: 16px;
-                                width: 30%;
-                                text-align: right;
-
-                                span {
-                                    margin-left: 2px;
+                                display: flex;
+                                color: #1E9FFF;
+                                i{
+                                    font-size: 22px;
+                                }
+                                span{
+                                    font-size: 15px;
+                                    margin-left: 3px;
                                 }
                             }
                         }

@@ -1,6 +1,6 @@
 <template>
     <div class="tool-view">
-        <div class="b_searchboxForm">
+        <div class="b_searchBoxForm">
             <input class="searchBox" maxlength="100" v-model="search_str"
                    @keydown.enter="search_b" autofocus="autofocus">
             <el-icon size="18" color="#7fb8e4" v-if="search_str!==''" @click="search_str=''">
@@ -19,8 +19,9 @@
                 </strong>
             </div>
             <div class="tool-box" style="display: block">
-                <ul v-loading="loading_tool" element-loading-background="#ffffff" element-loading-text="加载中...">
-                    <li v-for="item in tools_dict['WebDriver']">
+                <ul v-loading="loading_tool" element-loading-background="#ffffff" element-loading-text="加载中..."
+                    class="driver-list">
+                    <li v-for="item in tools_dict['WebDriver']" class="driver-list-item">
                         <a :title="item.name" :href="item['jump_url']" target="_blank">
                             <el-image :src="item['icon_url']" fit="fill"
                                       class="icon"/>
@@ -35,8 +36,9 @@
                 <strong>工具网址</strong>
             </div>
             <div class="tool-box" style="display: block">
-                <ul v-loading="loading_tool" element-loading-background="#ffffff" element-loading-text="加载中...">
-                    <li v-for="item in tools_dict['UrlCollection']">
+                <ul v-loading="loading_tool" element-loading-background="#ffffff" element-loading-text="加载中..."
+                    class="list web-list">
+                    <li v-for="item in tools_dict['UrlCollection']" class="list-item web-list-item">
                         <a :href="item['jump_url']" target="_blank">
                             <el-image :src="item['icon_url']" fit="fill" class="icon"/>
                             <span>{{ item.name }}</span>
@@ -45,11 +47,11 @@
                 </ul>
             </div>
         </div>
-        <div class="other-box ss web-box">
+        <div class="other-box ss">
             <div class="headline">
                 <strong>自定义</strong>
                 <el-button-group>
-                    <el-button type="primary" :icon="Edit" size="small" @click="editBtn=true"></el-button>
+                    <el-button type="primary" :icon="Edit" size="small" @click="editBtn=!editBtn"></el-button>
                     <el-button type="primary" :icon="Plus" size="small" @click="dialogVisible=true"></el-button>
                     <el-button type="primary" :icon="Select" size="small" v-if="saveBtn" @click="save"></el-button>
                     <el-button type="primary" :icon="CloseBold" size="small" v-if="saveBtn" @click="getWebUrl">
@@ -57,8 +59,19 @@
                 </el-button-group>
             </div>
             <div class="tool-box" style="display: block">
-                <ul v-loading="loading_other" element-loading-background="#ffffff" element-loading-text="加载中...">
-                    <li v-for="(item,index) in otherList">
+                <transition-group name="drag" tag="ul" class="list tool-list"
+                                  v-loading="loading_other"
+                                  element-loading-background="#ffffff"
+                                  element-loading-text="加载中...">
+                    <li
+                        @dragenter="dragenter($event, index)"
+                        @dragover="dragover($event, index)"
+                        @dragstart="dragstart(index)"
+                        draggable="true"
+                        v-for="(item, index) in otherList"
+                        :key="index"
+                        class="list-item tool-list-item"
+                    >
                         <a :href="item['jump_url']" target="_blank">
                             <el-image :src="item['icon_url']" fit="fill" class="icon"/>
                             <span>{{ item.title }}</span>
@@ -67,7 +80,8 @@
                             <close-bold/>
                         </el-icon>
                     </li>
-                </ul>
+                </transition-group>
+
             </div>
         </div>
     </div>
@@ -112,8 +126,7 @@ import {Edit, Plus, Select, CloseBold, Search} from "@element-plus/icons";
 import {markRaw} from "vue";
 import {ElMessage} from "element-plus";
 import {CommonApi} from "@/api/common";
-
-const {UserConfigApi} = require("../../api/pay");
+import {UserConfigApi} from "@/api/pay";
 
 export default {
     name: "toolsView",
@@ -134,6 +147,8 @@ export default {
             editBtn: false,
             search_str: '',
             loading_tool: false, loading_other: false,
+
+            dragIndex: '',
         }
     },
     components: {CloseBold, Search},
@@ -142,7 +157,6 @@ export default {
         this.getTools()
         this.getWebUrl()
     },
-    watch: {},
     methods: {
         getBrowser() {
             const UserAgent = navigator.userAgent.toLowerCase()
@@ -226,7 +240,27 @@ export default {
         search_b() {
             const url = 'https://cn.bing.com/search?q=' + this.search_str
             window.open(url)
-        }
+        },
+
+        dragstart(index) {
+            this.dragIndex = index;
+        },
+        dragenter(e, index) {
+            e.preventDefault()
+            // 避免源对象触发自身的dragenter事件
+            if (this.dragIndex !== index) {
+                const moving = this.otherList[this.dragIndex];
+                this.otherList.splice(this.dragIndex, 1);
+                this.otherList.splice(index, 0, moving);
+                // 排序变化后目标对象的索引变成源对象的索引
+                this.dragIndex = index;
+                this.saveBtn = true
+            }
+        },
+        dragover(e, index) {
+            e.preventDefault();
+        },
+
     }
 }
 </script>
@@ -236,7 +270,7 @@ export default {
     max-width: 1100px;
     margin: auto;
 
-    .b_searchboxForm {
+    .b_searchBoxForm {
         width: 650px;
         height: 48px;
         border-radius: 24px;
@@ -306,27 +340,49 @@ export default {
                 content: "";
             }
         }
-    }
-
-    .driver-box {
-        .headline {
-            strong {
-                span {
-                    font-size: 10px;
-                    font-weight: 100;
-                    color: #545c64;
-                    margin-left: 20px;
-                }
-            }
-        }
 
         .tool-box {
-            ul {
+
+            .list {
+                padding: 10px 15px 12px 15px;
+                justify-content: flex-start;
+                display: flex;
+                flex-wrap: wrap;
+                list-style: none;
+
+                .list-item {
+                    margin: 7px 5px;
+                    width: calc(100% / 8 - 10px);
+
+                    a {
+                        display: inline-flex;
+                        max-width: 100%;
+                        align-items: center;
+                        transition: color 0.2s;
+                        text-decoration: none;
+                        color: #34495e;
+                        outline: none;
+                        position: relative;
+
+                        .icon {
+                            width: 16px;
+                            height: 16px;
+                        }
+
+                        span {
+                            font-size: 13px;
+                            margin-left: 5px;
+                        }
+                    }
+                }
+            }
+
+            .driver-list {
                 padding: 5px 10px;
                 list-style: none;
                 display: flex;
 
-                li {
+                .driver-list-item {
                     position: relative;
                     width: 110px;
                     margin: 0 10px;
@@ -359,42 +415,20 @@ export default {
         }
     }
 
-    .web-box {
-        .tool-box {
-            ul {
-                padding: 10px 15px 12px 15px;
-                justify-content: flex-start;
-                display: flex;
-                flex-wrap: wrap;
-                list-style: none;
-
-                li {
-                    margin: 7px 5px;
-                    width: calc(100% / 8 - 10px);
-
-                    a {
-                        display: inline-flex;
-                        max-width: 100%;
-                        align-items: center;
-                        transition: color 0.2s;
-                        text-decoration: none;
-                        color: #34495e;
-                        outline: none;
-                        position: relative;
-
-                        .icon {
-                            width: 16px;
-                            height: 16px;
-                        }
-
-                        span {
-                            font-size: 13px;
-                            margin-left: 5px;
-                        }
-                    }
+    .driver-box {
+        .headline {
+            strong {
+                span {
+                    font-size: 10px;
+                    font-weight: 100;
+                    color: #545c64;
+                    margin-left: 20px;
                 }
             }
         }
+    }
+
+    .web-box {
     }
 
     .other-box {
@@ -410,11 +444,12 @@ export default {
                 right: -6px;
                 position: relative;
             }
+
         }
     }
 }
 
-ul{
+ul {
     min-height: 50px;
 }
 

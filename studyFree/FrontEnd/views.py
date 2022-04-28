@@ -32,7 +32,7 @@ class Article:
     @staticmethod
     def list_md_content(request):
         tag_id = request.params['tag_id']
-
+        ArticleContent.addClicks(tag_id)
         # noinspection PyBroadException
         try:
             filePathDict = ArticleContent.list({'tag_id': tag_id})

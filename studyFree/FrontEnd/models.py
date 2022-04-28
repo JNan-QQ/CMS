@@ -64,13 +64,11 @@ class Tags(models.Model):
         else:
             qs = Tags.objects.filter(tag_id=data['tage_id'], status=1, tag_type=2).values('id', 'tag_name')
             qs = list(qs)
-            for i in qs:
-                qs_content = Tags.objects.filter(tag_id=i['id'], status=1, tag_type=3).values('id', 'tag_name')
-                index = qs.index(i)
+            for index, item in enumerate(qs):
+                qs_content = Tags.objects.filter(tag_id=item['id'], status=1, tag_type=3).values('id', 'tag_name')
                 qs_content = list(qs_content)
-                for ii in qs_content:
-                    ret = ArticleContent.list({'tag_id': ii['id'], 'img': 0})
-                    index1 = qs_content.index(ii)
+                for index1, item1 in enumerate(qs_content):
+                    ret = ArticleContent.list({'tag_id': item1['id'], 'img': 0})
                     qs_content[index1].update(ret)
                 qs[index]['content'] = qs_content
 
@@ -147,6 +145,8 @@ class ArticleContent(models.Model):
     images = models.CharField(max_length=100, null=True, blank=True, default='images/python-default.png')
     # markdown文件路径
     filePath = models.CharField(max_length=100, null=True, blank=True)
+    # 点击量
+    clicks = models.IntegerField(default=0)
 
     class Meta:
         db_table = "study_articleContent"
@@ -158,7 +158,7 @@ class ArticleContent(models.Model):
         try:
             tag_id = data['tag_id']
             if 'img' in data:
-                qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1).values('images')
+                qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1).values('images', 'clicks')
             else:
                 qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1).values('filePath', 'tag_id__tag_name')
             qs = list(qs)
@@ -186,6 +186,21 @@ class ArticleContent(models.Model):
         article.save()
 
         return {'ret': 0}
+
+    @staticmethod
+    def addClicks(tag_id):
+        try:
+            # 根据 id 从数据库中找到相应的记录
+            article = ArticleContent.objects.get(tag_id__id=tag_id)
+            article.clicks += 1
+
+            article.save()
+
+            return {'ret': 0}
+        except ObjectDoesNotExist:
+            return {'ret': 1, 'msg': '标签id未查询到对应数据'}
+        except KeyError:
+            return {'ret': 1, 'msg': '请输入标签id'}
 
 
 class NoteBook(models.Model):

@@ -17,9 +17,15 @@
     </div>
 
     <el-collapse v-model="activeName" accordion class="mu-lu">
-        <el-collapse-item :title="item.title" :name="index+1" v-for="(item,index) in headlamp">
+        <el-collapse-item :title="item.title" :name="index+1" :key="index+'fist'" v-for="(item,index) in headlamp"
+                          @click="activeFist=index">
             <ul>
-                <li v-for="item1 in item.child"><a :href="'#'+item1.title">{{ item1.title }}</a></li>
+                <li><a :href="'#'+item.title">0. 进入模块</a></li>
+                <li v-for="(item1,index1) in item.child" :key="index1+'two'">
+                    <a :href="'#'+item1.title" @click="changeActiveTwo(index1)" :class="item1.child_class">
+                        {{ item1.title }}
+                    </a>
+                </li>
             </ul>
         </el-collapse-item>
     </el-collapse>
@@ -29,7 +35,7 @@
 <script>
 import {marked} from "marked"
 import {downloadFree, getArticleContent} from "@/api/common";
-import {DArrowLeft} from "@element-plus/icons";
+import {DArrowLeft, AddLocation} from "@element-plus/icons";
 import {ElMessageBox} from "element-plus";
 import MdEditor from 'md-editor-v3';
 
@@ -40,10 +46,12 @@ export default {
             baseArticleContent: "",
             title: "",
             headlamp: [],
-            activeName: 1
+            activeName: 1,
+            activeFist: 0,
+            activeTwo: [0, 0]
         }
     },
-    components: {DArrowLeft, MdEditor},
+    components: {DArrowLeft, MdEditor, AddLocation},
     mounted() {
         const param = this.$route.query
         getArticleContent({action: 'markdownContent', tag_id: param['id']}).then(res => {
@@ -90,6 +98,7 @@ export default {
 
         },
 
+        // 统计章节目录
         H_title() {
             // marked设置
             const rendererMD = new marked.Renderer();
@@ -97,9 +106,13 @@ export default {
             // 调整标题内容
             rendererMD.heading = (text, level) => {
                 if (level === 2) {
-                    this.headlamp.push({title: text.replace(/&#39;/g,"'"), level: 2, child: []})
+                    this.headlamp.push({title: text.replace(/&#39;/g, "'").replace(/<.*?>/g, ''), level: 2, child: []})
                 } else if (level === 3) {
-                    this.headlamp[this.headlamp.length - 1].child.push({title: text.replace(/&#39;/g,"'"), level: 3})
+                    this.headlamp[this.headlamp.length - 1].child.push({
+                        title: text.replace(/&#39;/g, "'").replace(/<.*?>/g, ''),
+                        level: 3,
+                        child_class: ''
+                    })
                 }
             };
 
@@ -109,7 +122,11 @@ export default {
 
             // 这里的html就是插入到页面的元素文本了
             marked(this.baseArticleContent)
-            console.log(this.headlamp)
+        },
+        changeActiveTwo(index) {
+            this.headlamp[this.activeTwo[0]].child[this.activeTwo[1]].child_class = ''
+            this.headlamp[this.activeFist].child[index].child_class = 'active'
+            this.activeTwo = [this.activeFist, index]
         },
     }
 }
@@ -164,6 +181,11 @@ export default {
     top: calc(10vh);
     right: 5px;
     border-radius: 4px;
+    background: #FFFFFF;
+
+    .el-collapse-item {
+        margin-left: 5px;
+    }
 
     ul {
         padding: 5px;
@@ -173,13 +195,24 @@ export default {
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
-            margin-top: 4px;
-            margin-bottom: 4px;
             font-size: 16px;
 
             a {
-                color: wheat;
+                padding: 2px;
+                color: #ffffff;
             }
+
+            a.active {
+                color: #fa9507;
+            }
+        }
+
+        li:nth-child(even) {
+            background: #919090; /*偶数行变色，黄色*/
+        }
+
+        li:nth-child(odd) {
+            background: rgba(84, 81, 81, 0.99); /*奇数行颜色，红色*/
         }
     }
 }
