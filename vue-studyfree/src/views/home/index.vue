@@ -6,19 +6,19 @@
             <div class="navbar-collapse">
                 <ul class="navbar-nav">
                     <router-link to="/Article">
-                        <li @click="is_active='文章'">
-                            <a :class="{ active: is_active==='文章' }">文章</a><i class="bgd-left">热门</i>
+                        <li @click="is_active='Article'">
+                            <a :class="{ active: is_active==='Article' }">文章</a><i class="bgd-left">热门</i>
                         </li>
                     </router-link>
                     <router-link to="/Note">
-                        <li @click="is_active='笔记'"><a :class="{ active: is_active==='笔记' }">笔记</a></li>
+                        <li @click="is_active='Note'"><a :class="{ active: is_active==='Note' }">笔记</a></li>
                     </router-link>
                     <router-link to="/Skill">
-                        <li @click="is_active='技巧'"><a :class="{ active: is_active==='技巧' }">技巧</a></li>
+                        <li @click="is_active='Skill'"><a :class="{ active: is_active==='Skill' }">技巧</a></li>
                     </router-link>
                     <router-link to="/Tool">
-                        <li v-if="userdata.isLogin" @click="is_active='工具'"><a
-                            :class="{ active: is_active==='工具' }">工具</a></li>
+                        <li v-if="userdata.isLogin" @click="is_active='Tool'"><a
+                            :class="{ active: is_active==='Tool' }">工具</a></li>
                     </router-link>
                 </ul>
                 <router-link to="/login" v-if="!userdata.isLogin">
@@ -199,8 +199,8 @@ export default {
         $route() {
             const url = this.$route.fullPath
             this.$store.commit('upDataUrl', url)
-            console.log(url)
             this.inHome = url !== '/home'
+            this.is_active = url.slice(1)
         },
     },
     methods: {
@@ -208,6 +208,7 @@ export default {
             sign({action: 'signout'}).then(res => {
                 if (res) {
                     checkLogin(this)
+                    this.$router.push('/home')
                 }
             })
         },

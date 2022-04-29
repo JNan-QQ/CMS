@@ -18,6 +18,7 @@ export function checkLogin(that) {
         data: {action:'checkLogin'}
     }).then(res => {
         if (res){
+            res['isLogin'] = true
             that.$store.commit('changeUserInfo', res)
         } else{
             that.userdata = {}

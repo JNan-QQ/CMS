@@ -50,9 +50,6 @@ export default createStore({
                     }
                 }
             }
-            if (!state.userdata.isLogin) {
-                state.userdata.isLogin = true
-            }
         },
         deleteUserInfo(state) {
             state.userdata = state.userdata_base
@@ -66,5 +63,5 @@ export default createStore({
         },
     },
     actions: {},
-    modules: {}
+    modules: {},
 })

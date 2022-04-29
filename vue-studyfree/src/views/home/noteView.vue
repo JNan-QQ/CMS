@@ -1,5 +1,6 @@
 <template>
-    <div class="noteView" id="noteView" v-loading="loading" element-loading-background="#414444" element-loading-text="加载中...">
+    <div class="noteView" id="noteView" v-loading="loading" element-loading-background="#414444"
+         element-loading-text="加载中...">
         <div class="noteBox">
             <div class="notebook">
                 <div class="bJ">
@@ -29,8 +30,9 @@
                         </el-collapse-item>
                     </el-collapse>
                 </div>
+                <div class="no-login" v-if="!isLogin">你还未登录┗|｀O′|┛ 嗷~~</div>
             </div>
-            <div class="right">
+            <div class="right" v-if="isLogin">
                 <el-affix :offset="80">
                     <el-tooltip content="添加新笔记" placement="right-start" effect="light">
                         <el-button :icon="DocumentAdd" size="default" type="warning" circle
@@ -83,12 +85,17 @@ export default {
             bjList: [],
             saveLoading: false, deleteBtn: false,
             DocumentAdd: markRaw(DocumentAdd), Remove: markRaw(Remove), CaretTop: markRaw(CaretTop),
-            loading: false
+            loading: false,
         }
     },
     components: {MdEditor, Edit},
     mounted() {
         this.before()
+    },
+    computed:{
+        isLogin(){
+            return this.$store.state.userdata.isLogin
+        }
     },
     methods: {
         before() {
@@ -96,8 +103,8 @@ export default {
             noteContent({action: 'listNoteBook'}).then(res => {
                 if (res) {
                     this.bjList = res['retlist']
-                    this.loading = false
                 }
+                this.loading = false
             })
         },
         addNoteBook() {
@@ -217,6 +224,15 @@ export default {
                     justify-content: right;
                     border-bottom: #eeeeee solid 2px;
                 }
+            }
+
+            .no-login {
+                text-align: center;
+                font-size: 22px;
+                margin-top: calc(10vh);
+                background: linear-gradient(to right, #ec5807, #0bee8c);
+                -webkit-background-clip: text;
+                color: transparent;
             }
         }
 
