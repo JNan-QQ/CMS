@@ -20,7 +20,7 @@
                        :total="total" @current-change="handleCurrentChange"/>
     </div>
 
-    <el-dialog v-model="dialogVisible" :title="message.title" width="30%" center destroy-on-close :draggable="true">
+    <el-dialog v-model="dialogVisible" :title="message.title" width="30%" center destroy-on-close>
         <div v-html="message.content"></div>
     </el-dialog>
 

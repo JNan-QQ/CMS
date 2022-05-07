@@ -50,9 +50,11 @@ export default createStore({
                     }
                 }
             }
+            localStorage.setItem('userdata',JSON.stringify(state.userdata))
         },
         deleteUserInfo(state) {
             state.userdata = state.userdata_base
+            localStorage.setItem('userdata',JSON.stringify(state.userdata_base))
         },
         upDataUrl(state, url) {
             state.nowUrl = url

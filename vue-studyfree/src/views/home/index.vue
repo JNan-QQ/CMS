@@ -76,7 +76,8 @@
                                 <el-dropdown-item>
                                     <div class="login-items">
                                         <ul>
-                                            <li class="items" @click="this.$router.push('/myCenter')">
+                                            <li class="items"
+                                                @click="this.$router.push('/myCenter')">
                                                 <div>
                                                     <el-icon>
                                                         <home-filled/>
@@ -104,7 +105,7 @@
                                                 </div>
                                                 <span>Lv{{ userdata.lv }}</span>
                                             </li>
-                                            <li class="items">
+                                            <li class="items" @click="this.$router.push('/pay')">
                                                 <div>
                                                     <el-icon>
                                                         <coin/>
@@ -114,12 +115,12 @@
                                                 <span>{{ userdata.coins }} 币</span>
                                             </li>
                                             <li class="items" v-if="userdata.usertype===1 || userdata.usertype===1005"
-                                                @click="this.$router.push('/pay')">
+                                                @click="this.$router.push({name:'myCenter',params:{index:'5'}})">
                                                 <div>
                                                     <el-icon>
                                                         <trophy/>
                                                     </el-icon>
-                                                    订购会员
+                                                    会员服务
                                                 </div>
                                             </li>
                                             <li class="items" v-if="false">
@@ -130,7 +131,7 @@
                                                     分享推广
                                                 </div>
                                             </li>
-                                            <li class="items">
+                                            <li class="items" @click="this.$router.push({name:'myCenter',params:{index:'4'}})">
                                                 <div>
                                                     <el-icon>
                                                         <setting/>
@@ -192,7 +193,6 @@ export default {
     components: {Document, CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},
     mounted() {
         checkLogin(this)
-        this.jumpUrl()
         getUserConfig(this)
     },
     watch: {
@@ -212,13 +212,7 @@ export default {
                 }
             })
         },
-        jumpUrl() {
-            if (this.$route.path === '/') {
-                this.$router.push('/home')
-            } else {
-                this.inHome = this.$route.path !== '/home';
-            }
-        },
+
         qd() {
             qianDao(this)
         }

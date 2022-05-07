@@ -11,7 +11,7 @@
                     <el-button>更换头像</el-button>
                 </el-upload>
             </div>
-            <el-menu default-active="1" @select="activeIndexes">
+            <el-menu :default-active="activeIndex" @select="activeIndexes">
                 <el-menu-item index="1">
                     <el-icon>
                         <InfoFilled/>
@@ -29,6 +29,7 @@
                         <MessageBox/>
                     </el-icon>
                     <span>通知中心</span>
+                    <el-badge :value="messageNum" :max="10" style="display: flex;height:85%" v-if="messageNum!==0"/>
                 </el-menu-item>
                 <el-menu-item index="4">
                     <el-icon>
@@ -67,6 +68,7 @@ import MessageMy from "./message"
 import OrderMy from "./order"
 import Services from "./services"
 import ToolMy from "./tool"
+import {MessageApi} from "@/api/common";
 
 export default {
     name: "index",
@@ -75,13 +77,26 @@ export default {
             userdata: this.$store.state.userdata,
             activeIndex: "1",
             Delete: markRaw(Delete),
+            messageNum: 0
         }
     },
     components: {Setting, InfoFilled, Tickets, MessageBox, Edit, Star, MyInfo, ToolMy, MessageMy, OrderMy, Services},
     mounted() {
         checkLogin(this)
+        this.getIndex()
+        MessageApi({action: 'newMessageNum'}).then(res => {
+            if (res) {
+                this.messageNum = res['num']
+            }
+        })
     },
     methods: {
+        getIndex() {
+            const index = this.$route.params.index
+            if (index !== undefined) {
+                this.activeIndex = index
+            }
+        },
         // 激活索引
         activeIndexes(index) {
             this.activeIndex = index
@@ -134,6 +149,7 @@ export default {
                 margin-top: 10px;
             }
         }
+
     }
 
     .right {

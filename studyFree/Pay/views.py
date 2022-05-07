@@ -3,6 +3,7 @@ import json
 import time
 import traceback
 
+from Admin.models import webConfig
 from Common.lib.handler import dispatcherBase
 from Common.lib.shara import jsonResponse, NOT_LOGIN, IS_LOGIN
 from Pay.ali.aliApi import aliPay
@@ -84,6 +85,7 @@ class payConfig:
         return str2
 
     def checkActive(self, request):
+        # noinspection PyBroadException
         try:
             ret = PayConfig.list({'user_id': request.session['user_id']})
             if ret['ret'] == 0:
@@ -105,12 +107,14 @@ class payOrder:
         Action2Handler = {
             'list': self.listOrder,  # 列出订单
             'createOrder': aliPay().createOrder,  # 创建一个订单
+            'payResult': self.payResult
         }
 
-        return dispatcherBase(request, Action2Handler, NOT_LOGIN)
+        return dispatcherBase(request, Action2Handler, IS_LOGIN)
 
     @staticmethod
     def listOrder(request):
+        # noinspection PyBroadException
         try:
             user_id = request.session['user_id']
             usertype = request.session['usertype']
@@ -118,7 +122,32 @@ class payOrder:
             return jsonResponse(ret)
         except:
             traceback.print_exc()
-            return jsonResponse({'ret': 1, 'msg': '未登陆'})
+            return jsonResponse({'ret': 1, 'msg': '未知错误'})
+
+    @staticmethod
+    def payResult(request):
+        # noinspection PyBroadException
+        try:
+            flg = request.params['flg']
+            user_id = request.session['user_id']
+            username = request.session['username']
+            order = list(Order.objects.filter(user_id=user_id).order_by('-id').values())[0]
+            if order['status'] == 0 or datetime.datetime.now().__sub__(order['create_time']).days >= 1:
+                return jsonResponse({'ret': 0, 'flg': False})
+            if flg:
+                coins = int(int(order['money']) * order['F'] * (order['Z'] + 1))
+                return jsonResponse({'ret': 0,
+                                     'info': {'username': username, 'orderNo': order['orderNo'], 'coins': coins,
+                                              'time': order['create_time'], 'money': order['money']}, 'flg': True})
+            else:
+                return jsonResponse({'ret': 0, 'info': {'username': username,
+                                                        'orderNo': order['orderNo'],
+                                                        'time': order['create_time'],
+                                                        'status': order['status']
+                                                        }, 'flg': True})
+        except Exception as e:
+            traceback.print_exc()
+            return jsonResponse({'ret': 0, 'flg': False})
 
 
 class payProduct:

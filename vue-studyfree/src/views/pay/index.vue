@@ -4,8 +4,8 @@
             <back/>
         </el-icon>
         <div>
-            <span style="margin-right: 30px">服务期限：{{ this.$store.state.userdata.deadline }}</span>
-            <span>F：{{ this.$store.state.userdata.coins }} 币</span>
+            <span style="margin-right: 30px">服务期限：{{ userdata.deadline }}</span>
+            <span>F：{{ userdata.coins }} 币</span>
         </div>
     </div>
     <div class="products">
@@ -44,20 +44,18 @@
 </template>
 
 <script>
-import {Back} from "@element-plus/icons";
-import {checkLogin} from "@/api/Login";
 import {getUserConfig} from "@/api/pay";
 import {orderApi, productApi} from "@/api/pay";
 import {ElMessage} from "element-plus";
 import {CommonApi} from "@/api/common";
-
-const {WebConfigApi} = require("../../api/admin");
+import {Back} from "@element-plus/icons";
+import {checkLogin} from "@/api/Login";
 
 export default {
     name: "index",
     data() {
         return {
-            userdata: this.$store.state.userdata,
+            userdata:this.$store.state.userdata,
             productsList: [],
             money: 0,
             F: 500,
@@ -65,14 +63,6 @@ export default {
         }
     },
     components: {Back},
-    // 监听函数
-    watch: {
-        'userdata.usertype'() {
-            if (this.userdata.isLogin !== true) {
-                this.$router.push('/home')
-            }
-        },
-    },
     mounted() {
         checkLogin(this)
         getUserConfig(this)

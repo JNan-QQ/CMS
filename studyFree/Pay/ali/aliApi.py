@@ -1,5 +1,6 @@
 import json
 import time
+import traceback
 from urllib.parse import parse_qs
 
 from django.shortcuts import HttpResponse
@@ -9,6 +10,7 @@ from Common.lib.shara import jsonResponse
 from Admin.models import webConfig
 from Pay.ali.alipay import AliPay
 from Pay.models import Order, PayConfig
+from django.shortcuts import redirect
 
 
 class aliPay:
@@ -59,7 +61,9 @@ class aliPay:
         # 拼接url，转到支付宝支付页面
         pay_url = "https://openapi.alipaydev.com/gateway.do?{}".format(query_params)
 
-        res = Order.add_order({'user_id': request.session['user_id'], 'orderNo': orderNo, 'money': money})
+        FZ = json.loads(webConfig.list({'title': 'pay'})['retlist'][0]['config'])
+        res = Order.add_order({'user_id': request.session['user_id'], 'orderNo': orderNo, 'money': money,
+                               'F': int(FZ['F']), 'Z': float(FZ['Z'])})
         if res['ret'] == 1:
             return jsonResponse(res)
 
@@ -90,14 +94,12 @@ class aliPay:
                 if res_order['ret'] == 1:
                     return jsonResponse({'支付成功，订单更新失败'})
 
-                FZ = webConfig.list({'title': 'pay'})['retlist'][0]['config']
-                FZ = json.loads(FZ)
-                F = int(FZ['F'])
-                Z = float(FZ['Z'])
+                # 获取折扣信息
+                FZ = json.loads(webConfig.list({'title': 'pay'})['retlist'][0]['config'])
 
                 res_config = PayConfig.modify(
-                    {'user_id': res_order['user_id'], 'coins': int(int(res_order['money']) * F * (Z + 1)),
-                     'exp': int(res_order['money']) * 50})
+                    {'user_id': res_order['user_id'], 'exp': int(res_order['money']) * 50,
+                     'coins': int(int(res_order['money']) * int(FZ['F']) * (float(FZ['Z']) + 1))})
 
                 if res_config['ret'] == 1:
                     return HttpResponse('支付成功，F币更新失败')
@@ -115,10 +117,13 @@ class aliPay:
         :return:
         """
         params = request.GET.dict()
+
         sign = params.pop('sign', None)
 
         status = self.obj.verify(params, sign)
 
         if status:
-            return HttpResponse('支付成功')
-        return HttpResponse('支付失败')
+            # return HttpResponse('支付成功')
+            return redirect('http://localhost:8080/PaySuccess')
+        # return HttpResponse('支付失败')
+        return redirect('http://localhost:8080/PayError')

@@ -107,7 +107,7 @@ class PayConfig(models.Model):
                 elif exps < 999999:
                     pay_config.lv = 5
                 elif exps >= 999999:
-                    pay_config.lv = 6
+                    pay_config.lv = int((exps-999999)/100000)
 
             # 服务截止时间相关
             if 'addDays' in data:
@@ -232,6 +232,10 @@ class Order(models.Model):
         (2, u'已关闭'),
         (3, u'已退款'),
     )
+    # F币价格/元
+    F = models.IntegerField(default=0)
+    # 折扣
+    Z = models.FloatField(default=0)
     status = models.SmallIntegerField(choices=GENDER_CHOICES)
     # 创建时间
     create_time = models.DateTimeField(auto_now=True)
@@ -248,7 +252,9 @@ class Order(models.Model):
                 user_id=data['user_id'],
                 orderNo=data['orderNo'],
                 status=0,
-                money=data['money']
+                money=data['money'],
+                F=data['F'],
+                Z=data['Z']
             )
             return {"ret": 0}
         except:

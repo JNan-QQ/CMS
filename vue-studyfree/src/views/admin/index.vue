@@ -156,15 +156,6 @@ export default {
         checkLogin(this)
     },
 
-    // 监听函数
-    watch: {
-        'userdata.usertype'() {
-            if (this.userdata.usertype !== 1) {
-                this.$router.push('/home')
-            }
-        },
-    },
-
     methods: {
         handleSelect(key) {
             this.activeIndex = key

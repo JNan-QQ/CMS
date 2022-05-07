@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from Admin.models import webConfig
 from Common.forms import handle_uploaded_file
@@ -106,7 +106,7 @@ class Login:
             'usertype': 1000,
             'realName': ''
         }
-        print(data)
+
         res = User.add_account(data)
 
         self.signin(request)
@@ -330,6 +330,7 @@ class MessageView:
             'getOneMessage': self.getOneMessage,  # 获取通知内容 并 取消未读操作
             'modify': self.modify,  # 修改一个通知管理员操作
             'delete': self.deleteMessage,  # 删除通知
+            'newMessageNum': self.newMessageNum,  # 获取未读消息个数
         }
 
         return dispatcherBase(request, Action2Handler, IS_LOGIN)
@@ -373,3 +374,9 @@ class MessageView:
         message_id = request.params['message_id']
         res = MessageNews.deleteOne(user_id, message_id)
         return jsonResponse(res)
+
+    @staticmethod
+    def newMessageNum(request):
+        user_id = request.session['user_id']
+        num = MessageNews.objects.filter(user_id_id=user_id).count()
+        return jsonResponse({'ret': 0, 'num': num})
