@@ -70,6 +70,18 @@
                     </el-option>
                 </el-select>
             </el-form-item>
+            <el-form-item label="作者">
+                <el-select v-model="newContent['user_id']">
+                    <el-option
+                        v-for="item in options_user"
+                        :label="item['username']"
+                        :value="item['id']"
+                    >
+                        <span>{{item['id']}}</span>&nbsp;--&nbsp;
+                        <span>{{item['username']}}</span>
+                    </el-option>
+                </el-select>
+            </el-form-item>
             <el-form-item>
                 <el-button type="success" @click="modifyArticleContent">确认</el-button>
                 <el-button type="warning" @click="editBtnCancel">取消</el-button>
@@ -119,6 +131,7 @@ export default {
             Edit: markRaw(Edit), Delete: markRaw(Delete),
             options_images: [],
             options_md: [],
+            options_user: [],
             loading_table: false
         }
     },
@@ -158,6 +171,7 @@ export default {
             ArticleApi({action: 'img_md'}).then(res => {
                 this.options_images = res['images']
                 this.options_md = res['md']
+                this.options_user = res['user']
                 this.articleContentVisible = true
             })
         },

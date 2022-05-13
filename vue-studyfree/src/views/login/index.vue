@@ -143,18 +143,6 @@ export default {
 </script>
 
 <style lang="less">
-* {
-    padding: 0;
-    margin: 0;
-}
-
-html {
-    height: 100%;
-}
-
-body {
-    background-image: linear-gradient(to bottom right, rgb(180, 189, 241), rgb(193, 160, 238));
-}
 
 .login-container {
     width: 530px;

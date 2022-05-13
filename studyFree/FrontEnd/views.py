@@ -4,6 +4,7 @@ import traceback
 from Common.lib.handler import dispatcherBase
 from Common.lib.shara import jsonResponse, NOT_LOGIN, IS_LOGIN
 from FrontEnd.models import Tags, ArticleContent, NoteBook
+from Pay.models import PayConfig
 from config import settings
 
 
@@ -40,7 +41,8 @@ class Article:
             if filePathDict:
                 with open(filePath, 'r', encoding='utf8') as f:
                     mdContent = f.read()
-                return jsonResponse({'ret': 0, 'mdContent': mdContent, 'title': filePathDict['tag_id__tag_name']})
+                return jsonResponse({'ret': 0, 'mdContent': mdContent, 'title': filePathDict['tag_id__tag_name'],
+                                     'author': filePathDict['user_id__username']})
             else:
                 return jsonResponse({'ret': 0, 'mdContent': '没有找到该文章，请联系管理员添加！'})
         except:

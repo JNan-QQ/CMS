@@ -158,23 +158,23 @@ class User(AbstractUser):
                 qs = qs.filter(query)
 
             # 要获取的第几页 # 每页要显示多少条记录
-            pagenum = data.get('pagenum', None)
-            pagesize = data.get('pagesize', None)
-            if not pagesize or not pagenum:
-                pagesize = 1000
-                pagenum = 1
+            pageNum = data.get('pageNum', None)
+            pageSize = data.get('pageSize', None)
+            if not pageSize or not pageNum:
+                pageSize = 1000
+                pageNum = 1
 
             # 使用分页对象，设定每页多少条记录
-            pgnt = Paginator(qs, pagesize)
+            pageNt = Paginator(qs, pageSize)
 
             # 从数据库中读取数据，指定读取其中第几页
-            page = pgnt.page(pagenum)
+            page = pageNt.page(pageNum)
 
             # 将 QuerySet 对象 转化为 list 类型
             retlist = list(page)
 
             # total指定了 一共有多少数据
-            return {'ret': 0, 'retlist': retlist, 'total': pgnt.count}
+            return {'ret': 0, 'retlist': retlist, 'total': pageNt.count}
 
         except EmptyPage:
             return {'ret': 0, 'retlist': [], 'total': 0}

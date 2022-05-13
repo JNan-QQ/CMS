@@ -5,7 +5,9 @@
                 <el-icon @click="this.$router.push('/Article');">
                     <d-arrow-left/>
                 </el-icon>
-                <span>{{ title }}</span></div>
+                <span class="md-title">{{ title }}</span>
+                <div class="author"><span>--&nbsp;&nbsp;{{ author }}</span></div>
+            </div>
             <div class="btn-class">
                 <el-button @click="downloadMarkdown">下载</el-button>
             </div>
@@ -45,6 +47,7 @@ export default {
         return {
             baseArticleContent: "",
             title: "",
+            author: "",
             headlamp: [],
             activeName: 1,
             activeFist: 0,
@@ -57,6 +60,7 @@ export default {
         getArticleContent({action: 'markdownContent', tag_id: param['id']}).then(res => {
             this.baseArticleContent = res['mdContent']
             this.title = res['title']
+            this.author = res['author']
         })
     },
     watch: {
@@ -167,8 +171,16 @@ export default {
                 height: 30px;
             }
 
-            span {
+            .md-title {
                 margin-left: 10px;
+            }
+
+            .author {
+                margin-left: 5px;
+                font-size: 5px;
+                height: 26px;
+                display: flex;
+                align-items: flex-end;
             }
         }
     }
@@ -208,11 +220,11 @@ export default {
         }
 
         li:nth-child(even) {
-            background: #919090; /*偶数行变色，黄色*/
+            background: #e1dede; /*偶数行变色，黄色*/
         }
 
         li:nth-child(odd) {
-            background: rgba(84, 81, 81, 0.99); /*奇数行颜色，红色*/
+            background: rgba(217, 213, 213, 0.99); /*奇数行颜色，红色*/
         }
     }
 }

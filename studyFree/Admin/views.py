@@ -1,4 +1,3 @@
-import json
 import os
 import shutil
 import time
@@ -151,6 +150,7 @@ class Article:
     def imgMd(request):
         img = []
         md = []
+        user = []
         try:
             for i in os.listdir(f'{BASE_DIR}/static/images/article'):
                 img.append({
@@ -163,10 +163,13 @@ class Article:
                     'md_name': i,
                     'md_path': f'md/{i}'
                 })
+
+            user = list(User.objects.values('id', 'username').order_by('-id'))
+
         except:
             print(traceback.print_exc())
 
-        return jsonResponse({'ret': 0, 'images': img, 'md': md})
+        return jsonResponse({'ret': 0, 'images': img, 'md': md, 'user': user})
 
     @staticmethod
     def modify_content(request):
@@ -302,14 +305,7 @@ class CDK_view:
 
     @staticmethod
     def list(request):
-        data = request.params
-        if 'page_size' not in data:
-            data['page_size'] = 10
-        if 'page_num' not in data:
-            data['page_num'] = 1
-
-        res = CDK.list(data)
-
+        res = CDK.list(request.params)
         return jsonResponse(res)
 
     @staticmethod

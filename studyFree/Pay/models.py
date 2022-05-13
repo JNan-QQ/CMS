@@ -31,6 +31,12 @@ class PayConfig(models.Model):
     userServerConfig = models.TextField(default={})
     # web_url
     web_url = models.TextField(default={})
+    # articleNum
+    article = models.IntegerField(null=True, blank=True, default=0)
+    # noteBookNum
+    notebook = models.IntegerField(null=True, blank=True, default=0)
+    # click
+    click = models.IntegerField(null=True, blank=True, default=0)
 
     class Meta:
         db_table = "pay_config"
@@ -40,7 +46,8 @@ class PayConfig(models.Model):
     def list(data):
         # noinspection PyBroadException
         try:
-            qs = PayConfig.objects.filter(user_id__id=data['user_id']).values('coins', 'lv', 'deadline', 'qd')
+            qs = PayConfig.objects.filter(user_id__id=data['user_id']) \
+                .values('coins', 'lv', 'deadline', 'qd', 'exp', 'article', 'notebook', 'click')
             qs = list(qs)
             return {'ret': 0, 'retlist': qs}
         except:
@@ -107,7 +114,7 @@ class PayConfig(models.Model):
                 elif exps < 999999:
                     pay_config.lv = 5
                 elif exps >= 999999:
-                    pay_config.lv = int((exps-999999)/100000)
+                    pay_config.lv = int((exps - 999999) / 100000)
 
             # 服务截止时间相关
             if 'addDays' in data:
@@ -298,13 +305,20 @@ class Order(models.Model):
         if 'user_id' in search_items:
             qs = qs.filter(user__id=search_items['user_id'])
 
-        qs = list(qs)
+        # 使用分页对象，设定每页多少条记录
+        pageNt = Paginator(qs, data['pageSize'])
+
+        # 从数据库中读取数据，指定读取其中第几页
+        page = pageNt.page(data['pageNum'])
+
+        # 将 QuerySet 对象 转化为 list 类型
+        qs = list(page)
 
         for i in range(len(qs)):
             qs[i]['create_time'] = qs[i]['create_time'].strftime("%Y-%m-%d %H:%M:%S")
             qs[i]['status'] = Order.GENDER_CHOICES[qs[i]['status']][1]
 
-        return {'ret': 0, 'retlist': qs}
+        return {'ret': 0, 'retlist': qs, 'total': pageNt.count}
 
 
 class CDK(models.Model):
@@ -406,8 +420,8 @@ class CDK(models.Model):
                 qs = qs.filter(query)
 
             # 要获取的第几页 # 每页要显示多少条记录
-            page_num = data['page_num']
-            page_size = data['page_size']
+            page_num = data.get('pageNum', 1)
+            page_size = data.get('pageSize', 10)
 
             # 使用分页对象，设定每页多少条记录
             pgn = Paginator(qs, page_size)

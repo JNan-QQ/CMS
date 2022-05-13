@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q, Count
+from django.db.models import Q
 
 from Admin.models import webConfig
 from Common.forms import handle_uploaded_file
@@ -340,8 +340,8 @@ class MessageView:
         try:
             user_id = request.session['user_id']
             usertype = request.session['usertype']
-            page_size = request.params.get('page_size', 10)
-            page_num = request.params.get('page_num', 1)
+            page_size = request.params.get('pageSize', 10)
+            page_num = request.params.get('pageNum', 1)
             ret = Message.list(user_id, usertype, page_size, page_num)
             return jsonResponse(ret)
         except KeyError:

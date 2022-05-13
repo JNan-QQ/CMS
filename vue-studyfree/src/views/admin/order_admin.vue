@@ -15,8 +15,7 @@
         </el-input>
         <el-button type="primary" plain @click="" style="position: relative">添加</el-button>
     </div>
-    <el-table :data="orderList.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
-              v-loading="loading_table" element-loading-text="加载中...">
+    <el-table :data="orderList" border class="table" v-loading="loading_table" element-loading-text="加载中...">
         <el-table-column prop="id" label="id" min-width="10%" sortable/>
         <el-table-column prop="orderNo" label="订单号" min-width="10%"/>
         <el-table-column prop="user__username" label="用户名" min-width="10%"/>
@@ -26,35 +25,24 @@
         <el-table-column label="操作" min-width="20%" #default="scope">
         </el-table-column>
     </el-table>
-    <div class="page">
-        <el-pagination
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[5,10,20]"
-            :page-size="pageSize"
-            layout="sizes, prev, pager, next, jumper, total"
-            :total="orderList.length">
-        </el-pagination>
-    </div>
+    <!--  分页  -->
+    <pages :total="total" @get-data="getOrderData" :btn_background="false"></pages>
 </template>
 
 <script>
 import {Edit, Loading, Search} from "@element-plus/icons";
 import {markRaw} from "vue";
 import {OrderApi} from "@/api/admin";
+import Pages from "@/components/pages.vue"
 
 export default {
     name: "order_admin",
-    components: {},
+    components: {Pages},
     data() {
         return {
             orderList: [],
             // 每页显示个数
-            pageSize: 5,
-            // 选择的页数
-            currentPage: 1,
+            total: 0,
             // 选择字段
             select_type: '',
             // 字段值
@@ -69,7 +57,7 @@ export default {
         this.getOrderData()
     },
     methods: {
-        getOrderData() {
+        getOrderData(current_page = 1, page_size = 10) {
             this.loading_table = true
             // 搜索过滤
             const search_items = {}
@@ -77,21 +65,18 @@ export default {
                 search_items[this.select_type] = this.select_value
             }
             // 发送列出账号请求
-            OrderApi({search_items: search_items, action: 'list'}).then(res => {
+            OrderApi({
+                search_items: search_items,
+                action: 'list',
+                pageSize: page_size,
+                pageNum: current_page
+            }).then(res => {
                 if (res) {
                     this.orderList = res['retlist']
+                    this.total = res['total']
                     this.loading_table = false
                 }
             })
-        },
-        //每页条数改变时触发 选择一页显示多少行
-        handleSizeChange(val) {
-            this.currentPage = 1;
-            this.pageSize = val;
-        },
-        //当前页改变时触发 跳转其他页
-        handleCurrentChange(val) {
-            this.currentPage = val;
         },
     }
 }
@@ -107,12 +92,7 @@ export default {
 .table {
     min-height: 600px;
     padding: 10px;
-}
-
-/*分页模块*/
-.page {
-    text-align: center;
-    margin: 10px auto auto;
-    position: relative;
+    height: calc(72vh);
+    overflow-y: scroll;
 }
 </style>

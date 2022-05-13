@@ -25,6 +25,12 @@
                         <div>
                             <h3>{{ tag3['tag_name'] }}</h3>
                             <div class="views">
+                                <div class="author">
+                                    <el-icon>
+                                        <connection/>
+                                    </el-icon>
+                                    <span>{{ tag3['user_id__username'] }}</span>
+                                </div>
                                 <div class="hot">
                                     <i class="el-ali-browse"></i>
                                     <span>{{ tag3['clicks'] }}</span>
@@ -52,7 +58,7 @@
 
 <script>
 import {getArticleContentTags, getSlideTags} from "@/api/common";
-import {} from '@element-plus/icons';
+import {Connection} from '@element-plus/icons';
 
 export default {
     name: "articleView",
@@ -65,6 +71,7 @@ export default {
             loading: false
         }
     },
+    components: {Connection},
     watch: {
         isActive() {
             const tag_id = this.tagList[this.isActive].id
@@ -243,18 +250,32 @@ export default {
 
                         .views {
                             display: flex;
-                            justify-content: flex-end;
-                            align-items: center;
-                            height: 16px;
-                            margin-top: 5px;
+                            justify-content: space-between;
+                            text-align: center;
+                            margin-top: 12px;
+
+                            .author{
+                                display: flex;
+                                color: #919090;
+                                i {
+                                    font-size: 18px;
+                                }
+
+                                span {
+                                    font-size: 13px;
+                                    margin-left: 3px;
+                                }
+                            }
 
                             .hot {
                                 display: flex;
                                 color: #1E9FFF;
-                                i{
+
+                                i {
                                     font-size: 22px;
                                 }
-                                span{
+
+                                span {
                                     font-size: 15px;
                                     margin-left: 3px;
                                 }

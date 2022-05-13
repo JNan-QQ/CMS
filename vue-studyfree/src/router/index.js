@@ -8,6 +8,7 @@ import Index from '@/views/home'
 import home from '@/views/home/home.vue'
 import article from "@/views/home/articleView.vue"
 import note from "@/views/home/noteView.vue"
+import noteTest from "@/views/home/noteView_test.vue"
 import skill from "@/views/home/skillView.vue"
 import tool from "@/views/home/toolView.vue"
 
@@ -47,7 +48,10 @@ const routes = [
             }, {
                 path: 'Tool',
                 component: tool
-            },
+            },{
+                path: 'NoteTest',
+                component: noteTest
+            }
         ]
     },
     {

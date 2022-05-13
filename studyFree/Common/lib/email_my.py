@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 
 from config.settings import BASE_DIR
 
-email_file_path = os.path.join(BASE_DIR, 'Common', 'lib', 'file', 'email.html')
+email_file_path = os.path.join(BASE_DIR, 'Common', 'templates', 'email.html')
 with open(email_file_path, 'r', encoding='utf8') as fb:
     email_html = fb.read()
 

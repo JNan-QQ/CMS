@@ -14,6 +14,9 @@ export default createStore({
             usertype: 0,
             isLogin: false,
             qd: '签到',
+            article: 0,
+            notebook: 0,
+            click: 0
         },
         userdata: {
             user_id: 0,
@@ -27,9 +30,13 @@ export default createStore({
             usertype: 0,
             isLogin: false,
             qd: '签到',
+            article: 0,
+            notebook: 0,
+            click: 0
         },
         nowUrl: localStorage.nowUrl || '/home',
-        loading: false
+        loading: false,
+        particles: localStorage.getItem('particles'),
     },
     mutations: {
         changeUserInfo(state, payload) {
@@ -44,17 +51,17 @@ export default createStore({
                     } else if (key === 'deadline') {
                         state.userdata[key] = payload[key].replace('T', ' ').split('.')[0]
                     } else if (key === 'aviator') {
-                        state.userdata[key] = "api_file/" +　payload[key]
-                    }else {
+                        state.userdata[key] = "api_file/" + payload[key]
+                    } else {
                         state.userdata[key] = payload[key]
                     }
                 }
             }
-            localStorage.setItem('userdata',JSON.stringify(state.userdata))
+            localStorage.setItem('userdata', JSON.stringify(state.userdata))
         },
         deleteUserInfo(state) {
             state.userdata = state.userdata_base
-            localStorage.setItem('userdata',JSON.stringify(state.userdata_base))
+            localStorage.setItem('userdata', JSON.stringify(state.userdata_base))
         },
         upDataUrl(state, url) {
             state.nowUrl = url
@@ -63,7 +70,11 @@ export default createStore({
         loadingChange(state, payload) {
             state.loading = payload
         },
+        pChange(state, payload) {
+            state.particles = payload
+        }
     },
+    getters: {},
     actions: {},
     modules: {},
 })

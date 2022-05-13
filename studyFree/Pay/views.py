@@ -1,9 +1,7 @@
 import datetime
-import json
 import time
 import traceback
 
-from Admin.models import webConfig
 from Common.lib.handler import dispatcherBase
 from Common.lib.shara import jsonResponse, NOT_LOGIN, IS_LOGIN
 from Pay.ali.aliApi import aliPay
@@ -107,22 +105,20 @@ class payOrder:
         Action2Handler = {
             'list': self.listOrder,  # 列出订单
             'createOrder': aliPay().createOrder,  # 创建一个订单
-            'payResult': self.payResult
+            'payResult': self.payResult,  # 获取最近一次支付结果
+            'repay': aliPay().repay,  # 重新付款
         }
 
         return dispatcherBase(request, Action2Handler, IS_LOGIN)
 
     @staticmethod
     def listOrder(request):
-        # noinspection PyBroadException
-        try:
-            user_id = request.session['user_id']
-            usertype = request.session['usertype']
-            ret = Order.list_order({'user_id': user_id, 'usertype': usertype})
-            return jsonResponse(ret)
-        except:
-            traceback.print_exc()
-            return jsonResponse({'ret': 1, 'msg': '未知错误'})
+        user_id = request.session['user_id']
+        usertype = request.session['usertype']
+        pageNum = request.params.get('pageNum', 1)
+        pageSize = request.params.get('pageSize', 10)
+        ret = Order.list_order({'user_id': user_id, 'usertype': usertype, 'pageNum': pageNum, 'pageSize': pageSize})
+        return jsonResponse(ret)
 
     @staticmethod
     def payResult(request):

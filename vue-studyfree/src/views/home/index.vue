@@ -1,8 +1,10 @@
 <template>
     <div class="navbar">
         <div class="container">
-            <el-image :src="require('../../assets/studyfree1.png')" fit="fill"
-                      style="width: 180px; height: 38px"></el-image>
+            <router-link to="/home">
+                <el-image :src="require('../../assets/studyfree1.png')" fit="fill"
+                          style="width: 180px; height: 38px"></el-image>
+            </router-link>
             <div class="navbar-collapse">
                 <ul class="navbar-nav">
                     <router-link to="/Article">
@@ -46,24 +48,24 @@
                             <el-dropdown-menu style="width: 280px">
                                 <el-dropdown-item>
                                     <div class="login-items">
-                                        <div class="header-items mt-3">
+                                        <div class="header-items">
                                             <ul>
                                                 <li class="num-items">
                                                     <a>
-                                                        <span class="num ksd-num-count6">0</span>
+                                                        <span class="num">{{userdata.article}}</span>
                                                         <span class="ktext">文章</span>
                                                     </a>
-                                                </li>
+                                                </li><router-link to="/Note">
                                                 <li class="num-items">
                                                     <a>
-                                                        <span class="num ksd-num-count1">0</span>
+                                                        <span class="num">{{ userdata.notebook }}</span>
                                                         <span class="ktext">笔记</span>
                                                     </a>
-                                                </li>
+                                                </li></router-link>
                                                 <li class="num-items">
                                                     <a>
-                                                        <span class="num ksd-num-count2">0</span>
-                                                        <span class="ktext">关注</span>
+                                                        <span class="num">{{ userdata.click }}</span>
+                                                        <span class="ktext">点击量</span>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -131,7 +133,8 @@
                                                     分享推广
                                                 </div>
                                             </li>
-                                            <li class="items" @click="this.$router.push({name:'myCenter',params:{index:'4'}})">
+                                            <li class="items"
+                                                @click="this.$router.push({name:'myCenter',params:{index:'4'}})">
                                                 <div>
                                                     <el-icon>
                                                         <setting/>
@@ -307,7 +310,7 @@ a:link, a:visited {
 
                 }
 
-                a.active{
+                a.active {
                     color: #1E9FFF;
                 }
 

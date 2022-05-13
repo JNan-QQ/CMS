@@ -16,8 +16,7 @@
         <el-button type="primary" plain @click="addBtnFunction" style="position: relative">添加</el-button>
     </div>
 
-    <el-table :data="accountData.slice((currentPage-1)*pageSize,currentPage*pageSize)" border class="table"
-              v-loading="loading_table" element-loading-text="加载中...">
+    <el-table :data="accountData" border class="table" v-loading="loading_table" element-loading-text="加载中...">
         <el-table-column prop="id" label="id" sortable width="60"/>
         <el-table-column prop="username" label="用户名" width="100"/>
         <el-table-column prop="realName" label="姓名" width="100"/>
@@ -46,18 +45,9 @@
             <el-button type="danger" :icon="Delete" circle @click="deleteAccount(props.row)"></el-button>
         </el-table-column>
     </el-table>
-    <div class="page">
-        <el-pagination
-            background
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[5,10,20]"
-            :page-size="pageSize"
-            layout="sizes, prev, pager, next, jumper, total"
-            :total="accountData.length">
-        </el-pagination>
-    </div>
+
+    <!--    分页      -->
+    <pages :total="total" :btn_background="false" @get-data="getAccountData"></pages>
 
     <!-- 添加、编辑页面   -->
     <el-dialog v-model="editBtn" title="账号信息" width="30%" destroy-on-close center>
@@ -84,6 +74,7 @@ import {Delete, Edit, Loading, Search} from '@element-plus/icons'
 import {markRaw} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {AccountApi} from "@/api/admin";
+import Pages from "@/components/pages.vue"
 
 export default {
     name: "account_admin",
@@ -91,10 +82,7 @@ export default {
         return {
             // 用户数据列表
             accountData: [],
-            // 每页显示个数
-            pageSize: 5,
-            // 选择的页数
-            currentPage: 1,
+            total: 0,
 
             // 添加修改用户信息字典
             newAccount: {},
@@ -111,14 +99,14 @@ export default {
 
         }
     },
-    components: {},
+    components: {Pages},
     watch: {},
     mounted() {
         this.getAccountData()
     },
     methods: {
         // 获取用户信息
-        getAccountData() {
+        getAccountData(current_page = 1, page_size = 10) {
             this.loading_table = true
             // 搜索过滤
             const search_items = {}
@@ -126,9 +114,15 @@ export default {
                 search_items[this.select_type] = this.select_value
             }
             // 发送列出账号请求
-            AccountApi({search_items: search_items, action: 'list'}).then(res => {
+            AccountApi({
+                search_items: search_items,
+                action: 'list',
+                pageSize: page_size,
+                pageNum: current_page
+            }).then(res => {
                 if (res) {
                     this.accountData = res['retlist']
+                    this.total = res['total']
                     this.loading_table = false
                 }
             })
@@ -235,17 +229,7 @@ export default {
 
         // 专业过滤
         filterMajor(value, row) {
-            return row.major === value
-        },
-
-        //每页条数改变时触发 选择一页显示多少行
-        handleSizeChange(val) {
-            this.currentPage = 1;
-            this.pageSize = val;
-        },
-        //当前页改变时触发 跳转其他页
-        handleCurrentChange(val) {
-            this.currentPage = val;
+            return row['major'] === value
         },
 
     },
@@ -262,12 +246,7 @@ export default {
 .table {
     min-height: 600px;
     padding: 10px;
-}
-
-/*分页模块*/
-.page {
-    text-align: center;
-    margin: 10px auto auto;
-    position: relative;
+    height: calc(72vh);
+    overflow-y: scroll;
 }
 </style>

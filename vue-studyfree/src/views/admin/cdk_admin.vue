@@ -56,10 +56,7 @@
     </el-table>
 
     <!--    翻页      -->
-    <div style="text-align: center;position: relative">
-        <el-pagination layout="prev, pager, next" :current-page.sync="current_page" :page-size="page_size"
-                       :total="total" @current-change="handleCurrentChange"/>
-    </div>
+    <pages :total="total" @get-data="getCdkData" :btn_background="false"></pages>
 
     <!-- 添加页面   -->
     <el-dialog v-model="editBtn" title="cdk信息" width="30%" destroy-on-close center>
@@ -90,6 +87,7 @@ import {Delete, Edit, Loading, Search, Check, Close} from "@element-plus/icons";
 import {markRaw} from "vue";
 import {CdkApi} from "@/api/admin";
 import {ElMessage, ElMessageBox} from "element-plus";
+import Pages from "@/components/pages.vue"
 
 export default {
     name: "cdk_admin", data() {
@@ -98,8 +96,6 @@ export default {
             cdkData: [],
             // 翻页
             total: 0,
-            page_size: 10,
-            current_page: 1,
             // 添加修改用户信息字典
             newCdk: {},
             // 引入ico图标
@@ -119,17 +115,15 @@ export default {
             addBtn: false
         }
     },
-    watch: {
-        'current_page'() {
-            this.getCdkData()
-        }
-    },
+
     mounted() {
         this.getCdkData()
     },
-    components: {},
+
+    components: {Pages},
+
     methods: {
-        getCdkData() {
+        getCdkData(current_page = 1, page_size = 10) {
             this.loading_table = true
             // 搜索过滤
             const search_items = {}
@@ -140,8 +134,8 @@ export default {
             CdkApi({
                 search_items: search_items,
                 action: 'list',
-                page_num: this.current_page,
-                page_size: this.page_size
+                pageSize: page_size,
+                pageNum: current_page
             }).then(res => {
                 if (res) {
                     this.cdkData = res['retlist']
@@ -150,10 +144,7 @@ export default {
                 }
             })
         },
-        // 翻页
-        handleCurrentChange: function (currentPage) {
-            this.current_page = currentPage
-        },
+
         // 添加一个CDK
         addCdk() {
             this.addBtn = true
@@ -207,5 +198,7 @@ export default {
 .table {
     min-height: 600px;
     padding: 10px;
+    height: calc(72vh);
+    overflow-y: scroll;
 }
 </style>

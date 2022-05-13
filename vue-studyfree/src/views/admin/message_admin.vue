@@ -74,10 +74,7 @@
         </el-table-column>
     </el-table>
     <!--    翻页      -->
-    <div style="text-align: center;position: relative">
-        <el-pagination layout="prev, pager, next" :current-page.sync="current_page" :page-size="page_size"
-                       :total="total" @current-change="handleCurrentChange"/>
-    </div>
+    <pages :total="total" @get-data="getMessageData" :btn_background="false"></pages>
 
     <el-dialog v-model="dialogVisible" :title="newMessage.action" width="30%" center destroy-on-close>
         <el-form :model="newMessage" label-width="120px">
@@ -120,6 +117,7 @@ import {Delete, Edit, Loading, Search} from "@element-plus/icons"
 import {markRaw} from "vue"
 import {MessageApi} from "@/api/common"
 import {ElMessage, ElMessageBox} from "element-plus"
+import Pages from "@/components/pages.vue"
 
 export default {
     name: "message_admin",
@@ -129,8 +127,6 @@ export default {
             messageData: [],
             // 翻页
             total: 0,
-            page_size: 10,
-            current_page: 1,
 
             // 添加修改用户信息字典
             newMessage: {},
@@ -151,17 +147,13 @@ export default {
 
         }
     },
+    components: {Pages},
     mounted() {
         this.getMessageData()
     },
-    watch: {
-        'current_page'() {
-            this.getMessageData()
-        }
-    },
     methods: {
         // 获取消息列表
-        getMessageData() {
+        getMessageData(current_page = 1, page_size = 10) {
             this.loading_table = true
             // 搜索过滤
             const search_items = {}
@@ -172,8 +164,8 @@ export default {
             MessageApi({
                 search_items: search_items,
                 action: 'list',
-                page_num: this.current_page,
-                page_size: this.page_size
+                pageSize: page_size,
+                pageNum: current_page
             }).then(res => {
                 if (res) {
                     this.messageData = res['retlist']
@@ -183,10 +175,6 @@ export default {
             })
         },
 
-        // 翻页
-        handleCurrentChange: function (currentPage) {
-            this.current_page = currentPage
-        },
 
         changeDialogVisible(mode, item = {}) {
             if (mode === 'modify') {
@@ -256,6 +244,8 @@ export default {
 .table {
     min-height: 600px;
     padding: 10px;
+    height: calc(72vh);
+    overflow-y: scroll;
 }
 
 </style>

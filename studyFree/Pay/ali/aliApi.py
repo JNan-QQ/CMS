@@ -54,7 +54,7 @@ class aliPay:
         # 1. 在数据库创建一条数据：状态（待支付）
 
         query_params = alipay.direct_pay(
-            subject=f'自动化服务 - F币充值',  # 商品简单描述
+            subject=f'自动化服务 - F币充值 - {money}元',  # 商品简单描述
             out_trade_no=orderNo,  # 商户订单号
             total_amount=money,  # 交易金额(单位: 元 保留俩位小数)
         )
@@ -68,6 +68,31 @@ class aliPay:
             return jsonResponse(res)
 
         return jsonResponse({'ret': 0, 'url': pay_url})
+
+    def repay(self, request):
+        # 实例化SDK里面的类AliPay
+        alipay = self.obj
+
+        # 对购买的数据进行加密
+        # 商户订单号
+        try:
+            orderNo = request.params['orderNo']
+            money = str(Order.objects.get(orderNo=orderNo).money)
+
+            # 1. 在数据库创建一条数据：状态（待支付）
+
+            query_params = alipay.direct_pay(
+                subject=f'自动化服务 - F币充值 - {money}元',  # 商品简单描述
+                out_trade_no=orderNo,  # 商户订单号
+                total_amount=money,  # 交易金额(单位: 元 保留俩位小数)
+            )
+            # 拼接url，转到支付宝支付页面
+            pay_url = "https://openapi.alipaydev.com/gateway.do?{}".format(query_params)
+
+            return jsonResponse({'ret': 0, 'url': pay_url})
+        except:
+            traceback.print_exc()
+            return jsonResponse({'ret': 1, 'msg': "1"})
 
     @csrf_exempt
     def update_order(self, request):
@@ -124,6 +149,6 @@ class aliPay:
 
         if status:
             # return HttpResponse('支付成功')
-            return redirect('http://localhost:8080/PaySuccess')
+            return redirect('/PaySuccess')
         # return HttpResponse('支付失败')
-        return redirect('http://localhost:8080/PayError')
+        return redirect('/PayError')

@@ -48,7 +48,8 @@ class Tags(models.Model):
                 if data['tag_type'] == 3:
                     ArticleContent.objects.create(
                         tag_id_id=tag.id,
-                        status=1
+                        status=1,
+                        user_id_id=1,
                     )
 
                 return {'ret': 0, 'tag_id': tag.id}
@@ -147,6 +148,8 @@ class ArticleContent(models.Model):
     filePath = models.CharField(max_length=100, null=True, blank=True)
     # 点击量
     clicks = models.IntegerField(default=0)
+    # 作者
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         db_table = "study_articleContent"
@@ -158,9 +161,11 @@ class ArticleContent(models.Model):
         try:
             tag_id = data['tag_id']
             if 'img' in data:
-                qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1).values('images', 'clicks')
+                qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1) \
+                    .values('images', 'clicks', 'user_id__username')
             else:
-                qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1).values('filePath', 'tag_id__tag_name')
+                qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1) \
+                    .values('filePath', 'tag_id__tag_name', 'user_id__username')
             qs = list(qs)
             return qs[0]
         except:
@@ -182,6 +187,8 @@ class ArticleContent(models.Model):
             article.images = data['images']
         if 'filePath' in data:
             article.filePath = data['filePath']
+        if 'user_id' in data:
+            article.user_id_id = data['user_id']
 
         article.save()
 
