@@ -29,7 +29,7 @@
                                     <el-icon>
                                         <connection/>
                                     </el-icon>
-                                    <span>{{ tag3['user_id__username'] }}</span>
+                                    <span>{{ tag3['user_id__realName'] }}</span>
                                 </div>
                                 <div class="hot">
                                     <i class="el-ali-browse"></i>

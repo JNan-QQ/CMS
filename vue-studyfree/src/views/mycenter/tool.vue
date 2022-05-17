@@ -18,10 +18,10 @@
             <el-button type="warning" @click="useCdk" :loading="cdkBtn">兑换</el-button>
         </div>
         <div class="web-view tools">
-            <span>界面调整：</span>
+            <span class="tools-item">界面调整：</span>
             <el-form label-width="85px">
                 <el-form-item label="粒子效果：">
-                    <el-switch
+                    <el-switch @change="changeParticles"
                         v-model="particles"
                         inline-prompt
                         active-color="#13ce66"
@@ -34,6 +34,17 @@
                     <el-color-picker v-model="rgb1" show-alpha :predefine="predefineColors"/>
                     &nbsp;&nbsp;-->&nbsp;&nbsp;
                     <el-color-picker v-model="rgb2" show-alpha :predefine="predefineColors"/>
+                    <span class="res-background-color" @click="resBackGroundColor">背景色重置</span>
+                </el-form-item>
+                <el-form-item label="笔记实验：">
+                    <el-switch @change="changeNoteBookRoute"
+                        v-model="notebookRoute"
+                        inline-prompt
+                        active-color="#13ce66"
+                        inactive-color="#ff4949"
+                        active-text="Y"
+                        inactive-text="N"
+                    />
                 </el-form-item>
             </el-form>
         </div>
@@ -61,6 +72,7 @@ export default {
             particles: true,
             rgb1: '',
             rgb2: '',
+            notebookRoute: localStorage.getItem('notebookRoute')==='true',
             predefineColors: ref([
                 '#ff4500',
                 '#ff8c00',
@@ -84,10 +96,6 @@ export default {
         '$store.state.userdata.usertype'() {
             this.heightSwitch = this.$store.state.userdata.usertype === 1005
         },
-        'particles'() {
-            localStorage.setItem('particles', this.particles)
-            this.$store.commit("pChange", this.particles);
-        },
         'rgb1'() {
             localStorage.setItem('rgb1', this.rgb1)
             setTheme(this.rgb1, this.rgb2)
@@ -95,11 +103,12 @@ export default {
         'rgb2'() {
             localStorage.setItem('rgb2', this.rgb2)
             setTheme(this.rgb1, this.rgb2)
-        }
+        },
     },
     components: {Key},
     mounted() {
         this.particles = localStorage.getItem('particles') !== 'false'
+
         if (localStorage.getItem('rgb1') === null) {
             this.rgb1 = 'rgb(180, 189, 241)'
         } else {
@@ -133,6 +142,17 @@ export default {
             })
         },
 
+        // 改变背景粒子效果
+        changeParticles(val){
+            localStorage.setItem('particles', val)
+            this.$store.commit("pChange", val)
+        },
+
+        // 改变笔记路由
+        changeNoteBookRoute(val){
+             localStorage.setItem('notebookRoute', val)
+        },
+
         // 使用cdk
         useCdk() {
             this.cdkBtn = true
@@ -143,6 +163,12 @@ export default {
                 }
                 this.cdkBtn = false
             })
+        },
+
+        // 重置背景色
+        resBackGroundColor() {
+            this.rgb1 = 'rgb(180, 189, 241)'
+            this.rgb2 = 'rgb(193, 160, 238)'
         },
     }
 }
@@ -162,9 +188,17 @@ export default {
         display: flex;
         align-items: center;
 
-        span {
-            margin-left: 10px;
-            margin-right: 5px;
+        span.res-background-color {
+            margin-left: 20px;
+            color: #FFFFFF;
+        }
+
+        span.res-background-color:hover {
+            color: #1E9FFF;
+        }
+
+        span.res-background-color:active {
+            color: #fc4c00;
         }
     }
 

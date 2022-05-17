@@ -162,10 +162,10 @@ class ArticleContent(models.Model):
             tag_id = data['tag_id']
             if 'img' in data:
                 qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1) \
-                    .values('images', 'clicks', 'user_id__username')
+                    .values('images', 'clicks', 'user_id__realName')
             else:
                 qs = ArticleContent.objects.filter(tag_id__id=tag_id, status=1) \
-                    .values('filePath', 'tag_id__tag_name', 'user_id__username')
+                    .values('filePath', 'tag_id__tag_name', 'user_id__realName')
             qs = list(qs)
             return qs[0]
         except:

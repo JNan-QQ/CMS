@@ -12,8 +12,11 @@
                             <a :class="{ active: is_active==='Article' }">文章</a><i class="bgd-left">热门</i>
                         </li>
                     </router-link>
-                    <router-link to="/Note">
+                    <router-link to="/Note" v-if="!notebookRoute">
                         <li @click="is_active='Note'"><a :class="{ active: is_active==='Note' }">笔记</a></li>
+                    </router-link>
+                    <router-link to="/NoteTest" v-else>
+                        <li @click="is_active='NoteTest'"><a :class="{ active: is_active==='NoteTest' }">笔记</a></li>
                     </router-link>
                     <router-link to="/Skill">
                         <li @click="is_active='Skill'"><a :class="{ active: is_active==='Skill' }">技巧</a></li>
@@ -39,7 +42,7 @@
                     <el-dropdown trigger="click">
                         <div class="drop">
                             <el-avatar :size="38" :src="userdata.aviator"></el-avatar>
-                            <span>{{ userdata.username }}</span>
+                            <span>{{ userdata.realName }}</span>
                             <el-icon>
                                 <caret-bottom/>
                             </el-icon>
@@ -52,16 +55,18 @@
                                             <ul>
                                                 <li class="num-items">
                                                     <a>
-                                                        <span class="num">{{userdata.article}}</span>
+                                                        <span class="num">{{ userdata.article }}</span>
                                                         <span class="ktext">文章</span>
                                                     </a>
-                                                </li><router-link to="/Note">
-                                                <li class="num-items">
-                                                    <a>
-                                                        <span class="num">{{ userdata.notebook }}</span>
-                                                        <span class="ktext">笔记</span>
-                                                    </a>
-                                                </li></router-link>
+                                                </li>
+                                                <router-link to="/Note">
+                                                    <li class="num-items">
+                                                        <a>
+                                                            <span class="num">{{ userdata.notebook }}</span>
+                                                            <span class="ktext">笔记</span>
+                                                        </a>
+                                                    </li>
+                                                </router-link>
                                                 <li class="num-items">
                                                     <a>
                                                         <span class="num">{{ userdata.click }}</span>
@@ -190,7 +195,8 @@ export default {
             Avatar: markRaw(Avatar), Notebook: markRaw(Notebook), Document: markRaw(Document), Flag: markRaw(Flag),
             userdata: this.$store.state.userdata,
             inHome: false,
-            is_active: ''
+            is_active: '',
+            notebookRoute: localStorage.getItem('notebookRoute') === 'true',
         }
     },
     components: {Document, CaretBottom, HomeFilled, Cloudy, Star, Coin, Setting, Position, Trophy, Moon},

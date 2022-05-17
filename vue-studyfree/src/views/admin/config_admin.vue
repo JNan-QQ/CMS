@@ -57,6 +57,9 @@
                         <template #append>折</template>
                     </el-input>
                 </el-form-item>
+                <el-form-item label="关闭付款功能：">
+                    <el-switch v-model="pay.disablePay"/>
+                </el-form-item>
                 <div style="text-align: center">
                     <el-button @click="saveConfig(2)" type="success">保存</el-button>
                 </div>

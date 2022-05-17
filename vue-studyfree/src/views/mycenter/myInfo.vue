@@ -13,7 +13,7 @@
                 <span>用户名：</span><span class="item-content username">{{ userdata.username }}</span>
             </div>
             <div class="item">
-                <span>姓　名：</span>
+                <span>昵　称：</span>
                 <span class="item-content realName" v-if="!editRealName">{{ userdata.realName }}</span>
                 <div style="display: flex" v-if="editRealName">
                     <el-input v-model="newUserdata.realName"></el-input>

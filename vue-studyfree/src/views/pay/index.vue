@@ -13,7 +13,7 @@
             <template #header>
                 <div class="card-header">
                     <span>充值F币</span>
-                    <el-button class="button" @click="payF">确定</el-button>
+                    <el-button class="button" @click="payF" :disabled="disablePay">确定</el-button>
                 </div>
             </template>
             <div>
@@ -59,7 +59,8 @@ export default {
             productsList: [],
             money: 0,
             F: 500,
-            Z: 1
+            Z: 1,
+            disablePay:false,
         }
     },
     components: {Back},
@@ -77,6 +78,7 @@ export default {
                 let ss = eval('(' + res['retlist'][0]['config'] + ')')
                 this.F = parseInt(ss.F)
                 this.Z = parseFloat(ss.Z)
+                this.disablePay = ss.disablePay
             }
         })
     },
