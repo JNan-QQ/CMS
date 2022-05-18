@@ -51,7 +51,11 @@ export default createStore({
                     } else if (key === 'deadline') {
                         state.userdata[key] = payload[key].replace('T', ' ').split('.')[0]
                     } else if (key === 'aviator') {
-                        state.userdata[key] = "api_file/" + payload[key]
+                        if (payload[key].match(new RegExp("^http.*$"))) {
+                            state.userdata[key] = payload[key]
+                        } else {
+                            state.userdata[key] = "api_file/" + payload[key]
+                        }
                     } else {
                         state.userdata[key] = payload[key]
                     }

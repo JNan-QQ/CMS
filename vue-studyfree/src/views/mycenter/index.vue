@@ -105,7 +105,11 @@ export default {
         // 上传头像图片成功后修改头像
         uploadImgSuccess(response, file, fileList) {
             if (response['ret'] === 0) {
-                this.userdata.aviator = 'api_file/' + response['url']
+                if (response['url'].match(new RegExp("^http.*$"))){
+                    this.userdata.aviator = response['url']
+                }else {
+                    this.userdata.aviator = 'api_file/' + response['url']
+                }
                 ElMessage({
                     message: '修改成功，请刷新！',
                     type: 'success',

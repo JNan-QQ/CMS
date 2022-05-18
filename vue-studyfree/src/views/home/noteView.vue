@@ -173,7 +173,14 @@ export default {
                     });
                 })
             );
-            callback(res.map((item) => 'api_file/' + item.url));
+            // callback(res.map((item) => 'api_file/' + item.url));
+            callback(res.map(function (item){
+                if (item.url.match(new RegExp("^http.*$"))){
+                    return item.url
+                }else{
+                  return  'api_file/' + item.url
+                }
+            }));
         },
 
         // 点击图片回到顶部方法，加计时器是为了过渡顺滑
