@@ -1,5 +1,4 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import store from "@/store"
 
 import Login from '@/views/login'
 import rpa from '@/views/login/rPA.vue'
@@ -12,7 +11,7 @@ import noteTest from "@/views/home/noteView_test.vue"
 import skill from "@/views/home/skillView.vue"
 import tool from "@/views/home/toolView.vue"
 
-import markdownView from "@/components/markdownView.vue"
+import markdownView from "@/components/articleViewPage/markdownView.vue"
 
 import myCenter from "@/views/mycenter"
 

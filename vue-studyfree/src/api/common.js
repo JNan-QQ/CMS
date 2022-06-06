@@ -12,53 +12,6 @@ export function getCq() {
     })
 }
 
-// 获取文章页面tags
-export function getSlideTags() {
-    return request({
-        url: 'frontEnd/article',
-        method: 'get',
-        params: {
-            action: 'slideTags'
-        }
-    })
-}
-
-// 获取文章页面content名称
-export function getArticleContentTags(data) {
-    return request({
-        url: 'frontEnd/article',
-        method: 'post',
-        data: data
-    })
-}
-
-// 获取文章页面content内容
-export function getArticleContent(data) {
-    return request({
-        url: 'frontEnd/article',
-        method: 'get',
-        params: data
-    })
-}
-
-// 获取笔记页面content内容
-export function noteContent(data) {
-    return request({
-        url: 'frontEnd/notebook',
-        method: 'post',
-        data: data
-    })
-}
-
-// 下载文章扣费
-export function downloadFree(price) {
-    return request({
-        url: 'download',
-        method: 'get',
-        params: {price: price, action: 'free'}
-    })
-}
-
 // 签到
 export function qianDao(that) {
     return request({
@@ -106,23 +59,6 @@ export function sendEmailCode(email_type) {
                 message: res['msg'],
                 type: 'success',
             })
-        }
-    })
-}
-
-// 账号接口
-export function AccountApi(data) {
-    return request({
-        url: 'common/account',
-        method: 'post',
-        data: data
-    }).then(res => {
-        if (res) {
-            ElMessage({
-                type: 'success',
-                message: '操作成功!',
-            })
-            return res
         }
     })
 }

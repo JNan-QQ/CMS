@@ -41,6 +41,7 @@ request.interceptors.response.use(
                 message: res['msg'],
                 type: 'warning',
             })
+            return false
         } else if (res['ret'] === 0) {
             return res
         } else {

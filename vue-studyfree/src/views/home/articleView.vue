@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import {getArticleContentTags, getSlideTags} from "@/api/common";
+import {getArticleContentTags, getSlideTags} from "@/api/front";
 import {Connection} from '@element-plus/icons';
 
 export default {

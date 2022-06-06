@@ -15,7 +15,7 @@
     </div>
 
     <div class="md-view">
-        <md-editor v-model="baseArticleContent" previewOnly/>
+        <md-editor-v3 v-model="baseArticleContent" previewOnly v-highlight/>
     </div>
 
     <el-collapse v-model="activeName" accordion class="mu-lu">
@@ -36,10 +36,10 @@
 
 <script>
 import {marked} from "marked"
-import {downloadFree, getArticleContent} from "@/api/common";
+import {CommonApi} from "@/api/common";
+import {getArticleContent} from "@/api/front"
 import {DArrowLeft, AddLocation} from "@element-plus/icons";
 import {ElMessageBox} from "element-plus";
-import MdEditor from 'md-editor-v3';
 
 export default {
     name: "markdownView",
@@ -51,16 +51,22 @@ export default {
             headlamp: [],
             activeName: 1,
             activeFist: 0,
-            activeTwo: [0, 0]
+            activeTwo: [0, 0],
+            price:0
         }
     },
-    components: {DArrowLeft, MdEditor, AddLocation},
+    components: {DArrowLeft, AddLocation},
     mounted() {
         const param = this.$route.query
         getArticleContent({action: 'markdownContent', tag_id: param['id']}).then(res => {
             this.baseArticleContent = res['mdContent']
             this.title = res['title']
             this.author = res['author']
+        })
+        CommonApi({action: 'list_webConfig', title: 'price'}).then(res => {
+            if (res) {
+                this.price = res['retlist'][0]['config']
+            }
         })
     },
     watch: {
@@ -71,7 +77,7 @@ export default {
     methods: {
         downloadMarkdown() {
             ElMessageBox.confirm(
-                '确认花费 50 F币下载文章吗？',
+                `确认花费 ${this.price} F币下载文章吗？`,
                 'Warning',
                 {
                     confirmButtonText: '确认',
@@ -79,7 +85,7 @@ export default {
                     type: 'warning',
                 }
             ).then(() => {
-                downloadFree(50).then(res => {
+                CommonApi({action: 'download'}).then(res => {
                     if (res) {
                         const blob = new Blob([this.baseArticleContent], {type: 'text/plain'})
                         const url = window.URL.createObjectURL(blob);
@@ -230,16 +236,6 @@ export default {
 }
 
 
-.markdown-body {
-    box-sizing: border-box;
-    min-width: 200px;
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 45px;
-    position: relative;
-    height: calc(90vh - 10px);
-    overflow-y: auto;
-}
 
 .md-previewOnly {
     box-sizing: border-box;
@@ -253,7 +249,7 @@ export default {
 }
 
 @media (max-width: 767px) {
-    .markdown-body, .md-previewOnly {
+    .md-previewOnly {
         padding: 15px;
     }
 }

@@ -2,7 +2,7 @@ import datetime
 import glob
 import os.path
 import traceback
-
+from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db import transaction
@@ -309,3 +309,189 @@ class NoteBook(models.Model):
             return {'ret': 0, 'retlist': qs}
         except Exception as e:
             print(e)
+
+
+class Skill(models.Model):
+    # id
+    id = models.BigAutoField(primary_key=True)
+    # title
+    title = models.CharField(max_length=100, null=True, blank=True, default='默认标题')
+    # content
+    content = models.TextField(null=True, blank=True, default='请在此输入内容，支持markdown语法，不要输入保密信息！')
+    # time
+    time = models.DateTimeField(auto_now=datetime.datetime.now)
+    # author
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    # 点击量
+    clicks = models.IntegerField(default=0)
+    # 评分
+    rate = models.DecimalField(default=3.0, max_digits=2, decimal_places=1)
+    # status
+    # 0 禁用，1 正常,2 暂存，3 待审核
+    status = models.PositiveIntegerField(default=2)
+    # 收藏数
+    collection = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = "study_skill"
+        app_label = "FrontEnd"
+
+    @staticmethod
+    def add(data):
+        skill = Skill.objects.create(
+            author_id=data['user_id'],
+            title=data['title'],
+            content=data['content'],
+            status=data['status']
+        )
+        return {'ret': 0, 'skill_id': skill.id}
+
+    @staticmethod
+    def modify(data):
+        user_id = data['user_id']
+        skill_id = data['skill_id']
+
+        if Skill.objects.filter(author_id=user_id, id=skill_id).exists():
+            skill = Skill.objects.filter(author_id=user_id, id=skill_id).get()
+            skill.title = data['title']
+            skill.content = data['content']
+            skill.status = data['status']
+            skill.save()
+            return {'ret': 0}
+        else:
+            return {'ret': 1, 'msg': '参数错误'}
+
+    @staticmethod
+    def deleteSkill(data):
+        user_id = data['user_id']
+        skill_id = data['skill_id']
+        print(user_id,skill_id)
+        if Skill.objects.filter(author_id=user_id, id=skill_id).exists():
+            Skill.objects.filter(author_id=user_id, id=skill_id).delete()
+            return {'ret': 0}
+        else:
+            return {'ret': 1, 'msg': '参数错误'}
+
+    @staticmethod
+    def list(data):
+        # 获取用户id，未登录为none
+        user_id = data['user_id']
+
+        # 确定排序方法
+        if data['mode'] == 'all':
+            order_by_mode = '-time'
+        else:
+            order_by_mode = '-clicks'
+
+        if data['mode'] == 'my-collection':
+            qs = list(Skill.objects.filter(status=1, skill_collection_user__user__id=user_id).values(
+                'id', 'title', 'time', 'author__aviator', 'rate', 'clicks', 'author__realName').order_by(order_by_mode))
+            for index, item in enumerate(qs):
+                qs[index]['isCollect'] = True
+        elif data['mode'] == 'myself':
+            qs = list(Skill.objects.filter(author__id=user_id).values('id', 'title', 'time', 'rate', 'clicks', 'status',
+                                                                      'collection'))
+        else:
+            qs = list(Skill.objects.filter(status=1).values('id', 'title', 'time', 'author__aviator', 'rate', 'clicks',
+                                                            'author__realName').order_by(order_by_mode))
+            if user_id:
+                collection_list = [i['skill_id'] for i in
+                                   list(Collection.objects.filter(user_id=user_id).values('skill_id'))]
+                for index, item in enumerate(qs):
+                    qs[index]['isCollect'] = item['id'] in collection_list
+
+        return {'ret': 0, 'retlist': qs}
+
+    @staticmethod
+    def listAdmin(data):
+        pass
+
+    @staticmethod
+    def get_content(data):
+        skill_id = data['skill_id']
+        user_id = data['user_id']
+        skill = list(Skill.objects.filter(id=skill_id).values('title', 'content', 'id'))[0]
+        if user_id:
+            rate = Rate.objects.filter(user_id=user_id, skill_id=skill_id).values('rate')
+            if rate:
+                skill['rate'] = rate[0]['rate']
+            else:
+                skill['rate'] = 0
+        return {'ret': 0, 'retlist': skill}
+
+
+class Rate(models.Model):
+    # id
+    id = models.BigAutoField(primary_key=True)
+    # user
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # skill
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name='skill_rate_user')
+    #
+    rate = models.DecimalField(default=3.0, max_digits=2, decimal_places=1)
+
+    class Meta:
+        db_table = "study_skill_rate"
+        app_label = "FrontEnd"
+
+    @staticmethod
+    def add(data):
+        user_id = data['user_id']
+        skill_id = data['skill_id']
+        try:
+            if user_id and skill_id and not Rate.objects.filter(user_id=user_id, skill_id=skill_id).exists():
+                Rate.objects.create(
+                    user_id=user_id,
+                    skill_id=skill_id,
+                    rate=data['rate']
+                )
+            else:
+                return {'ret': 1, 'msg': '参数错误'}
+        except:
+            traceback.print_exc()
+
+    @staticmethod
+    def modify(data):
+        user_id = data['user_id']
+        skill_id = data['skill_id']
+        if user_id and skill_id:
+            try:
+                rate = Rate.objects.filter(user_id=user_id, skill_id=skill_id).get()
+                rate.rate = data['rate']
+                rate.save()
+                return {'ret': 0}
+            except ObjectDoesNotExist:
+                ret = Rate.add(data)
+                traceback.print_exc()
+                return ret
+        else:
+            return {'ret': 1, 'msg': '参数错误'}
+
+
+class Collection(models.Model):
+    # id
+    id = models.BigAutoField(primary_key=True)
+    # user
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # skill
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name='skill_collection_user')
+
+    class Meta:
+        db_table = "study_skill_collection"
+        app_label = "FrontEnd"
+
+    @staticmethod
+    def changeCollection(data):
+        user_id = data.get('user_id', None)
+        skill_id = data.get('skill_id', None)
+        if user_id and skill_id:
+            if Collection.objects.filter(user_id=user_id, skill_id=skill_id).exists():
+                Collection.objects.filter(user_id=user_id, skill_id=skill_id)[0].delete()
+            else:
+                Collection.objects.create(
+                    user_id=user_id,
+                    skill_id=skill_id
+                )
+            return {'ret': 0}
+        else:
+            return {'ret': 1, 'msg': '参数错误'}

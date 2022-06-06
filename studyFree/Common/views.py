@@ -171,9 +171,9 @@ class Download:
     def free(request):
         # noinspection PyBroadException
         try:
-            price = request.params['price']
+            price = webConfig.objects.get(title='price').config
             res = PayConfig.modify(
-                {'user_id': request.session['user_id'], 'coins': -abs(int(price)), 'exp': 10 * int(price)})
+                {'user_id': request.session['user_id'], 'coins': -int(price), 'exp': 10 * int(price)})
             return jsonResponse(res)
         except KeyError:
             return jsonResponse({'ret': 1, 'msg': '请先登录，再下载文章'})
@@ -193,7 +193,8 @@ class Others:
             'changeUserInfo': self.changeUserInfo,  # 改变用户信息
             'uploadImg': self.uploadImg,  # 上传图片公共接口
             'listEmailAccount': self.listEmailAccount,  # 通过邮箱获取账号列表
-            'list_webConfig': self.list_webConfig  # 部分网址配置
+            'list_webConfig': self.list_webConfig,  # 部分网址配置
+            'download': self.download,  # 下载文章
         }
 
         return dispatcherBase(request, Action2Handler, NOT_LOGIN)
@@ -226,20 +227,7 @@ class Others:
 
     @staticmethod
     def uploadImg(request):
-        # File = request.FILES.get("file", None)
         file_type = request.POST['file_type']
-        # file_name = request.POST['file_name']
-        # file_name = file_name.replace('timeR', str(int(time.time())))
-        # if File:
-        #     f_path = os.path.join(settings.BASE_DIR, 'static/images', file_type, file_name)
-        #     ret = handle_uploaded_file(request.FILES['file'], f_path)
-        #     aviator_path = f'static/images/{file_type}/{file_name}'
-        #     if ret:
-        #         if file_type == 'aviator':
-        #             User.modify_account({'user_id': request.session['user_id'], 'aviator': aviator_path})
-        #         return jsonResponse({'ret': 0, 'url': aviator_path})
-        #     else:
-        #         return jsonResponse({'ret': 1, 'msg': '上传图像失败'})
         ret = upLoadFile.uploadImg(request)
         if file_type == 'aviator':
             User.modify_account({'user_id': request.session['user_id'], 'aviator': ret})
@@ -317,11 +305,25 @@ class Others:
     @staticmethod
     def list_webConfig(request):
         title = request.params['title']
-        if title not in ['tools', 'pay']:
+        if title not in ['tools', 'pay', 'price']:
             return jsonResponse({'ret': 1, 'msg': '无权查看'})
         res = webConfig.list({'title': title})
 
         return jsonResponse(res)
+
+    @staticmethod
+    def download(request):
+        # noinspection PyBroadException
+        try:
+            price = webConfig.objects.get(title='price').config
+            res = PayConfig.modify(
+                {'user_id': request.session['user_id'], 'coins': -int(price), 'exp': 10 * int(price)})
+            return jsonResponse(res)
+        except KeyError:
+            return jsonResponse({'ret': 1, 'msg': '请先登录，再下载文章'})
+        except:
+            traceback.print_exc()
+            return jsonResponse({'ret': 1, 'msg': '其他异常'})
 
 
 # 通知

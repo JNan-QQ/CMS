@@ -7,18 +7,19 @@ import store from './store'
 import './styles/index.less'
 import VueParticles from 'vue-particles'
 
-// makeDown 编辑器
-import 'github-markdown-css'
-// 代码高亮
-import 'highlight.js/styles/github.css'
-
 // element ui 逐渐库
 import ElementPlus from 'element-plus'
 
 // 加载element 逐渐库 样式
 import 'element-plus/dist/index.css'
 
-// import 'default-passive-events'
+import directives from "@/tools/directives";
 
-
-createApp(App).use(store).use(ElementPlus).use(router).use(VueParticles).mount('#app')
+const app = createApp(App)
+app.use(store)
+app.use(ElementPlus)
+app.use(router)
+app.use(VueParticles)
+app.use(MdEditorV3)
+directives(app)
+app.mount('#app')

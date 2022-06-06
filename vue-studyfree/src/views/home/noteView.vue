@@ -21,11 +21,10 @@
                                 <el-button @click="deleteNoteBook(item.id)" :loading="deleteBtn">删除</el-button>
                             </div>
                             <div style="margin: 2px;" v-if="index + 1===activeName">
-                                <md-editor v-if="isEdit" v-model="item.content"
+                                <md-editor-v3 v-if="isEdit" v-model="item.content"
                                            @onSave="saveNoteBook(item.id,item.content)"
-                                           @onUploadImg="onUploadImg"
-                                />
-                                <md-editor v-else v-model="item.content" previewOnly/>
+                                           @onUploadImg="onUploadImg" v-highlight/>
+                                <md-editor-v3 v-else v-model="item.content" previewOnly v-highlight/>
                             </div>
                         </el-collapse-item>
                     </el-collapse>
@@ -68,9 +67,7 @@
 </template>
 
 <script>
-import MdEditor from 'md-editor-v3'
-import 'md-editor-v3/lib/style.css'
-import {noteContent} from "@/api/common"
+import {noteContent} from "@/api/front"
 import {DocumentAdd, Edit, Remove, CaretTop} from "@element-plus/icons"
 import {ElMessage, ElMessageBox} from "element-plus"
 import request from "../../api/request"
@@ -88,12 +85,12 @@ export default {
             loading: false,
         }
     },
-    components: {MdEditor, Edit},
+    components: {Edit},
     mounted() {
         this.before()
     },
-    computed:{
-        isLogin(){
+    computed: {
+        isLogin() {
             return this.$store.state.userdata.isLogin
         }
     },
@@ -174,11 +171,11 @@ export default {
                 })
             );
             // callback(res.map((item) => 'api_file/' + item.url));
-            callback(res.map(function (item){
-                if (item.url.match(new RegExp("^http.*$"))){
+            callback(res.map(function (item) {
+                if (item.url.match(new RegExp("^http.*$"))) {
                     return item.url
-                }else{
-                  return  'api_file/' + item.url
+                } else {
+                    return 'api_file/' + item.url
                 }
             }));
         },

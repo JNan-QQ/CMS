@@ -40,11 +40,10 @@
             <el-image :src="random_image" fit="cover" class="cover" v-if="active_page===-1"/>
 
             <div style="margin: 2px;" v-else>
-                <md-editor v-if="isEdit" v-model="bjList[active_page].content"
+                <md-editor-v3 v-if="isEdit" v-model="bjList[active_page].content"
                            @onSave="saveNoteBook(bjList[active_page].id,bjList[active_page].content)"
-                           @onUploadImg="onUploadImg" :preview="false"
-                />
-                <md-editor v-else v-model="bjList[active_page].content" previewOnly/>
+                           @onUploadImg="onUploadImg" :preview="false" v-highlight/>
+                <md-editor-v3 v-else v-model="bjList[active_page].content" previewOnly v-highlight/>
             </div>
         </el-card>
         <el-icon v-if="active_page===-1" style="z-index: 2;position: absolute" :size="30" class="view-tools"
@@ -68,18 +67,16 @@
 </template>
 
 <script>
-import {noteContent} from "@/api/common";
+import {noteContent} from "@/api/front";
 import Pages from "@/components/pages";
 import {Edit, DocumentAdd, CollectionTag, Remove, Close, Check, Setting} from "@element-plus/icons";
-import MdEditor from 'md-editor-v3'
-import 'md-editor-v3/lib/style.css'
 import {ElMessage, ElMessageBox} from "element-plus";
 import request from "@/api/request";
 import {markRaw} from "vue";
 
 export default {
     name: "noteView_test",
-    components: {Pages, Edit, MdEditor, Remove, Close, Check, CollectionTag, Setting},
+    components: {Pages, Edit, Remove, Close, Check, CollectionTag, Setting},
     data() {
         return {
             bjList: [],
@@ -87,7 +84,7 @@ export default {
             isEdit: false,
             saveLoading: false,
             deleteLoading: false,
-            random_image: localStorage.getItem('book-view')||require('@/assets/others/notebookCover.jpg'),
+            random_image: localStorage.getItem('book-view') || require('@/assets/others/notebookCover.jpg'),
             styleObject: [],
             page_lm: ['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ', 'Ⅹ', 'Ⅺ', 'Ⅻ'],
             DocumentAdd: markRaw(DocumentAdd),
@@ -149,16 +146,6 @@ export default {
                 'hsla(209, 100%, 56%, 0.73)',
                 '#c7158577',
             ]
-            // 背景图
-            // let back_img = [
-            //     'https://tse4-mm.cn.bing.net/th/id/OIP-C._BGhMuCP3y7uYFc2XJD8XwHaEK?pid=ImgDet&rs=1',
-            // ]
-            // let user_image_book = localStorage.getItem('book-view')
-            // if (user_image_book){
-            //     this.random_image = user_image_book
-            // }else {
-            //     this.random_image = back_img[Math.floor(Math.random() * (back_img.length - 1))]
-            // }
 
             for (let i = 0; i < this.page_lm.length; i++) {
                 this.styleObject.push({
@@ -235,7 +222,7 @@ export default {
 
         // 上传图片
         async onUploadImg(files, callback) {
-            const file_name = `img_notebook_${this.bjList[this.activeName - 1].id}_timeR.png`
+            const file_name = `img_notebook_${this.bjList[this.active_page].id}_timeR.png`
             const res = await Promise.all(
                 Array.from(files).map((file) => {
                     return new Promise((rev, rej) => {
@@ -248,7 +235,14 @@ export default {
                     });
                 })
             );
-            callback(res.map((item) => 'api_file/' + item.url));
+            // callback(res.map((item) => 'api_file/' + item.url));
+            callback(res.map(function (item) {
+                if (item.url.match(new RegExp("^http.*$"))) {
+                    return item.url
+                } else {
+                    return 'api_file/' + item.url
+                }
+            }));
         },
 
         changeNoteBookCover() {
@@ -257,7 +251,7 @@ export default {
                 inputPattern: /^((http|https):\/\/)?(([A-Za-z0-9]+-[A-Za-z0-9]+|[A-Za-z0-9]+)\.)+([A-Za-z]+)[/\?\:]?.*$/,
                 inputErrorMessage: 'https://.....',
             }).then(({value}) => {
-                localStorage.setItem('book-view',value)
+                localStorage.setItem('book-view', value)
                 this.random_image = value
             })
         },
