@@ -51,8 +51,8 @@ export default {
             Search: markRaw(Search),
             images: [
                 'https://upload-bbs.mihoyo.com/upload/2020/07/21/21918678/7e624245423cbb6d3cce148c67d6db6f_5277841816657379233.jpg',
-                'http://p5.qhimg.com/t015a7830c430ff61bb.jpg?size=1920x1080',
-                'http://p4.qhimg.com/t01777f7c2055747c40.jpg?size=1162x727'
+                'https://p5.qhimg.com/t015a7830c430ff61bb.jpg?size=1920x1080',
+                'https://p4.qhimg.com/t01777f7c2055747c40.jpg?size=1162x727'
             ]
 
         }

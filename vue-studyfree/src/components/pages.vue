@@ -43,8 +43,9 @@ export default {
         styleObject: {
             type: Object,
             default: {
-                textAlign: 'center',
-                position: 'relative'
+                position: 'relative',
+                display:'flex',
+                justifyContent:'center'
             }
         }
     },
